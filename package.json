@@ -9,7 +9,8 @@
         "server": "cd server && npm start",
         "client": "npm start --prefix client",
         "format": "prettier --write .",
-        "lint": "eslint ."
+        "lint": "eslint .",
+        "install": "concurrently --kill-others-on-fail -n server,client -c blue,green \"cd server && npm install\" \"cd client && npm install\""
     },
     "author": "TeneT",
     "license": "ISC",
