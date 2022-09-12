@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  client:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    ports:
+      - "${CLIENT_HOST}:${CLIENT_PORT}"
+    environment:
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./client:/app/
+      - /app/node_modules
+    container_name: client
+  server:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    ports:
+      - "${SERVER_HOST}:${SERVER_PORT}"
+    environment:
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./server:/app/
+      - /app/node_modules
+    container_name: server
+  db:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile
+      context: ./db
+    ports:
+      - "${DB_HOST}:${DB_PORT}"
+    container_name: db
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
