@@ -17,6 +17,8 @@ app.use(cors())
 // Routes
 app.use('/', routes)
 
+console.log(process.env.DATABASE_URL)
+
 // Error Handling request not found
 app.use((req, res, next) => {
     const error = new Response("Not Found", "res_notFound");
@@ -34,5 +36,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(5000, () => {
-    console.log(`your application is running on port 5000`)
+    console.log(`your application is running on port ${process.env.SERVER_PORT}`)
 })

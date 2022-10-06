@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   client:
     stdin_open: true
@@ -19,21 +17,14 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
-    ports:
-      - "${SERVER_HOST}:${SERVER_PORT}"
+#    ports:
+#      - "${SERVER_HOST}:${SERVER_PORT}"
+    network_mode: "host"
     environment:
-      - WATCHPACK_POLLING=true
+      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ./server:/app/
       - /app/node_modules
     container_name: server
-  db:
-    stdin_open: true
-    build:
-      dockerfile: Dockerfile
-      context: ./db
-    ports:
-      - "${DB_HOST}:${DB_PORT}"
-    container_name: db
-    environment:
-      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+volumes:
+  data:

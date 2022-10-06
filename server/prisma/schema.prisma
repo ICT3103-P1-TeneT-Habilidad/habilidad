@@ -1,0 +1,175 @@
+generator client {
+   provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  userId   String  @id @default(uuid())
+  username String
+  password String
+  name String
+  phoneNumber Int
+  email String
+  deActivatedOn DateTime
+  createdOn DateTime @default(now())
+  updatedOn DateTime
+  role Role
+  // student Student
+  // instructor Instructor
+  // moderator Moderator
+  // administrator Administrators
+   @@unique([email, phoneNumber])
+}
+
+// model Student{
+//   studentId String @id @default(uuid())
+//    userId   User @relation(fields: [userId], references: [studentId])
+// }
+
+// model Instructor{
+//   instructorId String @id @default(uuid())
+//   userId User @relation(fields: [userId], references: [intructorId])
+// }
+
+// model Moderator{
+//   moderatorId String @id @default(uuid())
+//   userId User @relation(fields: [userId], references: [moderatorId])
+// }
+
+// model Employee{
+//   employeeId String @id @default(uuid())
+//   userId User @relation(fields: [userId], references: [employeeId])
+// }
+
+// model Administrators{
+//   administratorId String @id @default(uuid)
+//   userId User @relation(fields: [userId], references: [adminstratorId])
+// }
+
+model Course{
+  courseId String @id @default(uuid())
+  courseName String
+  duration DateTime @db.Time
+  price Int
+  description String
+  language Language
+  status Status
+  approvalStatus Status
+  createdOn DateTime @default(now())
+  updatedOn DateTime
+  // missing UserId, topics, approved by
+}
+
+model CourseMaterial {
+  courseMaterialId String @id @default(uuid())
+  url String
+  // missing course id
+}
+
+model Transaction {
+  paymentId String @id @default(uuid())
+  status Status
+  createdOn DateTime @default(now())
+  // missing userid
+}
+
+model Topics {
+  topicId String @id
+  topicName String
+  description String
+}
+
+// model Accounts {
+//   id      String  @id @default(uuid())
+//   email   String
+//   role    Role    @default(USER)
+//   enabled Boolean @default(true)
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   clientAccount     ClientAccounts?
+//   adminAccount      AdminAccounts?
+//   passwordHistories PasswordHistories[]
+//   @@unique([email, role])
+//   @@index([email, role, enabled])
+// }
+
+// model ClientAccounts {
+//   id            String @id @default(uuid())
+//   firstName     String
+//   lastName      String
+//   contactNumber Int
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   account   Accounts @relation(fields: [accountId], references: [id])
+//   accountId String   @unique
+// }
+
+// model AdminAccounts {
+//   id        String   @id @default(uuid())
+//   account   Accounts @relation(fields: [accountId], references: [id])
+//   accountId String   @unique
+//   firstName String
+//   lastName  String
+//   createdAt DateTime   @default(now())
+//   updatedAt DateTime   @updatedAt
+//   Products  Products[]
+// }
+
+// model PasswordHistories {
+//   id           String  @id @default(uuid())
+//   passwordHash String
+//   enabled      Boolean @default(true)
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   Accounts   Accounts @relation(fields: [accountsId], references: [id])
+//   accountsId String
+// }
+
+// model RefreshTokens {
+//   id String @id @default(uuid())
+  
+// }
+
+// model Products {
+//   id          String @id @default(uuid())
+//   name        String @unique
+//   description String
+//   quantity    Int    @default(1)
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   createdBy   AdminAccounts @relation(fields: [createdById], references: [id])
+//   createdById String
+// }
+
+enum Role {
+  User
+  Student
+  Instructor
+  Moderator
+  Employees
+  Administrators
+}
+
+enum Language {
+  Chinese
+  English
+  French
+  Indian
+  Japanese
+  Korean
+  Malay
+}
+
+enum Status {
+  InProgress
+  Pending
+  Completed
+  Approved
+  Ongoing
+  Started
+}
