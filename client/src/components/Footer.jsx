@@ -5,7 +5,7 @@ import { copyrighted_msg, website_name, year } from '../utils/Constants'
 const Footer = () => {
     return (
         <>
-            <footer className="bg-background p-4 relative flex bottom-0 px-2 py-3 justify-between">
+            <footer className="bg-navbarfooter p-4 relative flex bottom-0 px-2 py-3 justify-between">
                 <div className="flex justify-between px-4">
                     <div className="grid grid-cols-2 gap-5 mr-4 py-2 whitespace-nowrap uppercase">
                         <div>
@@ -34,7 +34,7 @@ const Footer = () => {
                     <Link to="/">{website_name}</Link>
                 </div>
             </footer>
-            <div className="bg-background text-center font-mono">
+            <div className="bg-navbarfooter text-center font-mono">
                 <span>
                     {copyrighted_msg} {year}
                 </span>
