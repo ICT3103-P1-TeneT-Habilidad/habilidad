@@ -19,37 +19,40 @@ model User {
   createdOn DateTime @default(now())
   updatedOn DateTime
   role Role
-  // student Student
-  // instructor Instructor
-  // moderator Moderator
-  // administrator Administrators
+  student Student?
+  instructor Instructor?
+  moderator Moderator?
+  administrator Administrators?
    @@unique([email, phoneNumber])
 }
 
-// model Student{
-//   studentId String @id @default(uuid())
-//    userId   User @relation(fields: [userId], references: [studentId])
-// }
+model Student{
+  studentId String @id @default(uuid())
+  user   User @relation(fields: [userId], references: [userId])
+  userId String
+  @@unique([userId])
+}
 
-// model Instructor{
-//   instructorId String @id @default(uuid())
-//   userId User @relation(fields: [userId], references: [intructorId])
-// }
+model Instructor{
+  instructorId String @id @default(uuid())
+  user User @relation(fields: [userId], references: [userId])
+  userId String
+  @@unique([userId])
+}
 
-// model Moderator{
-//   moderatorId String @id @default(uuid())
-//   userId User @relation(fields: [userId], references: [moderatorId])
-// }
+model Moderator{
+  moderatorId String @id @default(uuid())
+  user User @relation(fields: [userId], references: [userId])
+  userId String
+  @@unique([userId])
+}
 
-// model Employee{
-//   employeeId String @id @default(uuid())
-//   userId User @relation(fields: [userId], references: [employeeId])
-// }
-
-// model Administrators{
-//   administratorId String @id @default(uuid)
-//   userId User @relation(fields: [userId], references: [adminstratorId])
-// }
+model Administrators{
+  administratorId String @id @default(uuid())
+  user User @relation(fields: [userId], references: [userId])
+  userId String
+  @@unique([userId])
+}
 
 model Course{
   courseId String @id @default(uuid())
