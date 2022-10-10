@@ -8,13 +8,27 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
+model Account {
+  accountId      String  @id @default(uuid())
+  email   String
+  phoneNumber Int
+  user User?
+  enabled Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  passwordHistories PasswordHistories[]
+  @@unique([accountId, email, phoneNumber])
+}
+
 model User {
   userId   String  @id @default(uuid())
-  username String
-  password String
+  // username String
+  // password String
+  account   Account @relation(fields: [accountId, email, phoneNumber], references: [accountId, email, phoneNumber])
+  accountId String
   name String
-  phoneNumber Int
   email String
+  phoneNumber Int
   deActivatedOn DateTime
   createdOn DateTime @default(now())
   updatedOn DateTime
@@ -23,7 +37,9 @@ model User {
   instructor Instructor?
   moderator Moderator?
   administrator Administrators?
-   @@unique([email, phoneNumber])
+  token RefreshTokens?
+
+  @@unique([accountId, email, phoneNumber])
 }
 
 model Student{
@@ -87,20 +103,6 @@ model Topics {
   description String
 }
 
-// model Accounts {
-//   id      String  @id @default(uuid())
-//   email   String
-//   role    Role    @default(USER)
-//   enabled Boolean @default(true)
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   clientAccount     ClientAccounts?
-//   adminAccount      AdminAccounts?
-//   passwordHistories PasswordHistories[]
-//   @@unique([email, role])
-//   @@index([email, role, enabled])
-// }
-
 // model ClientAccounts {
 //   id            String @id @default(uuid())
 //   firstName     String
@@ -123,20 +125,26 @@ model Topics {
 //   Products  Products[]
 // }
 
-// model PasswordHistories {
-//   id           String  @id @default(uuid())
-//   passwordHash String
-//   enabled      Boolean @default(true)
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   Accounts   Accounts @relation(fields: [accountsId], references: [id])
-//   accountsId String
-// }
+model PasswordHistories {
+  id           String  @id @default(uuid())
+  passwordHash String
+  enabled      Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Accounts   Account @relation(fields: [accountsId], references: [accountId])
+  accountsId String
+  @@unique([accountsId, passwordHash])
+}
 
-// model RefreshTokens {
-//   id String @id @default(uuid())
+model RefreshTokens {
+  tokenId String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiredAt DateTime
+  user User @relation(fields: [userId], references: [userId])
+  userId String   @unique
   
-// }
+}
 
 // model Products {
 //   id          String @id @default(uuid())
