@@ -4,7 +4,7 @@ import UseVideoPlayer from '../hooks/UseVideoPlayer'
 //load dynamiclly
 // import video from '../assets/temp_video1.mp4'
 
-const VideoPlayer = ({ parentToChild }) => {
+const VideoPlayer = ({ setURL }) => {
     const videoElement = useRef(null)
     const { playerState, togglePlay, handleOnTimeUpdate, handleVideoProgress, handleVideoSpeed, toggleMute } =
         UseVideoPlayer(videoElement)
@@ -13,7 +13,7 @@ const VideoPlayer = ({ parentToChild }) => {
         // video = https://www.youtube.com/watch?v=wOMx9xXGuME
         <div className="">
             <div className="video-wrapper">
-                <video src={parentToChild} ref={videoElement} onTimeUpdate={handleOnTimeUpdate} />
+                <video src={setURL} ref={videoElement} onTimeUpdate={handleOnTimeUpdate} />
             </div>
             <div className="controls">
                 <div className="actions">
