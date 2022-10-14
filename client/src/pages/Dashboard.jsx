@@ -1,6 +1,6 @@
 import React from 'react'
 import Banner from '../assets/temp_banner.jpeg'
-import { PopularCourse } from '../components/index'
+import { PopularCourse, TopCategories } from '../components/index'
 
 const Dashboard = () => {
     return (
@@ -9,6 +9,7 @@ const Dashboard = () => {
                 <img src={Banner} alt="banner" className="object-fill flex-1"></img>
             </div>
             <PopularCourse />
+            <TopCategories />
         </div>
     )
 }
