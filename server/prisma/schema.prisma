@@ -10,8 +10,10 @@ datasource db {
 
 model Account {
   accountId      String  @id @default(uuid())
-  email   String
+  email   String @unique
   phoneNumber Int
+  username String @unique
+  password String
   user User?
   enabled Boolean @default(true)
   createdAt DateTime @default(now())
@@ -22,16 +24,14 @@ model Account {
 
 model User {
   userId   String  @id @default(uuid())
-  // username String
-  // password String
   account   Account @relation(fields: [accountId, email, phoneNumber], references: [accountId, email, phoneNumber])
   accountId String
   name String
   email String
   phoneNumber Int
-  deActivatedOn DateTime
+  deActivatedOn DateTime?
   createdOn DateTime @default(now())
-  updatedOn DateTime
+  updatedOn DateTime @updatedAt
   role Role
   student Student?
   instructor Instructor?
