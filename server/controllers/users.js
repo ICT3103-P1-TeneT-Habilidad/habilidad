@@ -40,7 +40,8 @@ export const userRegister = async (req, res, next) => {
         }
 
         // Hash password and store to DB
-        const user = await storeNewAccount({ email, password });
+        hashedPassword = hashText(password, generateSalt(12))
+        const user = await storeNewAccount({ email, hashedPassword });
 
         // Generate uuid
         // const jti = uuidv4();

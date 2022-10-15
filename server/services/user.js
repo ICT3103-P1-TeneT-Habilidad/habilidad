@@ -11,7 +11,6 @@ export const findUserByEmail = async (email) => {
 }
 
 export const storeNewAccount = async (user) => {
-    user.password = hashText(user.password, generateSalt(12));
     return db.account.create({
         data: {
             email: user.email,
