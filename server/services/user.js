@@ -1,6 +1,4 @@
 import db from '../utils/db.js'
-import { generateSalt, hashText } from '../utils/auth.js'
-
 
 export const findUserByEmail = async (email) => {
     return db.account.findUnique({
@@ -14,14 +12,14 @@ export const storeNewAccount = async (user) => {
     return db.account.create({
         data: {
             email: user.email,
-            username: 'abs',
-            password: user.password,
-            phoneNumber: 12345678,
+            username: user.username,
+            password: user.hashedPassword,
+            phoneNumber: user.phoneNumber,
             enabled: true,
             user: {
                 create: {
-                    name: 'abc',
-                    role: 'Student',
+                    name: user.name,
+                    role: user.role,
                     deActivatedOn: null
 
                 }

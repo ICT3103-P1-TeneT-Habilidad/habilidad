@@ -1,5 +1,6 @@
 import { Response } from '../utils/response.js'
 import { findUserByEmail, storeNewAccount } from '../services/user.js'
+import { generateSalt, hashText } from '../utils/auth.js'
 
 export const getUser = async (req, res, next) => {
     const err = new Response('getUser not implemented', 'res_notImplemented')
@@ -25,7 +26,7 @@ export const userLogout = async (req, res, next) => {
 
 export const userRegister = async (req, res, next) => {
     try {
-        const { email, password } = req.body
+        const { email, password, username, phoneNumber, name, role } = req.body
         if (!email || !password) {
             res.status(400)
             throw new Error('You must provide an email and a password.')
@@ -40,8 +41,8 @@ export const userRegister = async (req, res, next) => {
         }
 
         // Hash password and store to DB
-        hashedPassword = hashText(password, generateSalt(12))
-        const user = await storeNewAccount({ email, hashedPassword });
+        const hashedPassword = hashText(password, generateSalt(12))
+        const user = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role });
 
         // Generate uuid
         // const jti = uuidv4();
