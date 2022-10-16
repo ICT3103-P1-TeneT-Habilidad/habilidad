@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { BsFillPersonFill } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
 import { website_name } from '../utils/Constants'
+
+// import icons
+import { AiOutlineMenu } from 'react-icons/ai'
+import { BsFillPersonFill } from 'react-icons/bs'
 
 export default function Navbar({ fixed }) {
     const [navbarOpen, setNavbarOpen] = useState(false)
@@ -21,7 +24,7 @@ export default function Navbar({ fixed }) {
                             type="button"
                             onClick={() => setNavbarOpen(!navbarOpen)}
                         >
-                            <i className="fas fa-bars"></i>
+                            <AiOutlineMenu />
                         </button>
                     </div>
                     <div
@@ -30,7 +33,10 @@ export default function Navbar({ fixed }) {
                     >
                         <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
                             <li className="nav-item">
-                                <Link to="/login" className="inline-flex items-center">
+                                <Link
+                                    to="/login"
+                                    className="flex text-sm font-bold leading-relaxed mr-4 py-2 uppercase text-black items-center"
+                                >
                                     <BsFillPersonFill />
                                     <span className="ml-2">LOGIN/REGISTER</span>
                                 </Link>
