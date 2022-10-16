@@ -24,6 +24,9 @@ export const storeNewAccount = async (user) => {
 
                 }
             }
+        },
+        include: {
+            user: true
         }
     });
 }

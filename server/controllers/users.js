@@ -1,6 +1,9 @@
+import crypto from 'crypto'
 import { Response } from '../utils/response.js'
 import { findUserByEmail, storeNewAccount } from '../services/user.js'
 import { generateSalt, hashText } from '../utils/auth.js'
+import { generateTokens } from '../utils/jwt.js'
+import { addRefreshTokenToWhitelist } from '../services/auth.js'
 
 export const getUser = async (req, res, next) => {
     const err = new Response('getUser not implemented', 'res_notImplemented')
@@ -42,24 +45,28 @@ export const userRegister = async (req, res, next) => {
 
         // Hash password and store to DB
         const hashedPassword = hashText(password, generateSalt(12))
-        const user = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role });
+        const account = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role });
 
         // Generate uuid
-        // const jti = uuidv4();
+        const jti = crypto.randomUUID();
 
         // Generate Token
-        // const { accessToken, refreshToken } = generateTokens(user, jti);
+        const { accessToken, refreshToken } = generateTokens(account, jti);
+        console.log(account)
+        console.log(refreshToken)
+
+        const userId = account.user.userId
+        console.log(userId);
 
         // Whitelist refresh token (store in db)
-        // await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
+        await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
 
-        // return tokens
-        // res.json({
-        //     accessToken,
-        //     refreshToken,
-        // });
+        res.json({
+            accessToken,
+            refreshToken,
+        });
 
-        res.json('success')
+        // res.json('success')
 
     } catch (err) {
         err = new Response(err)
