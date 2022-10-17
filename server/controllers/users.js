@@ -1,13 +1,49 @@
 import crypto from 'crypto'
 import { Response } from '../utils/response.js'
-import { findUserByEmail, storeNewAccount, findUserByUsername } from '../services/user.js'
+import { findAccountByEmail, storeNewAccount, findAccountByUsername, findUserbyUserId } from '../services/user.js'
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
-import { generateTokens } from '../utils/jwt.js'
+import { decodeToken, generateTokens } from '../utils/jwt.js'
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
+import jwt from 'jsonwebtoken'
+
+const generateTokenProcedure = async () => {
+
+    // Generate uuid
+    const jti = crypto.randomUUID();
+
+
+    const userId = account.user.userId
+
+    // Generate Token
+    const { accessToken, refreshToken } = generateTokens(userId, jti);
+
+
+    // Whitelist refresh token (store in db)
+    await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
+
+
+    return {
+        accessToken,
+        refreshToken,
+    };
+}
 
 export const getUser = async (req, res, next) => {
-    const err = new Response('getUser not implemented', 'res_notImplemented')
-    next(err)
+
+    try {
+
+        const { accessToken } = req.body
+        const userId = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET).userId
+
+        const user = await findUserbyUserId(userId)
+
+        res.json(user)
+
+    } catch (err) {
+        err = new Response(err)
+        next(err)
+    }
+
 }
 
 // export const getUser = async (req, res, next) => {
@@ -24,7 +60,7 @@ export const userLogin = async (req, res, next) => {
         const { username, password } = req.body
 
         // Verify email
-        const account = await findUserByUsername(username)
+        const account = await findAccountByUsername(username)
 
         if (!account) {
             res.status(401)
@@ -39,25 +75,13 @@ export const userLogin = async (req, res, next) => {
             throw new Error('Wrong username or password.')
         }
 
-        // Generate uuid
-        const jti = crypto.randomUUID();
-
-        // Generate Token
-        const { accessToken, refreshToken } = generateTokens(account, jti);
-
-        const userId = account.user.userId
-
-        // Whitelist refresh token (store in db)
-        await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
+        // Process of generating tokens
+        const { accessToken, refreshToken } = await generateTokenProcedure()
 
         res.json({
             accessToken,
             refreshToken,
         });
-
-
-        res.json('success')
-
 
     } catch (err) {
         // const err = new Response('userLogin not implemented', 'res_notImplemented')
@@ -82,7 +106,7 @@ export const userRegister = async (req, res, next) => {
         }
 
         // check if this email can be used
-        const existingUser = await findUserByEmail(email)
+        const existingUser = await findAccountByEmail(email)
 
         if (existingUser) {
             res.status(400)
@@ -93,16 +117,8 @@ export const userRegister = async (req, res, next) => {
         const hashedPassword = hashText(password, generateSalt(12))
         const account = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role });
 
-        // Generate uuid
-        const jti = crypto.randomUUID();
-
-        // Generate Token
-        const { accessToken, refreshToken } = generateTokens(account, jti);
-
-        const userId = account.user.userId
-
-        // Whitelist refresh token (store in db)
-        await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
+        // Process of generating tokens
+        const { accessToken, refreshToken } = await generateTokenProcedure()
 
         res.json({
             accessToken,

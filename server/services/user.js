@@ -1,6 +1,6 @@
 import db from '../utils/db.js'
 
-export const findUserByEmail = async (email) => {
+export const findAccountByEmail = async (email) => {
     return db.account.findUnique({
         where: {
             email: email,
@@ -31,7 +31,7 @@ export const storeNewAccount = async (user) => {
     });
 }
 
-export const findUserByUsername = async (username) => {
+export const findAccountByUsername = async (username) => {
     return db.account.findUnique({
         where: {
             username: username,
@@ -40,4 +40,12 @@ export const findUserByUsername = async (username) => {
             user: true
         }
     });
+}
+
+export const findUserbyUserId = async (userId) => {
+    return db.user.findUnique({
+        where: {
+            userId: userId
+        }
+    })
 }

@@ -1,5 +1,6 @@
 import db from '../utils/db.js'
 import { hashToken } from '../utils/hash.js'
+import { decodeToken } from '../utils/jwt.js';
 
 // used when we create a refresh token.
 export const addRefreshTokenToWhitelist = ({ jti, refreshToken, userId }) => {
@@ -7,7 +8,7 @@ export const addRefreshTokenToWhitelist = ({ jti, refreshToken, userId }) => {
         data: {
             token: hashToken(refreshToken),
             userId: userId,
-            expiredAt: new Date(JSON.parse(Buffer.from(refreshToken.split('.')[1], 'base64').toString()).exp)
+            expiredAt: new Date(decodeToken(refreshToken, 1).exp)
         },
     });
 }
