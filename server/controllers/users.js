@@ -6,7 +6,7 @@ import { decodeToken, generateTokens } from '../utils/jwt.js'
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
 import jwt from 'jsonwebtoken'
 
-const generateTokenProcedure = async () => {
+const generateTokenProcedure = async (account) => {
 
     // Generate uuid
     const jti = crypto.randomUUID();
@@ -76,7 +76,7 @@ export const userLogin = async (req, res, next) => {
         }
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure()
+        const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
         res.json({
             accessToken,
@@ -118,7 +118,7 @@ export const userRegister = async (req, res, next) => {
         const account = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role });
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure()
+        const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
         res.json({
             accessToken,
