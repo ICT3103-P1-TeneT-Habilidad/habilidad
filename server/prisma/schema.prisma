@@ -143,6 +143,7 @@ model PasswordHistories {
 
 model RefreshTokens {
   rTokenId String @id @default(uuid())
+  token String @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiredAt DateTime
@@ -152,6 +153,7 @@ model RefreshTokens {
 
 model OtpToken {
   oTokenId String @id @default(uuid())
+  token String @db.VarChar(6)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiredAt DateTime
@@ -161,6 +163,7 @@ model OtpToken {
 
 model EmailToken {
   eTokenId String @id @default(uuid())
+  token String @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiredAt DateTime
