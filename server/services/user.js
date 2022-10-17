@@ -31,3 +31,13 @@ export const storeNewAccount = async (user) => {
     });
 }
 
+export const findUserByUsername = async (username) => {
+    return db.account.findUnique({
+        where: {
+            username: username,
+        },
+        include: {
+            user: true
+        }
+    });
+}

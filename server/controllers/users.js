@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Response } from '../utils/response.js'
-import { findUserByEmail, storeNewAccount } from '../services/user.js'
-import { generateSalt, hashText } from '../utils/auth.js'
+import { findUserByEmail, storeNewAccount, findUserByUsername } from '../services/user.js'
+import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 import { generateTokens } from '../utils/jwt.js'
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
 
@@ -18,8 +18,54 @@ export const getUser = async (req, res, next) => {
 // }
 
 export const userLogin = async (req, res, next) => {
-    const err = new Response('userLogin not implemented', 'res_notImplemented')
-    next(err)
+
+    try {
+
+        const { username, password } = req.body
+
+        // Verify email
+        const account = await findUserByUsername(username)
+
+        if (!account) {
+            res.status(401)
+            throw new Error('Wrong username or password.')
+        }
+
+        // Verify password
+        const result = verifyPassword(password, account.password)
+
+        if (!result) {
+            res.status(401)
+            throw new Error('Wrong username or password.')
+        }
+
+        // Generate uuid
+        const jti = crypto.randomUUID();
+
+        // Generate Token
+        const { accessToken, refreshToken } = generateTokens(account, jti);
+
+        const userId = account.user.userId
+
+        // Whitelist refresh token (store in db)
+        await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
+
+        res.json({
+            accessToken,
+            refreshToken,
+        });
+
+
+        res.json('success')
+
+
+    } catch (err) {
+        // const err = new Response('userLogin not implemented', 'res_notImplemented')
+        // next(err)    
+        err = new Response(err)
+        next(err)
+    }
+
 }
 
 export const userLogout = async (req, res, next) => {
@@ -52,11 +98,8 @@ export const userRegister = async (req, res, next) => {
 
         // Generate Token
         const { accessToken, refreshToken } = generateTokens(account, jti);
-        console.log(account)
-        console.log(refreshToken)
 
         const userId = account.user.userId
-        console.log(userId);
 
         // Whitelist refresh token (store in db)
         await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
@@ -65,9 +108,6 @@ export const userRegister = async (req, res, next) => {
             accessToken,
             refreshToken,
         });
-
-        // res.json('success')
-
     } catch (err) {
         err = new Response(err)
         next(err)

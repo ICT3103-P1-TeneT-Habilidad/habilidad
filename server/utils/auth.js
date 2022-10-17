@@ -8,3 +8,6 @@ export const hashText = (text, salt) => {
     return bcrypt.hashSync(text, salt)
 }
 
+export const verifyPassword = (password, dbPassword) => {
+    return bcrypt.compareSync(password, dbPassword)
+}
