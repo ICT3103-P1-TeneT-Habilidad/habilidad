@@ -78,8 +78,10 @@ export const userLogin = async (req, res, next) => {
         const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
         res.status(responseCode.res_ok).json({
-            accessToken,
-            refreshToken,
+            result: {
+                accessToken,
+                refreshToken,
+            }
         });
 
     } catch (err) {
@@ -115,8 +117,10 @@ export const userRegister = async (req, res, next) => {
         const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
         res.status(responseCode.res_ok).json({
-            accessToken,
-            refreshToken,
+            result: {
+                accessToken,
+                refreshToken,
+            }
         });
     } catch (err) {
         next(err)
