@@ -8,8 +8,6 @@ const Register = () => {
         formState: { errors },
     } = useForm()
 
-    // const onSubmit = (data) = console.log(data)
-
     const onSubmit = (data) => {
         console.log(data)
     }
@@ -48,7 +46,7 @@ const Register = () => {
                                     placeholder="Enter Name"
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('name', { required: 'Please enter your name' })}
-                                />{' '}
+                                />
                                 {errors.name ? (
                                     <span className="text-sm text-red-500">{errors.name.message}</span>
                                 ) : null}
@@ -64,7 +62,7 @@ const Register = () => {
                                     placeholder="Enter Email"
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('email', { required: 'Please enter your email' })}
-                                />{' '}
+                                />
                                 {errors.email ? (
                                     <span className="text-sm text-red-500">{errors.email.message}</span>
                                 ) : null}
@@ -80,7 +78,7 @@ const Register = () => {
                                     placeholder="Enter Phone Number"
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('phone_number', { required: 'Please enter your phone number' })}
-                                />{' '}
+                                />
                                 {errors.phone_number ? (
                                     <span className="text-sm text-red-500">{errors.phone_number.message}</span>
                                 ) : null}
@@ -95,8 +93,8 @@ const Register = () => {
                                     type="password"
                                     placeholder="Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('password', { required: 'Please enter your password' })}
-                                />{' '}
+                                    {...register('password', { required: 'Please enter your password'})}
+                                />
                                 {errors.password ? (
                                     <span className="text-sm text-red-500">{errors.password.message}</span>
                                 ) : null}
@@ -112,14 +110,14 @@ const Register = () => {
                                     placeholder="Re-Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('re_pwd', { required: 'Please enter your password again' })}
-                                />{' '}
+                                />
                                 {errors.re_pwd ? (
                                     <span className="text-sm text-red-500">{errors.re_pwd.message}</span>
                                 ) : null}
                             </div>
                         </div>
                         <div>
-                        <button
+                            <button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-navbarfooter"
                             >

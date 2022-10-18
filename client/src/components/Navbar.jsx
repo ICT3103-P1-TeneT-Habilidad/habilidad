@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { website_name } from '../utils/Constants'
 import { useAppContext } from '../context/appContext'
-import { LoginModal } from '../components/index'
+import { NavbarModal } from '../components/index'
 // import icons
 import { AiOutlineMenu } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
@@ -47,7 +47,7 @@ export default function Navbar({ fixed }) {
                     </div>
                 </div>
             </nav>
-            {openModal && <LoginModal />}
+            {openModal && <NavbarModal />}
         </>
     )
 }

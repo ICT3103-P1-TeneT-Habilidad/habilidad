@@ -89,7 +89,7 @@ const AppProvider = ({ children }) => {
     const setUser = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            const { data } = await axios.post(`/api/users/login`, user_data)
+            const { data } = await axios.post(`/users/login`, user_data)
             const { result, token } = data
             console.log(data)
             dispatch({
