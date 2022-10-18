@@ -74,11 +74,17 @@ const Register = () => {
                                 <input
                                     id="phone_number"
                                     name="phone_number"
-                                    type="phone_number"
+                                    type="number"
                                     placeholder="Enter Phone Number"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('phone_number', { required: 'Please enter your phone number' })}
-                                />
+                                    {...register('phone_number', {
+                                        required: 'Please enter your phone number',
+                                        maxLength: {
+                                            value: 8,
+                                            message: 'Maximum only 8 digits!',
+                                        },
+                                    })}
+                                />{' '}
                                 {errors.phone_number ? (
                                     <span className="text-sm text-red-500">{errors.phone_number.message}</span>
                                 ) : null}
@@ -93,8 +99,14 @@ const Register = () => {
                                     type="password"
                                     placeholder="Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('password', { required: 'Please enter your password'})}
-                                />
+                                    {...register('password', {
+                                        required: 'Please enter your password',
+                                        minLength: {
+                                            value: 6,
+                                            message: 'Need to be more than 6 characters!',
+                                        },
+                                    })}
+                                />{' '}
                                 {errors.password ? (
                                     <span className="text-sm text-red-500">{errors.password.message}</span>
                                 ) : null}
@@ -109,8 +121,14 @@ const Register = () => {
                                     type="password"
                                     placeholder="Re-Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('re_pwd', { required: 'Please enter your password again' })}
-                                />
+                                    {...register('re_pwd', {
+                                        required: 'Please enter your password again',
+                                        minLength: {
+                                            value: 6,
+                                            message: 'Need to be more than 6 characters!',
+                                        },
+                                    })}
+                                />{' '}
                                 {errors.re_pwd ? (
                                     <span className="text-sm text-red-500">{errors.re_pwd.message}</span>
                                 ) : null}
