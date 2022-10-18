@@ -5,6 +5,7 @@ import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 import { decodeToken, generateTokens } from '../utils/jwt.js'
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
 import jwt from 'jsonwebtoken'
+import { responseCode } from '../utils/responseCode.js'
 
 const generateTokenProcedure = async (account) => {
 
@@ -63,30 +64,25 @@ export const userLogin = async (req, res, next) => {
         const account = await findAccountByUsername(username)
 
         if (!account) {
-            res.status(401)
-            throw new Error('Wrong username or password.')
+            throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
         // Verify password
         const result = verifyPassword(password, account.password)
 
         if (!result) {
-            res.status(401)
-            throw new Error('Wrong username or password.')
+            throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
         // Process of generating tokens
         const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
-        res.json({
+        res.status(responseCode.res_ok).json({
             accessToken,
             refreshToken,
         });
 
     } catch (err) {
-        // const err = new Response('userLogin not implemented', 'res_notImplemented')
-        // next(err)    
-        err = new Response(err)
         next(err)
     }
 
@@ -101,16 +97,14 @@ export const userRegister = async (req, res, next) => {
     try {
         const { email, password, username, phoneNumber, name, role } = req.body
         if (!email || !password) {
-            res.status(400)
-            throw new Error('You must provide an email and a password.')
+            throw new Response('Missing email or password.', 'res_badRequest')
         }
 
         // check if this email can be used
         const existingUser = await findAccountByEmail(email)
 
         if (existingUser) {
-            res.status(400)
-            throw new Error('Email already in use.')
+            throw new Response('Email already in use.', 'res_badRequest')
         }
 
         // Hash password and store to DB
@@ -120,14 +114,12 @@ export const userRegister = async (req, res, next) => {
         // Process of generating tokens
         const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
-        res.json({
+        res.status(responseCode.res_ok).json({
             accessToken,
             refreshToken,
         });
     } catch (err) {
-        err = new Response(err)
         next(err)
-
     }
 
 }
