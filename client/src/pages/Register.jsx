@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 
 const Register = () => {
@@ -6,7 +6,11 @@ const Register = () => {
         register,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm()
+
+    const password = useRef({})
+    password.current = watch('password', '')
 
     const onSubmit = (data) => {
         console.log(data)
@@ -61,7 +65,13 @@ const Register = () => {
                                     type="email"
                                     placeholder="Enter Email"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('email', { required: 'Please enter your email' })}
+                                    {...register('email', {
+                                        required: 'Please enter your email',
+                                        pattern: {
+                                            value: /\S+@\S+\.\S+/,
+                                            message: 'Entered value does not match email format',
+                                        },
+                                    })}
                                 />
                                 {errors.email ? (
                                     <span className="text-sm text-red-500">{errors.email.message}</span>
@@ -84,7 +94,7 @@ const Register = () => {
                                             message: 'Maximum only 8 digits!',
                                         },
                                     })}
-                                />{' '}
+                                />
                                 {errors.phone_number ? (
                                     <span className="text-sm text-red-500">{errors.phone_number.message}</span>
                                 ) : null}
@@ -99,14 +109,14 @@ const Register = () => {
                                     type="password"
                                     placeholder="Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('password', {
+                                    {...register("password", {
                                         required: 'Please enter your password',
                                         minLength: {
-                                            value: 6,
-                                            message: 'Need to be more than 6 characters!',
+                                            value: 8,
+                                            message: 'Password must have at least 8 characters',
                                         },
                                     })}
-                                />{' '}
+                                />
                                 {errors.password ? (
                                     <span className="text-sm text-red-500">{errors.password.message}</span>
                                 ) : null}
@@ -121,14 +131,10 @@ const Register = () => {
                                     type="password"
                                     placeholder="Re-Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('re_pwd', {
-                                        required: 'Please enter your password again',
-                                        minLength: {
-                                            value: 6,
-                                            message: 'Need to be more than 6 characters!',
-                                        },
+                                    {...register("re_pwd", {
+                                        validate: (value) => value === password.current || 'The passwords do not match',
                                     })}
-                                />{' '}
+                                />
                                 {errors.re_pwd ? (
                                     <span className="text-sm text-red-500">{errors.re_pwd.message}</span>
                                 ) : null}

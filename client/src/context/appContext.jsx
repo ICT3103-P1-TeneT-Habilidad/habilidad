@@ -18,7 +18,7 @@ export const initialState = {
     user: user ? JSON.parse(user) : null,
     token: token ? token : null,
 
-    showLoginModal: false,
+    showNavbarModal: false,
     openModal: false,
     loginFail: false,
 
