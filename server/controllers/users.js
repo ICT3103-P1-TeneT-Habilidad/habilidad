@@ -1,9 +1,50 @@
+import crypto from 'crypto'
 import { Response } from '../utils/response.js'
-import { findUserByEmail, storeNewAccount } from '../services/user.js'
+import { findAccountByEmail, storeNewAccount, findAccountByUsername, findUserbyUserId } from '../services/user.js'
+import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
+import { decodeToken, generateTokens } from '../utils/jwt.js'
+import { addRefreshTokenToWhitelist } from '../services/auth.js'
+import jwt from 'jsonwebtoken'
+import { responseCode } from '../utils/responseCode.js'
+
+const generateTokenProcedure = async (account) => {
+
+    // Generate uuid
+    const jti = crypto.randomUUID();
+
+
+    const userId = account.user.userId
+
+    // Generate Token
+    const { accessToken, refreshToken } = generateTokens(userId, jti);
+
+
+    // Whitelist refresh token (store in db)
+    await addRefreshTokenToWhitelist({ jti, refreshToken, userId });
+
+
+    return {
+        accessToken,
+        refreshToken,
+    };
+}
 
 export const getUser = async (req, res, next) => {
-    const err = new Response('getUser not implemented', 'res_notImplemented')
-    next(err)
+
+    try {
+
+        const { accessToken } = req.body
+        const userId = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET).userId
+
+        const user = await findUserbyUserId(userId)
+
+        res.json(user)
+
+    } catch (err) {
+        err = new Response(err)
+        next(err)
+    }
+
 }
 
 // export const getUser = async (req, res, next) => {
@@ -14,8 +55,39 @@ export const getUser = async (req, res, next) => {
 // }
 
 export const userLogin = async (req, res, next) => {
-    const err = new Response('userLogin not implemented', 'res_notImplemented')
-    next(err)
+
+    try {
+
+        const { username, password } = req.body
+
+        // Verify email
+        const account = await findAccountByUsername(username)
+
+        if (!account) {
+            throw new Response('Wrong username or password', 'res_unauthorised')
+        }
+
+        // Verify password
+        const result = verifyPassword(password, account.password)
+
+        if (!result) {
+            throw new Response('Wrong username or password', 'res_unauthorised')
+        }
+
+        // Process of generating tokens
+        const { accessToken, refreshToken } = await generateTokenProcedure(account)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                accessToken,
+                refreshToken,
+            }
+        });
+
+    } catch (err) {
+        next(err)
+    }
+
 }
 
 export const userLogout = async (req, res, next) => {
@@ -25,45 +97,33 @@ export const userLogout = async (req, res, next) => {
 
 export const userRegister = async (req, res, next) => {
     try {
-        const { email, password } = req.body
+        const { email, password, username, phoneNumber, name, role } = req.body
         if (!email || !password) {
-            res.status(400)
-            throw new Error('You must provide an email and a password.')
+            throw new Response('Missing email or password.', 'res_badRequest')
         }
 
         // check if this email can be used
-        const existingUser = await findUserByEmail(email)
+        const existingUser = await findAccountByEmail(email)
 
         if (existingUser) {
-            res.status(400)
-            throw new Error('Email already in use.')
+            throw new Response('Email already in use.', 'res_badRequest')
         }
 
         // Hash password and store to DB
-        hashedPassword = hashText(password, generateSalt(12))
-        const user = await storeNewAccount({ email, hashedPassword });
+        const hashedPassword = hashText(password, generateSalt(12))
+        const account = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role });
 
-        // Generate uuid
-        // const jti = uuidv4();
+        // Process of generating tokens
+        const { accessToken, refreshToken } = await generateTokenProcedure(account)
 
-        // Generate Token
-        // const { accessToken, refreshToken } = generateTokens(user, jti);
-
-        // Whitelist refresh token (store in db)
-        // await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
-
-        // return tokens
-        // res.json({
-        //     accessToken,
-        //     refreshToken,
-        // });
-
-        res.json('success')
-
+        res.status(responseCode.res_ok).json({
+            result: {
+                accessToken,
+                refreshToken,
+            }
+        });
     } catch (err) {
-        err = new Response(err)
         next(err)
-
     }
 
 }
