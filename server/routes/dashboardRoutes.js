@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { indexCourses, createdCourses, purchasedCourses, topCategories, popularCourses } from '../controllers/dashboard.js'
+import { indexCourses, createdCourses, purchasedCourses, topCategories, popularCourses, addNewCourse } from '../controllers/dashboard.js'
 
 const router = express.Router()
 
@@ -18,6 +18,9 @@ router.route('/topCategories').get(topCategories)
 
 // get all courses popular among new signups
 router.route('/popularCourses').get(popularCourses)
+
+router.route('/create').post(addNewCourse)
+
 
 export default router
 
