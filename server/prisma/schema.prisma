@@ -37,7 +37,7 @@ model User {
   instructor Instructor?
   moderator Moderator?
   administrator Administrators?
-  rToken RefreshTokens?
+  rToken RefreshTokens[]
   oToken OtpToken?
   eToken EmailToken?
   
@@ -148,7 +148,7 @@ model RefreshTokens {
   updatedAt DateTime @updatedAt
   expiredAt DateTime
   user User @relation(fields: [userId], references: [userId])
-  userId String   @unique 
+  userId String  
 }
 
 model OtpToken {
