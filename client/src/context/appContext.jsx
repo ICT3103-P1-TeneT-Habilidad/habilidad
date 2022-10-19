@@ -2,13 +2,22 @@ import React, { useReducer, useContext } from 'react'
 import axios from 'axios'
 import reducer from './reducer'
 import {
-    CLEAR_VALUES,
     LOGIN_USER,
     SHOW_MODAL,
+    CLEAR_VALUES,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
     SET_USER_ERROR,
     LOGOUT,
+    CREATE_USER_BEGIN,
+    CREATE_USER_SUCCESS,
+    CREATE_USER_ERROR,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
+    DELETE_USER_BEGIN,
+    DELETE_USER_SUCCESS,
+    DELETE_USER_ERROR,
 } from './action'
 
 const token = localStorage.getItem('token')
@@ -21,6 +30,7 @@ export const initialState = {
     showNavbarModal: false,
     openModal: false,
     loginFail: false,
+    showAlert: false,
 
     user_data: {},
     user_type: '',
@@ -105,6 +115,22 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const createUser = async (user_data) => {
+        dispatch({ type: CREATE_USER_BEGIN })
+        try {
+            await authFetch.post(`/users/register`)
+            dispatch({ type: CREATE_USER_SUCCESS })
+            dispatch({ type: CLEAR_VALUES })
+        } catch (err) {
+            dispatch({
+                type: CREATE_USER_ERROR,
+                payload: {
+                    msg: 'Cannot create',
+                },
+            })
+        }
+    }
+
     const logout = () => {
         dispatch({ type: LOGOUT })
         removeUserFromLocalStorage()
@@ -119,6 +145,7 @@ const AppProvider = ({ children }) => {
                 clearValues,
                 setUser,
                 logout,
+                createUser
             }}
         >
             {children}
