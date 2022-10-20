@@ -11,14 +11,14 @@ const Alert = () => {
 const renderAlert = (type, msg) => {
     if (type === 'success') {
         return (
-            <div className="bg-green-50 p-4">
-                <span>{msg}</span>
+            <div className="bg-green-50 p-4 rounded-md">
+                <span className='text-green-700'>{msg}</span>
             </div>
         )
     } else if (type === 'danger') {
         return (
-            <div className="bg-red-50 p-4">
-                <span>{msg}</span>
+            <div className="bg-red-50 p-4 rounded-md">
+                <span className='text-red-700'>{msg}</span>
             </div>
         )
     }

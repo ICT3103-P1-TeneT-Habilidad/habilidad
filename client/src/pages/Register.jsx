@@ -35,9 +35,10 @@ const Register = () => {
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                        {showAlert && <Alert />}
                         <div>
                             <label>Username</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="username"
                                     name="username"
@@ -163,7 +164,6 @@ const Register = () => {
                     </form>
                 </div>
             </div>
-            {showAlert && <Alert />}
         </div>
     )
 }
