@@ -27,7 +27,7 @@ const Login = () => {
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <label>Username</label>
-                                <div classname="mt-1">
+                                <div className="mt-1">
                                     <input
                                         id="username"
                                         name="username"
@@ -43,7 +43,7 @@ const Login = () => {
                             </div>
                             <div>
                                 <label>Password</label>
-                                <div classname="mt-1">
+                                <div className="mt-1">
                                     <input
                                         id="password"
                                         name="password"
