@@ -86,7 +86,7 @@ export const addNewCourse = async (req, res, next) => {
             topicName,
             topicDescription
         })
-        res.status(200).json({ result })
+        res.status(responseCode.res_ok).json({ result })
 
     } catch (err) {
         next(err)
