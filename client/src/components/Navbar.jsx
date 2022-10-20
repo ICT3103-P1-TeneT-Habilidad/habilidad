@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { website_name } from '../utils/Constants'
-
+import { useAppContext } from '../context/appContext'
+import { NavbarModal } from '../components/index'
 // import icons
 import { AiOutlineMenu } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
 
 export default function Navbar({ fixed }) {
     const [navbarOpen, setNavbarOpen] = useState(false)
+    const { showModal, openModal } = useAppContext()
+
     return (
         <>
             <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-navbarfooter">
@@ -33,18 +36,18 @@ export default function Navbar({ fixed }) {
                     >
                         <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
                             <li className="nav-item">
-                                <Link
-                                    to="/login"
-                                    className="flex text-sm font-bold leading-relaxed mr-4 py-2 uppercase text-black items-center"
-                                >
+                                <div className="flex text-sm font-bold leading-relaxed mr-4 py-2 uppercase text-black items-center">
                                     <BsFillPersonFill />
-                                    <span className="ml-2">LOGIN/REGISTER</span>
-                                </Link>
+                                    <button type="button" className="ml-2" onClick={() => showModal()}>
+                                        LOGIN/REGISTER
+                                    </button>
+                                </div>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav>
+            {openModal && <NavbarModal />}
         </>
     )
 }
