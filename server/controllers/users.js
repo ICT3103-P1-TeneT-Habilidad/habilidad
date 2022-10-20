@@ -33,12 +33,13 @@ export const getUser = async (req, res, next) => {
 
     try {
 
-        const { accessToken } = req.body
-        const userId = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET).userId
+        const { userId } = req.payload
 
-        const user = await findUserbyUserId(userId)
+        const result = await findUserbyUserId(userId)
 
-        res.json(user)
+        res.status(responseCode.res_ok).json({
+            result
+        })
 
     } catch (err) {
         err = new Response(err)
@@ -82,7 +83,7 @@ export const userLogin = async (req, res, next) => {
                 accessToken,
                 refreshToken,
             }
-        });
+        })
 
     } catch (err) {
         next(err)
