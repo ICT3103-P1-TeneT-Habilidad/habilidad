@@ -1,6 +1,8 @@
 import React, { useReducer, useContext } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import reducer from './reducer'
+import axios from '../utils/axios'
+
 import {
     LOGIN_USER,
     SHOW_MODAL,
@@ -42,18 +44,17 @@ const AppContext = React.createContext()
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
-    const authFetch = axios.create({
-        baseURL: '/api'
-      });
+    const authFetch = axios
 
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            config.headers.common['authorization'] = `Bearer ${state.token}`
+            console.log(config)
+            config.headers['Authorization'] = `Bearer ${state.token}`
             return config
         },
-        (error) => {
-            return Promise.reject(error)
+        (err) => {
+            return Promise.reject(err)
         }
     )
 
@@ -61,12 +62,12 @@ const AppProvider = ({ children }) => {
         (response) => {
             return response
         },
-        (error) => {
-            console.log(error)
-            if (error.error.status === 401) {
+        (err) => {
+            console.log(err)
+            if (err.response.status !== 401) {
                 logout()
             }
-            return Promise.reject(error)
+            return Promise.reject(err)
         }
     )
 
@@ -109,10 +110,10 @@ const AppProvider = ({ children }) => {
                 payload: { result, token },
             })
             addUserToLocalStorage({ result, token })
-        } catch (error) {
+        } catch (err) {
             dispatch({
                 type: SET_USER_ERROR,
-                payload: { msg: error.response.data.msg },
+                payload: { msg: err.response.data.error.message },
             })
         }
     }
@@ -127,9 +128,7 @@ const AppProvider = ({ children }) => {
             console.log(err)
             dispatch({
                 type: CREATE_USER_ERROR,
-                payload: {
-                    msg: err.error.message,
-                },
+                payload: { msg: err.response.data.error.message },
             })
         }
     }
