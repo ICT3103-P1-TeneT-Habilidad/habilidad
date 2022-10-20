@@ -1,7 +1,10 @@
 import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAppContext } from '../context/appContext'
 
 const Register = () => {
+    const { createUser, showAlert } = useAppContext()
+
     const {
         register,
         handleSubmit,
@@ -14,6 +17,7 @@ const Register = () => {
 
     const onSubmit = (data) => {
         console.log(data)
+        createUser(data)
     }
 
     return (
@@ -82,12 +86,12 @@ const Register = () => {
                             <label>Phone Number</label>
                             <div classname="mt-1">
                                 <input
-                                    id="phone_number"
-                                    name="phone_number"
+                                    id="phoneNumber"
+                                    name="phoneNumber"
                                     type="number"
                                     placeholder="Enter Phone Number"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('phone_number', {
+                                    {...register('phoneNumber', {
                                         required: 'Please enter your phone number',
                                         maxLength: {
                                             value: 8,
@@ -95,8 +99,8 @@ const Register = () => {
                                         },
                                     })}
                                 />
-                                {errors.phone_number ? (
-                                    <span className="text-sm text-red-500">{errors.phone_number.message}</span>
+                                {errors.phoneNumber ? (
+                                    <span className="text-sm text-red-500">{errors.phoneNumber.message}</span>
                                 ) : null}
                             </div>
                         </div>
@@ -109,7 +113,7 @@ const Register = () => {
                                     type="password"
                                     placeholder="Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register("password", {
+                                    {...register('password', {
                                         required: 'Please enter your password',
                                         minLength: {
                                             value: 8,
@@ -131,7 +135,7 @@ const Register = () => {
                                     type="password"
                                     placeholder="Re-Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register("re_pwd", {
+                                    {...register('re_pwd', {
                                         validate: (value) => value === password.current || 'The passwords do not match',
                                     })}
                                 />
@@ -151,6 +155,7 @@ const Register = () => {
                     </form>
                 </div>
             </div>
+            {showAlert && <span>Test</span>}
         </div>
     )
 }

@@ -118,7 +118,7 @@ const AppProvider = ({ children }) => {
     const createUser = async (user_data) => {
         dispatch({ type: CREATE_USER_BEGIN })
         try {
-            await authFetch.post(`/users/register`)
+            await authFetch.post(`/users/register`, user_data)
             dispatch({ type: CREATE_USER_SUCCESS })
             dispatch({ type: CLEAR_VALUES })
         } catch (err) {
@@ -145,7 +145,7 @@ const AppProvider = ({ children }) => {
                 clearValues,
                 setUser,
                 logout,
-                createUser
+                createUser,
             }}
         >
             {children}
