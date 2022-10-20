@@ -20,8 +20,12 @@ export const storeNewAccount = async (user) => {
                 create: {
                     name: user.name,
                     role: user.role,
-                    deActivatedOn: null
+                    deActivatedOn: null,
+                    [user.role.toLowerCase()]: {
+                        create: {
 
+                        }
+                    }
                 }
             }
         },
