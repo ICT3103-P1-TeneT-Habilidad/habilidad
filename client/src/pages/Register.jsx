@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAppContext } from '../context/appContext'
+import { Alert } from '../components/index'
 
 const Register = () => {
     const { createUser, showAlert } = useAppContext()
@@ -15,8 +16,14 @@ const Register = () => {
     const password = useRef({})
     password.current = watch('password', '')
 
+    const formatData = (data) => {
+        data.role = 'Student'
+        delete data.re_pwd
+    }
+
     const onSubmit = (data) => {
         console.log(data)
+        formatData(data)
         createUser(data)
     }
 
@@ -97,6 +104,7 @@ const Register = () => {
                                             value: 8,
                                             message: 'Maximum only 8 digits!',
                                         },
+                                        valueAsNumber: true,
                                     })}
                                 />
                                 {errors.phoneNumber ? (
@@ -155,7 +163,7 @@ const Register = () => {
                     </form>
                 </div>
             </div>
-            {showAlert && <span>Test</span>}
+            {showAlert && <Alert />}
         </div>
     )
 }

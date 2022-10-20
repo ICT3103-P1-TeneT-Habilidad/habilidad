@@ -9,12 +9,12 @@ import {
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
     CREATE_USER_ERROR,
-    UPDATE_USER_BEGIN,
-    UPDATE_USER_SUCCESS,
-    UPDATE_USER_ERROR,
-    DELETE_USER_BEGIN,
-    DELETE_USER_SUCCESS,
-    DELETE_USER_ERROR,
+    // UPDATE_USER_BEGIN,
+    // UPDATE_USER_SUCCESS,
+    // UPDATE_USER_ERROR,
+    // DELETE_USER_BEGIN,
+    // DELETE_USER_SUCCESS,
+    // DELETE_USER_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -68,13 +68,14 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 showAlert: true,
-                alert_msg: "Registered"
+                alert_type: "success"
             }
         case CREATE_USER_ERROR:
             return {
                 ...state,
                 showAlert: true,
-                alert_msg: action.payload.msg
+                alert_msg: action.payload.msg,
+                alert_type: "danger"
             }
         default:
             throw new Error(`no such action: ${action.type}`)

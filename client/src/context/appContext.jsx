@@ -12,12 +12,12 @@ import {
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
     CREATE_USER_ERROR,
-    UPDATE_USER_BEGIN,
-    UPDATE_USER_SUCCESS,
-    UPDATE_USER_ERROR,
-    DELETE_USER_BEGIN,
-    DELETE_USER_SUCCESS,
-    DELETE_USER_ERROR,
+    // UPDATE_USER_BEGIN,
+    // UPDATE_USER_SUCCESS,
+    // UPDATE_USER_ERROR,
+    // DELETE_USER_BEGIN,
+    // DELETE_USER_SUCCESS,
+    // DELETE_USER_ERROR,
 } from './action'
 
 const token = localStorage.getItem('token')
@@ -35,6 +35,7 @@ export const initialState = {
     user_data: {},
     user_type: '',
     alert_msg: '',
+    alert_type: '',
 }
 
 const AppContext = React.createContext()
@@ -42,8 +43,8 @@ const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
     const authFetch = axios.create({
-        baseURL: '/api',
-    })
+        baseURL: '/api'
+      });
 
     // interceptors
     authFetch.interceptors.request.use(
@@ -61,7 +62,8 @@ const AppProvider = ({ children }) => {
             return response
         },
         (error) => {
-            if (error.response.status === 401) {
+            console.log(error)
+            if (error.error.status === 401) {
                 logout()
             }
             return Promise.reject(error)
@@ -99,7 +101,7 @@ const AppProvider = ({ children }) => {
     const setUser = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            const { data } = await axios.post(`/users/login`, user_data)
+            const { data } = await axios.post(`api/users/login`, user_data)
             const { result, token } = data
             console.log(data)
             dispatch({
@@ -118,14 +120,15 @@ const AppProvider = ({ children }) => {
     const createUser = async (user_data) => {
         dispatch({ type: CREATE_USER_BEGIN })
         try {
-            await authFetch.post(`/users/register`, user_data)
+            await axios.post(`/api/users/register`, user_data)
             dispatch({ type: CREATE_USER_SUCCESS })
             dispatch({ type: CLEAR_VALUES })
         } catch (err) {
+            console.log(err)
             dispatch({
                 type: CREATE_USER_ERROR,
                 payload: {
-                    msg: 'Cannot create',
+                    msg: err.error.message,
                 },
             })
         }
