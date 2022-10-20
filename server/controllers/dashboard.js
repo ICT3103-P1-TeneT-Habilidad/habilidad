@@ -1,24 +1,45 @@
 import { createNewCourse, findCoursesSortedByPopularity, findCoursesWhereCreatedByInstructor, findCoursesWherePurchasedByStudent, findCoursesWhereSubscribable } from '../services/course.js'
-import { Response } from '../utils/response.js'
 import { responseCode } from '../utils/responseCode.js'
 import jwt from 'jsonwebtoken'
 
 export const indexCourses = async (req, res, next) => {
 
     try {
-        const result = await findCoursesWhereSubscribable()
+        const courses = await findCoursesWhereSubscribable()
+        const { accessToken, refreshToken } = req.body
 
-        res.status(200).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                courses,
+                accessToken,
+                refreshToken
+            }
+        })
 
     } catch (err) {
         next(err)
     }
 
-
-
 }
 
 export const createdCourses = async (req, res, next) => {
+
+    try {
+
+        const { accessToken, refreshToken } = req.body
+        const courses = await findCoursesWhereCreatedByInstructor()
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                courses,
+                accessToken,
+                refreshToken
+            }
+        })
+
+    } catch (err) {
+        next(err)
+    }
 
 }
 
@@ -52,7 +73,6 @@ export const addNewCourse = async (req, res, next) => {
         } = req.body
 
         const userId = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET).userId
-
 
         const result = await createNewCourse({
             courseName,
