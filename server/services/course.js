@@ -20,11 +20,27 @@ export const findCoursesWhereSubscribable = async () => {
     })
 }
 
-export const findCoursesWhereCreatedByInstructor = async () => {
+export const findCoursesWhereCreatedByInstructor = async (instructorId) => {
+    return db.course.findMany({
+        where: {
+            instructorId: {
+                equals: instructorId
+            }
+        }
+    })
 
 }
 
-export const findCoursesWherePurchasedByStudent = async () => {
+export const findCoursesWherePurchasedByStudent = async (studentId) => {
+    return db.course.findMany({
+        where: {
+            purchasedCourse: {
+                studentId: {
+                    equals: studentId
+                }
+            }
+        }
+    })
 
 }
 
@@ -33,6 +49,7 @@ export const findCoursesSortedByPopularity = async () => {
 }
 
 export const createNewCourse = async (info) => {
+    console.log(info.topic)
 
     return db.course.create({
         data: {
@@ -41,17 +58,15 @@ export const createNewCourse = async (info) => {
             price: info.price,
             description: info.courseDescription,
             language: info.language,
-            status: 'Ongoing',
-            approvalStatus: 'Approved',
-            instructorId: user.userId,
-            topics: {
-                create: [
-                    {
-                        topicName: 'test',
-                        description: 'First ',
-                    }
-                ]
+            status: 'Pending',
+            approvalStatus: 'Pending',
+            instructorId: info.instructorId,
+            topic: {
+                create: info.topic
             }
+        },
+        include: {
+            topic: true
         }
     })
 
