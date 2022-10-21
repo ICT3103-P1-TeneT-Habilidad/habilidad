@@ -79,8 +79,8 @@ model Administrators{
 model Course{
   courseId String @id @default(uuid()) 
   courseName String
-  duration DateTime @db.Time
-  price Int
+  duration Int
+  price Float
   description String
   language Language
   status Status
@@ -123,7 +123,7 @@ model PurchasedCourse {
 }
 
 model Topics {
-  topicId String @id
+  topicId String @id @default(uuid())
   topicName String
   description String
   course Course @relation(fields: [courseId], references: [courseId])
