@@ -1,28 +1,65 @@
 import { createNewCourse, findCoursesSortedByPopularity, findCoursesWhereCreatedByInstructor, findCoursesWherePurchasedByStudent, findCoursesWhereSubscribable } from '../services/course.js'
-import { Response } from '../utils/response.js'
 import { responseCode } from '../utils/responseCode.js'
 import jwt from 'jsonwebtoken'
+import { findInstructorIdByUserId, findStudentIdByUserId } from '../services/user.js'
 
 export const indexCourses = async (req, res, next) => {
 
     try {
-        const result = await findCoursesWhereSubscribable()
+        const courses = await findCoursesWhereSubscribable()
+        const { accessToken, refreshToken } = req.body
 
-        res.status(200).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                courses,
+                accessToken,
+                refreshToken
+            }
+        })
 
     } catch (err) {
         next(err)
     }
 
-
-
 }
 
 export const createdCourses = async (req, res, next) => {
 
+    try {
+
+        const { userId } = req.payload
+        const { instructorId } = await findInstructorIdByUserId(userId)
+        const courses = await findCoursesWhereCreatedByInstructor(instructorId)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                courses
+            }
+        })
+
+    } catch (err) {
+        next(err)
+    }
+
 }
 
 export const purchasedCourses = async (req, res, next) => {
+
+    try {
+
+        const { userId } = req.payload
+        const { studentId } = await findStudentIdByUserId(userId)
+        const courses = await findCoursesWherePurchasedByStudent(studentId)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                courses
+            }
+        })
+
+    } catch (err) {
+        next(err)
+    }
 
 }
 
@@ -46,13 +83,10 @@ export const addNewCourse = async (req, res, next) => {
             language,
             status,
             approvalStatus,
-            accessToken,
-            topicName,
-            topicDescription
+            topic
         } = req.body
 
-        const userId = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET).userId
-
+        const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
 
         const result = await createNewCourse({
             courseName,
@@ -62,11 +96,10 @@ export const addNewCourse = async (req, res, next) => {
             language,
             status,
             approvalStatus,
-            userId,
-            topicName,
-            topicDescription
+            instructorId,
+            topic
         })
-        res.status(200).json({ result })
+        res.status(responseCode.res_ok).json({ result })
 
     } catch (err) {
         next(err)
