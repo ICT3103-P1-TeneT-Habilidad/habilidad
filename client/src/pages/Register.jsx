@@ -17,7 +17,6 @@ const Register = () => {
     password.current = watch('password', '')
 
     const formatData = (data) => {
-        data.role = 'Student'
         delete data.re_pwd
     }
 
@@ -37,7 +36,7 @@ const Register = () => {
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         {showAlert && <Alert />}
                         <div>
-                            <label>Username</label>
+                            <label>Username:</label>
                             <div className="mt-1">
                                 <input
                                     id="username"
@@ -53,7 +52,7 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Name</label>
+                            <label>Name:</label>
                             <div classname="mt-1">
                                 <input
                                     id="name"
@@ -69,7 +68,7 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Email</label>
+                            <label>Email:</label>
                             <div classname="mt-1">
                                 <input
                                     id="email"
@@ -91,7 +90,7 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Phone Number</label>
+                            <label>Phone Number:</label>
                             <div classname="mt-1">
                                 <input
                                     id="phoneNumber"
@@ -114,7 +113,36 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Password</label>
+                            <label>Role:</label>
+                            <div classname="mt-1 flex flex-row">
+                                <div>
+                                    <input
+                                        {...register('role', { required: true })}
+                                        type="radio"
+                                        name="role"
+                                        value="Student"
+                                        className="m-2"
+                                        id="role"
+                                    />
+                                    Student
+                                </div>
+
+                                <div>
+                                    <input
+                                        {...register('role', { required: true })}
+                                        type="radio"
+                                        name="role"
+                                        value="Instructor"
+                                        className="m-2"
+                                        id="role"
+                                    />
+                                    Instructor
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>Password:</label>
                             <div classname="mt-1">
                                 <input
                                     id="password"
@@ -136,7 +164,7 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Re-enter Password</label>
+                            <label>Re-enter Password:</label>
                             <div classname="mt-1">
                                 <input
                                     id="re_pwd"
@@ -146,6 +174,7 @@ const Register = () => {
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('re_pwd', {
                                         validate: (value) => value === password.current || 'The passwords do not match',
+                                        required: 'Please enter the password again',
                                     })}
                                 />
                                 {errors.re_pwd ? (
