@@ -7,14 +7,8 @@ import { sendEmailLink, generateEmailToken } from '../utils/email.js'
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import {
-    findAccountByEmail,
-    storeNewAccount,
-    findAccountByUsername,
-    findUserbyUserId,
-    updatePassword,
-    findUserByEmail,
-} from '../services/user.js'
+import { findUserbyUserId, findUserByEmail } from '../services/user.js'
+import { updatePassword, findAccountByUsername, storeNewAccount, findAccountByEmail } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
 import { email_template } from '../constants.js'
@@ -187,9 +181,8 @@ export const sendEmailResetLink = async (req, res) => {
         if (token.expiredAt > token.createdAt) {
             token = generateEmailToken(user[0].userId)
             const result = await replaceEmailToken({ userId: user[0].userId, token: token })
-        }
-        else if(token.expiredAt < token.createdAt){
-            throw new Error("Invalid Link")
+        } else if (token.expiredAt < token.createdAt) {
+            throw new Error('Invalid Link')
         }
 
         const emailMsg = email_template(token)
