@@ -69,3 +69,22 @@ export const findStudentIdByUserId = async (userId) => {
         }
     })
 }
+
+export const findUserByEmail = async (email) => {
+    return db.user.findMany({
+        where: {
+            email: email,
+        },
+    })
+}
+
+export const updatePassword = async (user) => {
+    return db.account.update({
+        where: {
+            username: user.username,
+        },
+        data: {
+            password: user.password,
+        },
+    })
+}
