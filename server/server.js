@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 // import routes
 import routes from './routes/routes.js'
 import { Response } from './utils/response.js'
+import { setHeaderTimestamp } from './utils/time.js'
 
 dotenv.config({ path: '../.env' })
 
@@ -15,7 +16,7 @@ app.use(helmet())
 app.use(cors())
 
 // Routes
-app.use('/', routes)
+app.use('/', setHeaderTimestamp, routes)
 
 console.log(process.env.DATABASE_URL)
 
