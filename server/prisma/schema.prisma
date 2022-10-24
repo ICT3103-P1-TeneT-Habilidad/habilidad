@@ -103,6 +103,7 @@ model Topics {
   topicId String @id @default(uuid())
   topicName String
   description String
+  url String
   topicCourse TopicCourse[]
 }
 
