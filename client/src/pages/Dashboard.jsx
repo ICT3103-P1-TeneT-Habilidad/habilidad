@@ -1,5 +1,5 @@
 import React from 'react'
-import Banner from '../assets/temp_banner.jpeg'
+import Banner from '../assets/banner.png'
 import { PopularCourse, TopCategories } from '../components/index'
 
 const Dashboard = () => {
