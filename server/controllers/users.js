@@ -2,10 +2,10 @@ import crypto from 'crypto'
 import { Response } from '../utils/response.js'
 import { findAccountByEmail, storeNewAccount, findAccountByUsername, findUserbyUserId } from '../services/user.js'
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
-import { decodeToken, generateTokens } from '../utils/jwt.js'
+import { generateTokens } from '../utils/jwt.js'
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import jwt from 'jsonwebtoken'
 import { responseCode } from '../utils/responseCode.js'
+import { validateEmail, validatePasswords } from '../utils/input.js'
 
 const generateTokenProcedure = async (account) => {
 
@@ -98,6 +98,9 @@ export const userLogout = async (req, res, next) => {
 
 export const userRegister = async (req, res, next) => {
     try {
+        if (!req.validate.status) {
+            throw new Response(req.validate.message, 'res_badRequest')
+        }
         const { email, password, username, phoneNumber, name, role } = req.body
         if (!email || !password) {
             throw new Response('Missing email or password.', 'res_badRequest')
@@ -137,4 +140,18 @@ export const updateUser = async (req, res, next) => {
 export const userVerify = async (req, res, next) => {
     const err = new Response('userVerify not implemented', 'res_notImplemented')
     next(err)
+}
+
+export const validateEmailAndPassword = async (req, res, next) => {
+    await Promise.all([validateEmail(req), validatePasswords(req)]).then((value) => {
+        req.validate = {
+            status: true
+        }
+    }).catch((reject) => {
+        req.validate = {
+            status: false,
+            message: reject
+        }
+    })
+    next()
 }
