@@ -1,3 +1,5 @@
+import db from '../utils/db.js'
+
 export const updatePassword = async (user) => {
     return db.account.update({
         where: {
