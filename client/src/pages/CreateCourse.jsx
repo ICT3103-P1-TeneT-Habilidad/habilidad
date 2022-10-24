@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { React } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
@@ -29,7 +29,7 @@ const CreateCourse = () => {
             </div>
             <div className="flex bg-white mt-10 rounded-lg w-full justify-center">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex p-4 w-3/4">
-                    <div className="flex flex-col w-full">=
+                    <div className="flex flex-col w-full">
                         <div className="flex flex-row w-full">
                             <div className="flex flex-col w-1/2">
                                 <div className="p-3">
