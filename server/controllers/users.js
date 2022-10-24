@@ -3,7 +3,7 @@ import { Response } from '../utils/response.js'
 // import utils
 import { decodeToken, generateTokens } from '../utils/jwt.js'
 import { responseCode } from '../utils/responseCode.js'
-import { sendEmailLink, generateEmailToken } from '../utils/email.js'
+import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
@@ -134,20 +134,26 @@ export const userVerify = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
     try {
-        const username = req.body.username
-        const user = await findAccountByUsername(username)
+        const token = decodeEmailToken(req.params.token);
 
-        if (!user) return res.status(responseCode.res_badRequest).send('User does not exist')
+        console.log(token);
+        // const userId = token.userId;
 
-        const token = await findEmailToken({
-            userid: user.userId,
-            token: req.body.token,
-        })
+        // const userId = req.body.username
+        // const user = await findAccountByUsername(username)
 
-        if (!token) return res.status(responseCode.res_ok).send('Invalid link')
+        // if (!user) return res.status(responseCode.res_badRequest).send('User does not exist')
 
-        user.password = req.body.password
-        await updatePassword(user)
+        // const token = await findEmailToken({
+        //     userid: user.userId,
+        //     token: req.params.token,
+        // })
+
+        // if (!token) return res.status(responseCode.res_ok).send('Invalid link')
+
+        // user.password = req.body.password
+
+        // await updatePassword(user)
         // await token.delete()
 
         res.status(responseCode.res_ok).json({
@@ -173,14 +179,26 @@ export const sendEmailResetLink = async (req, res) => {
 
         let token = await findEmailToken(user[0].userId)
 
+        const currentDate = new Date(Date.now())
+        const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
+
         if (!token) {
-            token = generateEmailToken(user[0].userId)
-            const result = await saveEmailToken({ userId: user[0].userId, token: token })
+            token = generateEmailToken({ userId: user[0].userId, expiredAt: expiredDate, createdAt: currentDate })
+            const result = await saveEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredDate,
+            })
         }
 
         if (token.expiredAt > token.createdAt) {
             token = generateEmailToken(user[0].userId)
-            const result = await replaceEmailToken({ userId: user[0].userId, token: token })
+            const result = await replaceEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredDate,
+                updatedAt: currentDate,
+            })
         } else if (token.expiredAt < token.createdAt) {
             throw new Error('Invalid Link')
         }

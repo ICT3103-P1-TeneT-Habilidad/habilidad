@@ -1,7 +1,7 @@
 import express from 'express'
 import { isAuthenticate } from '../controllers/auth.js'
 
-import { getUser, userLogin, userLogout, userRegister, updateUser, sendEmailResetLink } from '../controllers/users.js'
+import { getUser, userLogin, userLogout, userRegister, updateUser, sendEmailResetLink, resetPassword } from '../controllers/users.js'
 
 const router = express.Router()
 
@@ -28,6 +28,6 @@ router.route('/register').post(userRegister)
 router.route('/resetPassword').post(sendEmailResetLink)
 
 // reset password
-// router.route('/resetPassword/:id/:token').post(resetPassword)
+router.route('/resetPassword/:token').post(resetPassword)
 
 export default router

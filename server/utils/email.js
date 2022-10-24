@@ -36,3 +36,11 @@ export const generateEmailToken = (user) => {
         console.log(err)
     }
 }
+
+export const decodeEmailToken = (token) => {
+    try {
+        return jwt.decode(token, process.env.SECRET_KEY)
+    } catch (err) {
+        console.log(err)
+    }
+}
