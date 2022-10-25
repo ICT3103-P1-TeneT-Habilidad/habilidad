@@ -8,7 +8,7 @@ import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
 import { findUserbyUserId, findUserByEmail } from '../services/user.js'
-import { updatePassword, findAccountByUsername, storeNewAccount, findAccountByEmail } from '../services/account.js'
+import { updatePassword, findAccountByUsername, storeNewAccount } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
 import { email_template } from '../constants.js'
@@ -97,8 +97,8 @@ export const userRegister = async (req, res, next) => {
             throw new Response('Missing email or password.', 'res_badRequest')
         }
 
-        // check if this email can be used
-        const existingUser = await findAccountByEmail(email)
+        // check if this username can be used
+        const existingUser = await findAccountByUsername(username)
 
         if (existingUser) {
             throw new Response('Email already in use.', 'res_badRequest')

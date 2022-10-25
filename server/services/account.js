@@ -25,14 +25,14 @@ export const findAccountByUsername = async (username) => {
 export const storeNewAccount = async (user) => {
     return db.account.create({
         data: {
-            email: user.email,
             username: user.username,
             password: user.hashedPassword,
-            phoneNumber: user.phoneNumber,
             enabled: true,
             user: {
                 create: {
                     name: user.name,
+                    email: user.email,
+                    phoneNumber: user.phoneNumber,
                     role: user.role,
                     deActivatedOn: null,
                     [user.role.toLowerCase()]: {
@@ -46,13 +46,5 @@ export const storeNewAccount = async (user) => {
         include: {
             user: true
         }
-    });
-}
-
-export const findAccountByEmail = async (email) => {
-    return db.account.findUnique({
-        where: {
-            email: email,
-        },
     });
 }
