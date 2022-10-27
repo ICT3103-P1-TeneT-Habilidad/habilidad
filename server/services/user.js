@@ -35,17 +35,6 @@ export const storeNewAccount = async (user) => {
     });
 }
 
-export const deActivateUser = async (userId) =>{
-    return db.user.update({
-        where: {
-            userid : userId
-        },
-        data:{           
-            deActivatedOn: new Date()
-        },
-    })
-}
-
 export const findAccountByUsername = async (username) => {
     return db.account.findUnique({
         where: {
