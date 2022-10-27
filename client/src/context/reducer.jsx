@@ -62,20 +62,20 @@ const reducer = (state, action) => {
             }
         case CREATE_USER_BEGIN:
             return {
-                ...state
+                ...state,
             }
         case CREATE_USER_SUCCESS:
             return {
                 ...state,
                 showAlert: true,
-                alert_type: "success"
+                alert_type: 'success',
             }
         case CREATE_USER_ERROR:
             return {
                 ...state,
                 showAlert: true,
                 alert_msg: action.payload.msg,
-                alert_type: "danger"
+                alert_type: 'danger',
             }
         default:
             throw new Error(`no such action: ${action.type}`)

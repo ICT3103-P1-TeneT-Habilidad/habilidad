@@ -33,7 +33,7 @@ const Footer = () => {
                 </div>
                 <div className="lg:pr-10 lg:uppercase lg:font-medium hidden lg:inline">
                     <Link to="/">
-                        <img src={Logo_small} alt="small logo" className='object-scale-down h-16'/>
+                        <img src={Logo_small} alt="small logo" className="object-scale-down h-16" />
                     </Link>
                 </div>
             </footer>
