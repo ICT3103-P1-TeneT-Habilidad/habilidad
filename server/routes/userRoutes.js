@@ -30,4 +30,7 @@ router.route('/resetPassword').post(sendEmailResetLink)
 // reset password
 router.route('/resetPassword/:token').post(resetPassword)
 
+// Deactivate user account
+router.route('/deactivate').post(isAuthenticate, userDeactivate)
+
 export default router
