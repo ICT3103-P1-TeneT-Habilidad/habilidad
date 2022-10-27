@@ -1,9 +1,32 @@
 import db from '../utils/db.js'
+import { findUserbyUserId } from './user.js'
 
-export const updatePassword = async (user) => {
+export const updatePasswordAndDeleteToken = async (user) => {
+    return db.$transaction([
+        db.account.update({
+            where: {
+                accountId: user.accountId,
+                username: user.username
+            },
+            data: {
+                password: user.hashedPassword,
+            },
+        }),
+        db.emailToken.delete({
+            where: {
+                userId: user.userId,
+            },
+        })
+
+    ])
+}
+
+export const updatePasswordByUserId = async (user) => {
+    const accountId = findUserbyUserId(user.userId).accountId
     return db.account.update({
         where: {
-            username: user.username,
+            accountId: accountId,
+            username: 'test2'
         },
         data: {
             password: user.password,

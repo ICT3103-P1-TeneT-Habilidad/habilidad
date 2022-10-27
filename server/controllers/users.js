@@ -8,10 +8,12 @@ import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
 import { findUserbyUserId, findUserByEmail } from '../services/user.js'
-import { updatePassword, findAccountByUsername, storeNewAccount } from '../services/account.js'
+import { findAccountByUsername, storeNewAccount, updatePasswordAndDeleteToken } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
 import { email_template } from '../constants.js'
+import jwt from 'jsonwebtoken'
+import { prismaTransactions } from '../utils/db.js'
 
 const generateTokenProcedure = async (account) => {
     // Generate uuid
@@ -134,36 +136,41 @@ export const userVerify = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
     try {
-        const token = decodeEmailToken(req.params.token);
+        const { token } = req.params
+        const { password } = req.body
+        let userId
+        jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
 
-        console.log(token);
-        // const userId = token.userId;
+            if (err) throw new Response('Token invalid', 'res_forbidden')
 
-        // const userId = req.body.username
-        // const user = await findAccountByUsername(username)
+            userId = user.userId
 
-        // if (!user) return res.status(responseCode.res_badRequest).send('User does not exist')
-
-        // const token = await findEmailToken({
-        //     userid: user.userId,
-        //     token: req.params.token,
-        // })
-
-        // if (!token) return res.status(responseCode.res_ok).send('Invalid link')
-
-        // user.password = req.body.password
-
-        // await updatePassword(user)
-        // await token.delete()
-
-        res.status(responseCode.res_ok).json({
-            status: 'Password reset sucessfully',
         })
+
+        // verify token in db
+        const verifyToken = await findEmailToken(userId, token)
+
+        if (!verifyToken) {
+            throw new Response("Invalid link", 'res_internalServer')
+        }
+
+        const { accountId, username } = await findUserbyUserId(userId)
+
+        // delete token + update password
+        const hashedPassword = hashText(password, generateSalt(12))
+        const result = await updatePasswordAndDeleteToken({ accountId, userId, hashedPassword, username })
+
+        if (result.length > 0) {
+            // return result
+            res.status(responseCode.res_ok).json({
+                status: 'Password reset sucessfully',
+            })
+        } else {
+            throw new Response('Failed to reset password', 'res_internalServer')
+        }
+
     } catch (err) {
-        res.status(responseCode.res_internalServer).json({
-            status: 'Failed to reset password',
-            message: err.message,
-        })
+        next(err)
     }
 }
 
@@ -205,7 +212,8 @@ export const sendEmailResetLink = async (req, res) => {
             })
         }
 
-        const emailMsg = email_template(token.token)
+        console.log(token)
+        const emailMsg = email_template(token)
 
         await sendEmailLink(email, 'Password reset', emailMsg)
 
