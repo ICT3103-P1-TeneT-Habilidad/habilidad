@@ -8,7 +8,7 @@ import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
 import { findUserbyUserId, findUserByEmail } from '../services/user.js'
-import { updatePassword, findAccountByUsername, storeNewAccount, findAccountByEmail } from '../services/account.js'
+import { updatePassword, findAccountByUsername, storeNewAccount } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
 import { email_template } from '../constants.js'
@@ -97,8 +97,8 @@ export const userRegister = async (req, res, next) => {
             throw new Response('Missing email or password.', 'res_badRequest')
         }
 
-        // check if this email can be used
-        const existingUser = await findAccountByEmail(email)
+        // check if this username can be used
+        const existingUser = await findAccountByUsername(username)
 
         if (existingUser) {
             throw new Response('Email already in use.', 'res_badRequest')
@@ -175,35 +175,37 @@ export const sendEmailResetLink = async (req, res) => {
 
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
-        if (!user) return res.status(responseCode.res_badRequest).send("User with given email doesn't exist")
-
         let token = await findEmailToken(user[0].userId)
 
-        const currentDate = new Date(Date.now())
-        const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
+        let expiredAt
+        let issueAt
 
+        // No valid email token in db
         if (!token) {
-            token = generateEmailToken({ userId: user[0].userId, expiredAt: expiredDate, createdAt: currentDate })
-            const result = await saveEmailToken({
+            token = generateEmailToken({ userId: user[0].userId })
+            const tokenPayload = decodeEmailToken(token)
+            expiredAt = new Date(tokenPayload.exp * 1000)
+            await saveEmailToken({
                 userId: user[0].userId,
                 token: token,
-                expiredAt: expiredDate,
+                expiredAt: expiredAt,
+            })
+        }
+        // Has valid email token in db
+        else {
+            token = generateEmailToken({ userId: user[0].userId })
+            const tokenPayload = decodeEmailToken(token)
+            expiredAt = new Date(tokenPayload.exp * 1000)
+            issueAt = new Date(tokenPayload.iat * 1000)
+            await replaceEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredAt,
+                updatedAt: issueAt,
             })
         }
 
-        if (token.expiredAt > token.createdAt) {
-            token = generateEmailToken(user[0].userId)
-            const result = await replaceEmailToken({
-                userId: user[0].userId,
-                token: token,
-                expiredAt: expiredDate,
-                updatedAt: currentDate,
-            })
-        } else if (token.expiredAt < token.createdAt) {
-            throw new Error('Invalid Link')
-        }
-
-        const emailMsg = email_template(token)
+        const emailMsg = email_template(token.token)
 
         await sendEmailLink(email, 'Password reset', emailMsg)
 
@@ -211,9 +213,6 @@ export const sendEmailResetLink = async (req, res) => {
             status: 'Password reset link sent to your email account',
         })
     } catch (err) {
-        res.status(responseCode.res_internalServer).json({
-            status: 'Failed to send reset link',
-            message: err.message,
-        })
+        next(err)
     }
 }
