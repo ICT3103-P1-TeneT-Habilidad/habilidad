@@ -45,7 +45,24 @@ export const getUser = async (req, res, next) => {
         next(err)
     }
 }
+export const userDeactivate = async (req, res, next) => {
 
+    try {
+
+        const { userId } = req.payload
+
+        const result = await deActivateUser(userId)
+
+        res.status(responseCode.res_ok).json({
+            result
+        })
+
+    } catch (err) {
+        err = new Response(err)
+        next(err)
+    }
+
+}
 // export const getUser = async (req, res, next) => {
 //     const users = await prisma.user.findMany();
 //     if(users){

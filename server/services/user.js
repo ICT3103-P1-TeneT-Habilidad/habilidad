@@ -15,3 +15,13 @@ export const findUserByEmail = async (email) => {
         },
     })
 }
+export const deActivateUser = async (userId) => {
+    return db.user.update({
+        where: {
+            userId: userId
+        },
+        data: {
+            deActivatedOn: new Date()
+        },
+    })
+}
