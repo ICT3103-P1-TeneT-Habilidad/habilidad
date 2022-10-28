@@ -1,9 +1,12 @@
 import React from 'react'
 
-const NewCourseMaterial = () => {
+const NewCourseMaterial = (index) => {
+
+    console.log(index)
+
     return (
         <div>
-            <h1>material</h1>
+            <h1>Material</h1>
         </div>
     )
 }
