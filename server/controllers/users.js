@@ -7,11 +7,11 @@ import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/em
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import { findUserbyUserId, findUserByEmail } from '../services/user.js'
+import { findUserbyUserId, findUserByEmail, deActivateUser } from '../services/user.js'
 import { updatePassword, findAccountByUsername, storeNewAccount } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
-import { email_template } from '../constants.js'
+import { email_template, email_template_deactivate } from '../constants.js'
 
 const generateTokenProcedure = async (account) => {
     // Generate uuid
@@ -53,9 +53,7 @@ export const userDeactivate = async (req, res, next) => {
 
         const result = await deActivateUser(userId)
 
-        res.status(responseCode.res_ok).json({
-            result
-        })
+        next()
 
     } catch (err) {
         err = new Response(err)
@@ -114,8 +112,8 @@ export const userRegister = async (req, res, next) => {
             throw new Response('Missing email or password.', 'res_badRequest')
         }
 
-        // check if this username can be used
-        const existingUser = await findAccountByUsername(username)
+        // check if this email can be used
+        const existingUser = await findAccountByEmail(email)
 
         if (existingUser) {
             throw new Response('Email already in use.', 'res_badRequest')
@@ -192,42 +190,145 @@ export const sendEmailResetLink = async (req, res) => {
 
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
+        if (!user) return res.status(responseCode.res_badRequest).send("User with given email doesn't exist")
+
         let token = await findEmailToken(user[0].userId)
 
-        let expiredAt
-        let issueAt
+        const currentDate = new Date(Date.now())
+        const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
 
-        // No valid email token in db
         if (!token) {
-            token = generateEmailToken({ userId: user[0].userId })
-            const tokenPayload = decodeEmailToken(token)
-            expiredAt = new Date(tokenPayload.exp * 1000)
-            await saveEmailToken({
+            token = generateEmailToken({ userId: user[0].userId, expiredAt: expiredDate, createdAt: currentDate })
+            const result = await saveEmailToken({
                 userId: user[0].userId,
                 token: token,
-                expiredAt: expiredAt,
-            })
-        }
-        // Has valid email token in db
-        else {
-            token = generateEmailToken({ userId: user[0].userId })
-            const tokenPayload = decodeEmailToken(token)
-            expiredAt = new Date(tokenPayload.exp * 1000)
-            issueAt = new Date(tokenPayload.iat * 1000)
-            await replaceEmailToken({
-                userId: user[0].userId,
-                token: token,
-                expiredAt: expiredAt,
-                updatedAt: issueAt,
+                expiredAt: expiredDate,
             })
         }
 
-        const emailMsg = email_template(token.token)
+        if (token.expiredAt > token.createdAt) {
+            token = generateEmailToken(user[0].userId)
+            const result = await replaceEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredDate,
+                updatedAt: currentDate,
+            })
+        } else if (token.expiredAt < token.createdAt) {
+            throw new Error('Invalid Link')
+        }
+
+        const emailMsg = email_template(token)
 
         await sendEmailLink(email, 'Password reset', emailMsg)
 
         res.status(responseCode.res_ok).json({
             status: 'Password reset link sent to your email account',
+        })
+    } catch (err) {
+        res.status(responseCode.res_internalServer).json({
+            status: 'Failed to send reset link',
+            message: err.message,
+        })
+    }
+}
+// export const sendEmailDeactivateAcc = async (req, res) => {
+//     try {
+//         const email = req.body.user_email
+
+//         const user = await findUserByEmail(email)
+
+//         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
+
+//         if (!user) return res.status(responseCode.res_badRequest).send("User with given email doesn't exist")
+
+//         // let token = await findEmailToken(user[0].userId)
+
+//         // const currentDate = new Date(Date.now())
+//         // const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
+
+//         // if (!token) {
+//         //     token = generateEmailToken({ userId: user[0].userId, expiredAt: expiredDate, createdAt: currentDate })
+//         //     const result = await saveEmailToken({
+//         //         userId: user[0].userId,
+//         //         token: token,
+//         //         expiredAt: expiredDate,
+//         //     })
+//         // }
+
+//         // if (token.expiredAt > token.createdAt) {
+//         //     token = generateEmailToken(user[0].userId)
+//         //     const result = await replaceEmailToken({
+//         //         userId: user[0].userId,
+//         //         token: token,
+//         //         expiredAt: expiredDate,
+//         //         updatedAt: currentDate,
+//         //     })
+//         // } else if (token.expiredAt < token.createdAt) {
+//         //     throw new Error('Invalid Link')
+//         // }
+
+//         const emailMsg = "Your account has been deactivated as of " + new Date() + email
+
+//         await sendEmailLink(email, 'Account Deactivate', emailMsg)
+
+//         res.status(responseCode.res_ok).json({
+//             status: 'Deactivate conformation email has been sent',
+//             message: "Email is" + email + emailMsg,
+//         })
+//     } catch (err) {
+//         res.status(responseCode.res_internalServer).json({
+//             status: 'Failed to send deactivation conformation email',
+//             message: err.message,
+//         })
+//     }
+// }
+export const sendEmailDeactivateAcc = async (req, res) => {
+    try {
+        const email = req.body.user_email
+
+        const user = await findUserByEmail(email)
+
+        if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
+
+        // let token = await findEmailToken(user[0].userId)
+
+        // let expiredAt
+        // let issueAt
+
+        // // No valid email token in db
+        // if (!token) {
+        //     token = generateEmailToken({ userId: user[0].userId })
+        //     const tokenPayload = decodeEmailToken(token)
+        //     expiredAt = new Date(tokenPayload.exp * 1000)
+        //     await saveEmailToken({
+        //         userId: user[0].userId,
+        //         token: token,
+        //         expiredAt: expiredAt,
+        //     })
+        // }
+        // // Has valid email token in db
+        // else {
+        //     token = generateEmailToken({ userId: user[0].userId })
+        //     const tokenPayload = decodeEmailToken(token)
+        //     expiredAt = new Date(tokenPayload.exp * 1000)
+        //     issueAt = new Date(tokenPayload.iat * 1000)
+        //     await replaceEmailToken({
+        //         userId: user[0].userId,
+        //         token: token,
+        //         expiredAt: expiredAt,
+        //         updatedAt: issueAt,
+        //     })
+        // }
+
+        //const emailMsg = email_template(token.token)
+        const emailMsg = email_template_deactivate
+
+
+        await sendEmailLink(email, 'Deactivate Account', emailMsg)
+
+        res.status(responseCode.res_ok).json({
+            status: 'Account has been deactivated',
         })
     } catch (err) {
         next(err)
