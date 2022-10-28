@@ -1,11 +1,14 @@
-import { React } from 'react'
+import { React, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../utils/Constants'
+import { NewCourseMaterial } from '../components'
 
 const CreateCourse = () => {
     const animatedComponents = makeAnimated()
+    // const [componentCounter, setComponentCounter] = useState(1)
+    const [newCourseMaterialComponent, setNewCourseMaterialComponent] = useState([<NewCourseMaterial />])
 
     const {
         register,
@@ -22,14 +25,26 @@ const CreateCourse = () => {
         console.log(data)
     }
 
+    const addComponent = () => {
+        setNewCourseMaterialComponent([...newCourseMaterialComponent, <NewCourseMaterial />])
+        // setComponentCounter(componentCounter + 1)
+    }
+
+    const removeComponent = (i) => {
+        setNewCourseMaterialComponent(newCourseMaterialComponent.filter(
+            (_, index) => (index !== i)
+        ))
+    }
+
     return (
         <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 w-full">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Create a new Course!</h2>
+                <h2 className="text-center text-3xl font-extrabold text-gray-900">Create a new Course!</h2>
             </div>
             <div className="flex bg-white mt-10 rounded-lg w-full justify-center">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex p-4 w-3/4">
                     <div className="flex flex-col w-full">
+                        {/* general info row */}
                         <div className="flex flex-row w-full">
                             <div className="flex flex-col w-1/2">
                                 <div className="p-3">
@@ -137,7 +152,7 @@ const CreateCourse = () => {
                                     control={control}
                                     rules={{
                                         required: 'Please select up to 5 topics relevant to this course',
-                                        validate: (value) => 
+                                        validate: (value) =>
                                             value.length <= 5 || 'Please only select 5 relevant topics',
                                     }}
                                     render={({ field }) => {
@@ -184,14 +199,37 @@ const CreateCourse = () => {
                         </div>
                         {/* course materials section */}
                         <div className="flex flex-row">
-                            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                                <h3 className="mt-6 text-center text-xl font-extrabold text-gray-900">
-                                    Upload Course Material
-                                </h3>
+                            <div className="flex flex-col w-2/3">
+                                <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
+                            </div>
+                            <div className="flex flex-col">
+                                <button
+                                    className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                                    type="button"
+                                    onClick={() => addComponent()}
+                                >
+                                    Add Material
+                                </button>
                             </div>
                         </div>
+                        {newCourseMaterialComponent.map((component, index) => (
+                            <div className="felx flex-row w-full">
+                                <div className="flex flex-col w-1/3">{component}</div>
+                                {newCourseMaterialComponent.length > 1 ? (
+                                    <div className="felx flex-col w-1/3">
+                                        <button
+                                            className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() => removeComponent(index)}
+                                        >
+                                            Remove Material
+                                        </button>
+                                    </div>
+                                ) : null}
+                            </div>
+                        ))}
                         {/* button row */}
-                        <div className="flex flex-row">
+                        <div className="flex flex-row pt-5">
                             <div className="flex items-center justify-between">
                                 <button
                                     className="shadow focus:shadow-outline focus:outline-none bg-navbarfooter font-bold py-2 px-4 rounded"
