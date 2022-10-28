@@ -15,3 +15,18 @@ export const findUserByEmail = async (email) => {
         },
     })
 }
+
+export const updateUserDetails = async({email,password,phoneNumber,name},userId) => {
+    return db.user.update({
+        where: {
+            userId : userId,
+        },
+        data:{
+            email: email,
+            name: name,
+            phoneNumber: phoneNumber,
+            password: password,
+
+        },
+    })
+}

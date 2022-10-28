@@ -1,12 +1,12 @@
 import db from '../utils/db.js'
 
-export const updatePassword = async (user) => {
+export const updatePassword = async (user,hashedPassword) => {
     return db.account.update({
         where: {
             username: user.username,
         },
         data: {
-            password: user.password,
+            password: hashedPassword,
         },
     })
 }

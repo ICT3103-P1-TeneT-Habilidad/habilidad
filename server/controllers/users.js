@@ -7,7 +7,7 @@ import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/em
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import { findUserbyUserId, findUserByEmail } from '../services/user.js'
+import { findUserbyUserId, findUserByEmail, updateUserDetails } from '../services/user.js'
 import { updatePassword, findAccountByUsername, storeNewAccount } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
@@ -123,8 +123,44 @@ export const userRegister = async (req, res, next) => {
 }
 
 export const updateUser = async (req, res, next) => {
-    const err = new Response('updateUser not implemented', 'res_notImplemented')
+   // const err = new Response('updateUser not implemented', 'res_notImplemented')
+   try {
+    const { email, phoneNumber, name,password} = req.body
+    const { userId } = req.payload
+    
+        if (!email  || !name || !phoneNumber || !password) {
+            throw new Response('Missing inputs, field must not be empty.', 'res_badRequest')
+        }
+        
+        // Hash password and store to DB
+        
+        const hashedPassword = hashText(password, generateSalt(12))
+        
+        // check if this username can be used
+        const existingUser = await findUserbyUserId(userId)
+        
+        if (!existingUser) {
+            throw new Response('User doesnt exist.', 'res_badRequest')
+        }
+        await updateUserDetails({ email, phoneNumber, name},userId)
+
+        // Update password function not working so far
+        //await updatePassword({existingUser,hashedPassword})
+            res.status(responseCode.res_ok).json({
+                result: {
+                    status: "User details have been updated."
+                },
+        })
+    
+    
+    
+    // else{
+    //     throw new Response('User does not exist.', 'res_badRequest')
+    // }
+    
+} catch (err) {
     next(err)
+}
 }
 
 export const userVerify = async (req, res, next) => {
