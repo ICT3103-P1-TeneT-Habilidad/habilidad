@@ -26,15 +26,15 @@ export default function NavbarModal() {
                         </div>
                         {/*body*/}
                         <div className="relative p-6 flex m-auto content-center space-x-10 my-4 items-center">
-                            <Link to="/register">
-                                <button className="border bg-slate-100 p-4 rounded-md" onClick={() => showModal()}>
-                                    Register
-                                </button>
-                            </Link>
-                            <span>or</span>
                             <Link to="/login">
                                 <button className="border bg-slate-100 p-4 rounded-md" onClick={() => showModal()}>
                                     Login
+                                </button>
+                            </Link>
+                            <span>or</span>
+                            <Link to="/register">
+                                <button className="border bg-slate-100 p-4 rounded-md" onClick={() => showModal()}>
+                                    Register
                                 </button>
                             </Link>
                         </div>

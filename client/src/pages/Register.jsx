@@ -11,6 +11,7 @@ const Register = () => {
         handleSubmit,
         formState: { errors },
         watch,
+        reset,
     } = useForm()
 
     const password = useRef({})
@@ -24,6 +25,7 @@ const Register = () => {
         console.log(data)
         formatData(data)
         createUser(data)
+        reset()
     }
 
     return (
@@ -35,6 +37,35 @@ const Register = () => {
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         {showAlert && <Alert />}
+                        <div className="mt-4 space-y-4">
+                            <label>Select role:</label>
+                            <div className="flex items-center">
+                                <input
+                                    id="student"
+                                    name="student"
+                                    type="radio"
+                                    value="Student"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    {...register('role')}
+                                />
+                                <label htmlFor="student" className="ml-3 block text-sm font-medium text-gray-700">
+                                    Student
+                                </label>
+                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    id="instructor"
+                                    name="instructor"
+                                    type="radio"
+                                    value="Instructor"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    {...register('role')}
+                                />
+                                <label htmlFor="instructor" className="ml-3 block text-sm font-medium text-gray-700">
+                                    Instructor
+                                </label>
+                            </div>
+                        </div>
                         <div>
                             <label>Username:</label>
                             <div className="mt-1">
@@ -52,8 +83,8 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Name:</label>
-                            <div classname="mt-1">
+                            <label>Name</label>
+                            <div className="mt-1">
                                 <input
                                     id="name"
                                     name="name"
@@ -68,8 +99,8 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Email:</label>
-                            <div classname="mt-1">
+                            <label>Email</label>
+                            <div className="mt-1">
                                 <input
                                     id="email"
                                     name="email"
@@ -90,8 +121,8 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Phone Number:</label>
-                            <div classname="mt-1">
+                            <label>Phone Number</label>
+                            <div className="mt-1">
                                 <input
                                     id="phoneNumber"
                                     name="phoneNumber"
@@ -113,37 +144,8 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Role:</label>
-                            <div classname="mt-1 flex flex-row">
-                                <div>
-                                    <input
-                                        {...register('role', { required: true })}
-                                        type="radio"
-                                        name="role"
-                                        value="Student"
-                                        className="m-2"
-                                        id="role"
-                                    />
-                                    Student
-                                </div>
-
-                                <div>
-                                    <input
-                                        {...register('role', { required: true })}
-                                        type="radio"
-                                        name="role"
-                                        value="Instructor"
-                                        className="m-2"
-                                        id="role"
-                                    />
-                                    Instructor
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label>Password:</label>
-                            <div classname="mt-1">
+                            <label>Password</label>
+                            <div className="mt-1">
                                 <input
                                     id="password"
                                     name="password"
@@ -164,8 +166,8 @@ const Register = () => {
                             </div>
                         </div>
                         <div>
-                            <label>Re-enter Password:</label>
-                            <div classname="mt-1">
+                            <label>Re-enter Password</label>
+                            <div className="mt-1">
                                 <input
                                     id="re_pwd"
                                     name="re_pwd"

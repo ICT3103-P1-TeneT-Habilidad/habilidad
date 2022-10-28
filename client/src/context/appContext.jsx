@@ -4,7 +4,6 @@ import reducer from './reducer'
 import axios from '../utils/axios'
 
 import {
-    LOGIN_USER,
     SHOW_MODAL,
     CLEAR_VALUES,
     CLEAR_ALERT,
@@ -39,7 +38,6 @@ export const initialState = {
     isLoading: false,
 
     user_data: {},
-    user_type: '',
     alert_msg: '',
     alert_type: '',
 }
@@ -92,14 +90,6 @@ const AppProvider = ({ children }) => {
         })
     }
 
-    const setUserType = (user_type) => {
-        clearValues()
-        dispatch({
-            type: LOGIN_USER,
-            payload: { user_type },
-        })
-    }
-
     const clearValues = () => {
         dispatch({ type: CLEAR_VALUES })
     }
@@ -109,7 +99,7 @@ const AppProvider = ({ children }) => {
             dispatch({
                 type: CLEAR_ALERT,
             })
-        }, 5000)
+        }, 3000)
     }
 
     const setUser = async (user_data) => {
@@ -144,6 +134,7 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.error.message },
             })
         }
+        clearAlert()
     }
 
     const logout = () => {
@@ -156,7 +147,6 @@ const AppProvider = ({ children }) => {
             value={{
                 ...state,
                 showModal,
-                setUserType,
                 clearValues,
                 clearAlert,
                 setUser,

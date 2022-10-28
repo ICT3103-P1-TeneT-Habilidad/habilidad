@@ -1,5 +1,4 @@
 import {
-    LOGIN_USER,
     SHOW_MODAL,
     CLEAR_VALUES,
     CLEAR_ALERT,
@@ -22,11 +21,6 @@ import { initialState } from './appContext'
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case LOGIN_USER:
-            return {
-                ...state,
-                user_type: action.payload.user_type,
-            }
         case SHOW_MODAL:
             return {
                 ...state,
@@ -34,17 +28,17 @@ const reducer = (state, action) => {
             }
         case CLEAR_VALUES: {
             const initialState = {
-                user_type: '',
                 alert_msg: '',
             }
             return { ...state, ...initialState }
         }
-        case CLEAR_ALERT:
+        case CLEAR_ALERT: {
             return {
                 ...state,
                 showAlert: false,
                 alert_msg: '',
             }
+        }
         case SET_USER_BEGIN:
             return {
                 ...state,
