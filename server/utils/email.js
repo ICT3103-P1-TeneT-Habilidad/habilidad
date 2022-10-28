@@ -31,7 +31,9 @@ export const sendEmailLink = async (receiverEmail, subject, text) => {
 
 export const generateEmailToken = (user) => {
     try {
-        return jwt.sign(user, process.env.SECRET_KEY)
+        return jwt.sign(user, process.env.SECRET_KEY, {
+            expiresIn: process.env.JWT_EMAIL_EXPIRES_IN
+        })
     } catch (err) {
         console.log(err)
     }
