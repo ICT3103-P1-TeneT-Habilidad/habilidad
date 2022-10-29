@@ -1,8 +1,8 @@
-import { Response } from '../utils/response.js'
+// import responses
+import { Response } from '../responses/response.js'
 import jwt from 'jsonwebtoken'
 
 export const isAuthenticate = async (req, res, next) => {
-
     try {
         const { authorization } = req.headers
 
@@ -20,5 +20,5 @@ export const isAuthenticate = async (req, res, next) => {
         next(err)
     }
 
-    return next();
-} 
+    return next()
+}

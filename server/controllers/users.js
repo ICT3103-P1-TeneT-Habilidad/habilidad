@@ -1,17 +1,25 @@
 import crypto from 'crypto'
-import { Response } from '../utils/response.js'
-// import utils
-import { decodeToken, generateTokens } from '../utils/jwt.js'
-import { responseCode } from '../utils/responseCode.js'
-import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
-import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import { findUserbyUserId, findUserByEmail } from '../services/user.js'
-import { updatePassword, findAccountByUsername, storeNewAccount } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
+import {
+    findAccountByEmail,
+    storeNewAccount,
+    findAccountByUsername,
+    findUserbyUserId,
+    findUserByEmail,
+} from '../services/user.js'
 // import constants
 import { email_template } from '../constants.js'
+// import middleware
+import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
+import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
+import { decodeToken, generateTokens } from '../utils/jwt.js'
+// import validations
+import { validateEmail, validatePasswords } from '../validations/input.js'
+// import Responses
+import { responseCode } from '../responses/responseCode.js'
+import { Response } from '../responses/response.js'
 
 const generateTokenProcedure = async (account) => {
     // Generate uuid
@@ -134,9 +142,9 @@ export const userVerify = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
     try {
-        const token = decodeEmailToken(req.params.token);
+        const token = decodeEmailToken(req.params.token)
 
-        console.log(token);
+        console.log(token)
         // const userId = token.userId;
 
         // const userId = req.body.username
@@ -215,4 +223,19 @@ export const sendEmailResetLink = async (req, res) => {
     } catch (err) {
         next(err)
     }
+}
+export const validateEmailAndPassword = async (req, res, next) => {
+    await Promise.all([validateEmail(req), validatePasswords(req)])
+        .then((value) => {
+            req.validate = {
+                status: true,
+            }
+        })
+        .catch((reject) => {
+            req.validate = {
+                status: false,
+                message: reject,
+            }
+        })
+    next()
 }
