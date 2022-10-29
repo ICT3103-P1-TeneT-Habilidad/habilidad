@@ -1,31 +1,28 @@
 import crypto from 'crypto'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
+import { findUserbyUserId, findUserByEmail, storeNewUser, findUserByUsername } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
-import {
-    findAccountByEmail,
-    storeNewAccount,
-    findAccountByUsername,
-    findUserbyUserId,
-    findUserByEmail,
-} from '../services/user.js'
+
 // import constants
 import { email_template } from '../constants.js'
+import jwt from 'jsonwebtoken'
+
 // import middleware
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
-import { decodeToken, generateTokens } from '../utils/jwt.js'
+import { generateTokens } from '../utils/jwt.js'
 // import validations
 import { validateEmail, validatePasswords } from '../validations/input.js'
 // import Responses
 import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
 
-const generateTokenProcedure = async (account) => {
+const generateTokenProcedure = async (user) => {
     // Generate uuid
     const jti = crypto.randomUUID()
 
-    const userId = account.user.userId
+    const userId = user.userId
 
     // Generate Token
     const { accessToken, refreshToken } = generateTokens(userId, jti)
@@ -54,33 +51,26 @@ export const getUser = async (req, res, next) => {
     }
 }
 
-// export const getUser = async (req, res, next) => {
-//     const users = await prisma.user.findMany();
-//     if(users){
-//         res.status(res_ok).json(users)
-//     }
-// }
-
 export const userLogin = async (req, res, next) => {
     try {
         const { username, password } = req.body
 
         // Verify email
-        const account = await findAccountByUsername(username)
+        const user = await findUserByUsername(username)
 
-        if (!account) {
+        if (!user) {
             throw new Response('Wrong credentials', 'res_unauthorised')
         }
 
         // Verify password
-        const result = verifyPassword(password, account.password)
+        const result = verifyPassword(password, user.password)
 
         if (!result) {
             throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure(account)
+        const { accessToken, refreshToken } = await generateTokenProcedure(user)
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -106,7 +96,7 @@ export const userRegister = async (req, res, next) => {
         }
 
         // check if this username can be used
-        const existingUser = await findAccountByUsername(username)
+        const existingUser = await findUserByUsername(username)
 
         if (existingUser) {
             throw new Response('Email already in use.', 'res_badRequest')
@@ -114,10 +104,10 @@ export const userRegister = async (req, res, next) => {
 
         // Hash password and store to DB
         const hashedPassword = hashText(password, generateSalt(12))
-        const account = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role })
+        const user = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure(account)
+        const { accessToken, refreshToken } = await generateTokenProcedure(user)
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -142,36 +132,42 @@ export const userVerify = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
     try {
-        const token = decodeEmailToken(req.params.token)
+        const { token } = req.params
+        const { password } = req.body
+        let userId
+        jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
 
-        console.log(token)
-        // const userId = token.userId;
+            if (err) throw new Response('Token invalid', 'res_forbidden')
+            const token = decodeEmailToken(req.params.token)
 
-        // const userId = req.body.username
-        // const user = await findAccountByUsername(username)
+            userId = user.userId
 
-        // if (!user) return res.status(responseCode.res_badRequest).send('User does not exist')
-
-        // const token = await findEmailToken({
-        //     userid: user.userId,
-        //     token: req.params.token,
-        // })
-
-        // if (!token) return res.status(responseCode.res_ok).send('Invalid link')
-
-        // user.password = req.body.password
-
-        // await updatePassword(user)
-        // await token.delete()
-
-        res.status(responseCode.res_ok).json({
-            status: 'Password reset sucessfully',
         })
+
+        // verify token in db
+        const verifyToken = await findEmailToken(userId, token)
+
+        if (!verifyToken) {
+            throw new Response("Invalid link", 'res_internalServer')
+        }
+
+        const { username } = await findUserbyUserId(userId)
+
+        // delete token + update password
+        const hashedPassword = hashText(password, generateSalt(12))
+        const result = await updatePasswordAndDeleteToken({ userId, hashedPassword, username })
+
+        if (result.length > 0) {
+            // return result
+            res.status(responseCode.res_ok).json({
+                status: 'Password reset sucessfully',
+            })
+        } else {
+            throw new Response('Failed to reset password', 'res_internalServer')
+        }
+
     } catch (err) {
-        res.status(responseCode.res_internalServer).json({
-            status: 'Failed to reset password',
-            message: err.message,
-        })
+        next(err)
     }
 }
 
@@ -213,7 +209,8 @@ export const sendEmailResetLink = async (req, res) => {
             })
         }
 
-        const emailMsg = email_template(token.token)
+        console.log(token)
+        const emailMsg = email_template(token)
 
         await sendEmailLink(email, 'Password reset', emailMsg)
 

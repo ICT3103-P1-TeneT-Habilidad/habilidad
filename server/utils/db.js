@@ -11,4 +11,8 @@ if (process.env.NODE_ENV === 'production') {
     prisma = global.prisma
 }
 
+export const prismaTransactions = async (transactions) => {
+    return await prisma.$transaction(transactions)
+}
+
 export default prisma
