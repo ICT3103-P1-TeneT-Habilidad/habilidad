@@ -1,6 +1,7 @@
 generator client {
    provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
+  previewFeatures = ["transactionApi"]
 }
 
 datasource db {
@@ -8,25 +9,14 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-model Account {
-  accountId      String  @id @default(uuid())
-  username String @unique
-  password String
-  user User?
-  enabled Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@unique([accountId])
-}
-
 model User {
   userId   String  @id @default(uuid())
-  account   Account @relation(fields: [accountId], references: [accountId])
-  accountId String @unique
+  username String @unique
+  password String
   name String
   email String
   phoneNumber Int
-  deActivatedOn DateTime?
+  deactivationDate DateTime?
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
   role Role
@@ -36,7 +26,7 @@ model User {
   rToken RefreshTokens[]
   oToken OtpToken?
   eToken EmailToken?
-  @@unique([accountId, email, phoneNumber])
+  @@unique([email, phoneNumber])
 }
 
 model Student{
