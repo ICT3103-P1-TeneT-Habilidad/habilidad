@@ -10,6 +10,7 @@ import {
     popularCourses,
     addNewCourse,
 } from '../controllers/course.js'
+import { courseUpload } from '../utils/multer.js'
 
 const router = express.Router()
 
@@ -31,6 +32,6 @@ router.route('/topCategories').get(topCategories)
 // get all courses popular among new signups
 router.route('/popularCourses').get(popularCourses)
 
-router.route('/create').post(isAuthenticate, addNewCourse)
+router.route('/create').post(isAuthenticate, courseUpload, addNewCourse)
 
 export default router

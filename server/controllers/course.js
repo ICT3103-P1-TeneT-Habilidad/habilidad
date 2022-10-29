@@ -9,7 +9,9 @@ import {
     findCourseDetail
 } from '../services/course.js'
 import { findInstructorIdByUserId, findStudentIdByUserId } from '../services/user.js'
-
+import cloudinary from '../utils/cloudinary.js'
+import { Response } from '../responses/response.js'
+import fs from 'fs'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -89,20 +91,51 @@ export const purchasedCourses = async (req, res, next) => {
     }
 }
 
-export const topCategories = async (req, res, next) => {}
+export const topCategories = async (req, res, next) => { }
 
-export const popularCourses = async (req, res, next) => {}
+export const popularCourses = async (req, res, next) => { }
 
 export const addNewCourse = async (req, res, next) => {
     try {
+
+        // const { courseImage, courseMaterials } = await cloudinary.uploader.upload(req.files)
+        const { courseImageFiles, courseMaterialFiles } = req.files
+
+        console.log('------Image')
+        console.log(courseImage)
+        console.log(courseMaterials)
+        console.log('------Material')
+
         const { courseName, duration, price, courseDescription, language, status, approvalStatus, topic } = req.body
 
         const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
 
+        // const uploadResult = {}
+
+        // for (const file in courseMaterials) {
+        //     uploadResult[file.originalname] = await cloudinary.uploader.upload_large(file.path)
+        //     fs.unlinkSync(file.path)
+        // }
+
+        // for (const file in courseImage){
+        //     uploadResult[file.originalname] = await cloudinary.uploader.upload(file.path)
+        //     fs.unlinkSync(file.path)
+        // }
+
+        const uploadResult = await Promise.all([
+            ...(courseMaterialFiles.map((file) => cloudinary.uploader.upload_large(file.path, { resource_type: 'video' })) || []),
+            ...(courseImageFiles.map((file) => cloudinary.uploader.upload(file.path)) || [])
+        ]).catch((err) => {
+            console.log(err)
+            throw new Response('File Size Too Large', 'res_badRequest')
+        })
+
+        console.log(uploadResult)
+
         const result = await createNewCourse({
             courseName,
-            duration,
-            price,
+            duration: parseInt(duration),
+            price: parseFloat(price),
             courseDescription,
             language,
             status,
@@ -110,6 +143,7 @@ export const addNewCourse = async (req, res, next) => {
             instructorId,
             topic,
         })
+
         res.status(responseCode.res_ok).json({ result })
     } catch (err) {
         next(err)

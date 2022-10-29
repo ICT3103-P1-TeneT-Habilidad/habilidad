@@ -20,16 +20,17 @@ export const findCoursesWhereSubscribable = async () => {
             AND: [
                 {
                     approvalStatus: {
-                        equals: 'Approved',
-                    },
+                        equals: 'Approved'
+                    }
                 },
                 {
                     status: {
-                        in: ['Started', 'Ongoing', 'Completed'],
-                    },
-                },
+                        in: ['Started', 'Ongoing', 'Completed']
+                    }
+                }
+
             ],
-        },
+        }
     })
 }
 
@@ -37,10 +38,11 @@ export const findCoursesWhereCreatedByInstructor = async (instructorId) => {
     return db.course.findMany({
         where: {
             instructorId: {
-                equals: instructorId,
-            },
-        },
+                equals: instructorId
+            }
+        }
     })
+
 }
 
 export const findCoursesWherePurchasedByStudent = async (studentId) => {
@@ -48,16 +50,20 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
         where: {
             purchasedCourse: {
                 studentId: {
-                    equals: studentId,
-                },
-            },
-        },
+                    equals: studentId
+                }
+            }
+        }
     })
+
 }
 
-export const findCoursesSortedByPopularity = async () => { }
+export const findCoursesSortedByPopularity = async () => {
+
+}
 
 export const createNewCourse = async (info) => {
+    console.log(info.topic)
 
     return db.course.create({
         data: {
@@ -69,14 +75,16 @@ export const createNewCourse = async (info) => {
             status: 'Pending',
             approvalStatus: 'Pending',
             instructorId: info.instructorId,
+            imageUrl: info.url,
             topicCourse: {
                 create: info.topicCourse
-            }
+            },
         },
         include: {
-            topicCourse: true
+            topic: true
         }
     })
+
 }
 
 // export const storeNewAccount = async (user) => {
