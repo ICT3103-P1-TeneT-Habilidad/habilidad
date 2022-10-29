@@ -1,46 +1,25 @@
 import db from '../utils/db.js'
 
-export const findAccountByEmail = async (email) => {
-    return db.account.findUnique({
-        where: {
-            email: email,
-        },
-    })
-}
-
-export const storeNewAccount = async (user) => {
-    return db.account.create({
+export const storeNewUser = async (user) => {
+    return db.user.create({
         data: {
-            email: user.email,
             username: user.username,
             password: user.hashedPassword,
+            name: user.name,
+            email: user.email,
             phoneNumber: user.phoneNumber,
-            enabled: true,
-            user: {
-                create: {
-                    name: user.name,
-                    role: user.role,
-                    deActivatedOn: null,
-                    [user.role.toLowerCase()]: {
-                        create: {},
-                    },
-                },
-            },
-        },
-        include: {
-            user: true,
-        },
-    })
+            role: user.role,
+            deactivationDate: null,
+            [user.role.toLowerCase()]: { create: {} }
+        }
+    });
 }
 
-export const findAccountByUsername = async (username) => {
-    return db.account.findUnique({
+export const findUserByUsername = async (username) => {
+    return db.user.findUnique({
         where: {
             username: username,
-        },
-        include: {
-            user: true,
-        },
+        }
     })
 }
 
@@ -74,4 +53,24 @@ export const findUserByEmail = async (email) => {
             email: email,
         },
     })
+}
+
+export const updatePasswordAndDeleteToken = async (user) => {
+    return db.$transaction([
+        db.user.update({
+            where: {
+                userId: user.userId,
+                username: user.username
+            },
+            data: {
+                password: user.hashedPassword,
+            },
+        }),
+        db.emailToken.delete({
+            where: {
+                userId: user.userId,
+            },
+        })
+
+    ])
 }

@@ -1,8 +1,7 @@
 import crypto from 'crypto'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import { findUserbyUserId, findUserByEmail, storeNewUser } from '../services/user.js'
-import { findAccountByUsername, updatePasswordAndDeleteToken } from '../services/account.js'
+import { findUserbyUserId, findUserByEmail, storeNewUser, findUserByUsername } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 
 // import constants
@@ -19,11 +18,11 @@ import { validateEmail, validatePasswords } from '../validations/input.js'
 import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
 
-const generateTokenProcedure = async (account) => {
+const generateTokenProcedure = async (user) => {
     // Generate uuid
     const jti = crypto.randomUUID()
 
-    const userId = account.user.userId
+    const userId = user.userId
 
     // Generate Token
     const { accessToken, refreshToken } = generateTokens(userId, jti)
@@ -52,33 +51,26 @@ export const getUser = async (req, res, next) => {
     }
 }
 
-// export const getUser = async (req, res, next) => {
-//     const users = await prisma.user.findMany();
-//     if(users){
-//         res.status(res_ok).json(users)
-//     }
-// }
-
 export const userLogin = async (req, res, next) => {
     try {
         const { username, password } = req.body
 
         // Verify email
-        const account = await findAccountByUsername(username)
+        const user = await findUserByUsername(username)
 
-        if (!account) {
+        if (!user) {
             throw new Response('Wrong credentials', 'res_unauthorised')
         }
 
         // Verify password
-        const result = verifyPassword(password, account.password)
+        const result = verifyPassword(password, user.password)
 
         if (!result) {
             throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure(account)
+        const { accessToken, refreshToken } = await generateTokenProcedure(user)
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -104,7 +96,7 @@ export const userRegister = async (req, res, next) => {
         }
 
         // check if this username can be used
-        const existingUser = await findAccountByUsername(username)
+        const existingUser = await findUserByUsername(username)
 
         if (existingUser) {
             throw new Response('Email already in use.', 'res_badRequest')
@@ -112,10 +104,10 @@ export const userRegister = async (req, res, next) => {
 
         // Hash password and store to DB
         const hashedPassword = hashText(password, generateSalt(12))
-        const account = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
+        const user = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure(account)
+        const { accessToken, refreshToken } = await generateTokenProcedure(user)
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -159,11 +151,11 @@ export const resetPassword = async (req, res, next) => {
             throw new Response("Invalid link", 'res_internalServer')
         }
 
-        const { accountId, username } = await findUserbyUserId(userId)
+        const { username } = await findUserbyUserId(userId)
 
         // delete token + update password
         const hashedPassword = hashText(password, generateSalt(12))
-        const result = await updatePasswordAndDeleteToken({ accountId, userId, hashedPassword, username })
+        const result = await updatePasswordAndDeleteToken({ userId, hashedPassword, username })
 
         if (result.length > 0) {
             // return result
