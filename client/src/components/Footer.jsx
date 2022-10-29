@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { copyrighted_msg, website_name, year } from '../utils/Constants'
+import { copyrighted_msg, year } from '../utils/Constants'
+import Logo_small from '../assets/habilidad_small_logo.png'
 
 const Footer = () => {
     return (
@@ -31,7 +32,9 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="lg:pr-10 lg:uppercase lg:font-medium hidden lg:inline">
-                    <Link to="/">{website_name}</Link>
+                    <Link to="/">
+                        <img src={Logo_small} alt="small logo" className='object-scale-down h-16'/>
+                    </Link>
                 </div>
             </footer>
             <div className="bg-navbarfooter text-center font-mono">

@@ -5,7 +5,7 @@ export const findAccountByEmail = async (email) => {
         where: {
             email: email,
         },
-    });
+    })
 }
 
 export const storeNewAccount = async (user) => {
@@ -22,17 +22,15 @@ export const storeNewAccount = async (user) => {
                     role: user.role,
                     deActivatedOn: null,
                     [user.role.toLowerCase()]: {
-                        create: {
-
-                        }
-                    }
-                }
-            }
+                        create: {},
+                    },
+                },
+            },
         },
         include: {
-            user: true
-        }
-    });
+            user: true,
+        },
+    })
 }
 
 export const findAccountByUsername = async (username) => {
@@ -41,24 +39,24 @@ export const findAccountByUsername = async (username) => {
             username: username,
         },
         include: {
-            user: true
-        }
-    });
+            user: true,
+        },
+    })
 }
 
 export const findUserbyUserId = async (userId) => {
     return db.user.findUnique({
         where: {
-            userId: userId
-        }
+            userId: userId,
+        },
     })
 }
 
 export const findInstructorIdByUserId = async (userId) => {
     return db.instructor.findUnique({
         where: {
-            userId: userId
-        }
+            userId: userId,
+        },
     })
 }
 
@@ -67,5 +65,13 @@ export const findStudentIdByUserId = async (userId) => {
         where: {
             userId: userId
         }
+    })
+}
+
+export const findUserByEmail = async (email) => {
+    return db.user.findMany({
+        where: {
+            email: email,
+        },
     })
 }

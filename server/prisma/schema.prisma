@@ -1,6 +1,7 @@
 generator client {
    provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
+  previewFeatures = ["transactionApi"]
 }
 
 datasource db {
@@ -8,41 +9,24 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-model Account {
-  accountId      String  @id @default(uuid())
-  email   String @unique
-  phoneNumber Int
-  username String @unique
-  password String
-  user User?
-  enabled Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  passwordHistories PasswordHistories[]
-  @@unique([accountId, email, phoneNumber])
-}
-
 model User {
   userId   String  @id @default(uuid())
-  account   Account @relation(fields: [accountId, email, phoneNumber], references: [accountId, email, phoneNumber])
-  accountId String
+  username String @unique
+  password String
   name String
   email String
   phoneNumber Int
-  deActivatedOn DateTime?
+  deactivationDate DateTime?
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
   role Role
   student Student?
   instructor Instructor?
   moderator Moderator?
-  administrator Administrators?
   rToken RefreshTokens[]
   oToken OtpToken?
   eToken EmailToken?
-  
-
-  @@unique([accountId, email, phoneNumber])
+  @@unique([email, phoneNumber])
 }
 
 model Student{
@@ -50,7 +34,6 @@ model Student{
   user   User @relation(fields: [userId], references: [userId])
   userId String
   transaction Transaction[]
-  purchasedCourse PurchasedCourse[]
   @@unique([userId])
 }
 
@@ -69,16 +52,10 @@ model Moderator{
   @@unique([userId])
 }
 
-model Administrators{
-  administratorId String @id @default(uuid())
-  user User @relation(fields: [userId], references: [userId])
-  userId String
-  @@unique([userId])
-}
-
 model Course{
   courseId String @id @default(uuid()) 
   courseName String
+  imageUrl String
   duration Int
   price Float
   description String
@@ -90,9 +67,8 @@ model Course{
   instructor Instructor @relation(fields: [instructorId], references: [instructorId])
   instructorId String
   courseMaterial CourseMaterial[]
-  topic Topics[]
-  purchasedCourse PurchasedCourse[]
-  // missing topics, approved by
+  transactions Transaction[]
+  topicCourse TopicCourse[]
 }
 
 model CourseMaterial {
@@ -104,41 +80,32 @@ model CourseMaterial {
 
 model Transaction {
   transactionId String @id @default(uuid())
+  amountPaid Float
   status Status
   createdOn DateTime @default(now())
   student Student @relation(fields: [studentId], references: [studentId])
   studentId String
-  purchasedCourse PurchasedCourse[]
-}
-
-model PurchasedCourse {
-  courseMaterialId String @id @default(uuid())
-  transactionId String
-  courseId String
-  studentId String
-  student Student @relation(fields: [studentId], references: [studentId])
   course Course @relation(fields: [courseId], references: [courseId])
-  transaction Transaction @relation(fields: [transactionId], references: [transactionId])
-  @@unique([transactionId, courseId, studentId])
+  courseId String
 }
 
 model Topics {
   topicId String @id @default(uuid())
   topicName String
   description String
-  course Course @relation(fields: [courseId], references: [courseId])
-  courseId String
+  url String
+  topicCourse TopicCourse[]
 }
 
-model PasswordHistories {
-  id           String  @id @default(uuid())
-  passwordHash String
-  enabled      Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Accounts   Account @relation(fields: [accountsId], references: [accountId])
-  accountsId String
-  @@unique([accountsId, passwordHash])
+model TopicCourse{
+  topicCourseId String @id @default(uuid())
+  course Course @relation(fields: [courseId], references: [courseId])
+  courseId String
+  topics Topics @relation(fields: [topicId], references: [topicId])
+  topicId String
+  @@unique([courseId, topicId])
+
+
 }
 
 model RefreshTokens {
@@ -177,7 +144,6 @@ enum Role {
   Instructor
   Moderator
   Employees
-  Administrators
 }
 
 enum Language {
@@ -190,14 +156,6 @@ enum Language {
   Malay
 }
 
-// enum Status {
-//   Pending   // Waiting to be approved
-//   Approved // Approved but not avaiable to public
-//   Declined  // Course is declined
-//   Ongoing   // Approved and content is avaialble to subscribers
-//   Stopped   //Approved but content not available to anyone
-// }
-
 enum Status {
   InProgress
   Pending
@@ -206,36 +164,3 @@ enum Status {
   Ongoing
   Started
 }
-
-// model Products {
-//   id          String @id @default(uuid())
-//   name        String @unique
-//   description String
-//   quantity    Int    @default(1)
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   createdBy   AdminAccounts @relation(fields: [createdById], references: [id])
-//   createdById String
-// }
-
-// model ClientAccounts {
-//   id            String @id @default(uuid())
-//   firstName     String
-//   lastName      String
-//   contactNumber Int
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   account   Accounts @relation(fields: [accountId], references: [id])
-//   accountId String   @unique
-// }
-
-// model AdminAccounts {
-//   id        String   @id @default(uuid())
-//   account   Accounts @relation(fields: [accountId], references: [id])
-//   accountId String   @unique
-//   firstName String
-//   lastName  String
-//   createdAt DateTime   @default(now())
-//   updatedAt DateTime   @updatedAt
-//   Products  Products[]
-// }
