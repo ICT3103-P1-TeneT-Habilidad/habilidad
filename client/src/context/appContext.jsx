@@ -20,6 +20,9 @@ import {
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
+    GET_ALL_COURSES_BEGIN,
+    GET_ALL_COURSES_SUCCESS,
+    // GET_ALL_COURSES_ERROR,
 } from './action'
 
 const token = localStorage.getItem('token')
@@ -38,6 +41,7 @@ export const initialState = {
     user_type: '',
     alert_msg: '',
     alert_type: '',
+    courses: {},
 }
 
 const AppContext = React.createContext()
@@ -102,7 +106,7 @@ const AppProvider = ({ children }) => {
     const setUser = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            const { data } = await axios.post(`api/users/login`, user_data)
+            const { data } = await axios.post(`/api/users/login`, user_data)
             const { result, token } = data
             console.log(data)
             dispatch({
@@ -116,6 +120,11 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.error.message },
             })
         }
+    }
+
+    const logout = () => {
+        dispatch({ type: LOGOUT })
+        removeUserFromLocalStorage()
     }
 
     const createUser = async (user_data) => {
@@ -133,9 +142,18 @@ const AppProvider = ({ children }) => {
         }
     }
 
-    const logout = () => {
-        dispatch({ type: LOGOUT })
-        removeUserFromLocalStorage()
+    const getAllCourses = async () => {
+        dispatch({ type: GET_ALL_COURSES_BEGIN })
+        try {
+            const { data } = await authFetch.get(`/api/course/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_COURSES_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
@@ -148,6 +166,7 @@ const AppProvider = ({ children }) => {
                 setUser,
                 logout,
                 createUser,
+                getAllCourses
             }}
         >
             {children}
