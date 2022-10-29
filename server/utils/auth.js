@@ -14,7 +14,6 @@ export const verifyPassword = (password, dbPassword) => {
 
 export const verifyAccessToken = (token) => {
     jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, user) => {
-
         if (err) return res.sendStatus(403)
 
         req.user = user

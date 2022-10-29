@@ -1,7 +1,16 @@
 import express from 'express'
+// import controllers
 import { isAuthenticate } from '../controllers/auth.js'
-
-import { getUser, userLogin, userLogout, userRegister, updateUser, sendEmailResetLink, resetPassword } from '../controllers/users.js'
+import {
+    getUser,
+    userLogin,
+    userLogout,
+    userRegister,
+    updateUser,
+    validateEmailAndPassword,
+    sendEmailResetLink,
+    resetPassword
+} from '../controllers/users.js'
 
 const router = express.Router()
 
@@ -10,8 +19,6 @@ router.route('/').get(isAuthenticate, getUser)
 
 // Update user detail
 router.route('/update').post(updateUser)
-
-// Delete user account
 
 // login
 router.route('/login').post(userLogin)
