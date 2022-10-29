@@ -1,4 +1,4 @@
-import { responseCode } from "./responseCode.js"
+import { responseCode } from './responseCode.js'
 
 export class Response extends Error {
     constructor(message, resCode) {

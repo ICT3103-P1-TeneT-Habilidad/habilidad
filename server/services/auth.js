@@ -1,6 +1,6 @@
 import db from '../utils/db.js'
 import { hashToken } from '../utils/hash.js'
-import { decodeToken } from '../utils/jwt.js';
+import { decodeToken } from '../utils/jwt.js'
 
 // used when we create a refresh token.
 export const addRefreshTokenToWhitelist = ({ jti, refreshToken, userId }) => {
@@ -8,9 +8,9 @@ export const addRefreshTokenToWhitelist = ({ jti, refreshToken, userId }) => {
         data: {
             token: hashToken(refreshToken),
             userId: userId,
-            expiredAt: new Date(decodeToken(refreshToken, 1).exp)
+            expiredAt: new Date(decodeToken(refreshToken, 1).exp),
         },
-    });
+    })
 }
 
 // used to check if the token sent by the client is in the database.
@@ -19,7 +19,7 @@ function findRefreshTokenById(id) {
         where: {
             id,
         },
-    });
+    })
 }
 
 // soft delete tokens after usage.
@@ -29,18 +29,18 @@ function deleteRefreshToken(id) {
             id,
         },
         data: {
-            revoked: true
-        }
-    });
+            revoked: true,
+        },
+    })
 }
 
 function revokeTokens(userId) {
     return db.refreshTokens.updateMany({
         where: {
-            userId
+            userId,
         },
         data: {
-            revoked: true
-        }
-    });
+            revoked: true,
+        },
+    })
 }

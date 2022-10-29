@@ -1,19 +1,23 @@
 import crypto from 'crypto'
-import { Response } from '../utils/response.js'
-// import utils
-import { decodeToken, generateTokens } from '../utils/jwt.js'
-import { responseCode } from '../utils/responseCode.js'
-import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
-import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/auth.js'
-import { findUserbyUserId, findUserByEmail } from '../services/user.js'
-import { findAccountByUsername, storeNewAccount, updatePasswordAndDeleteToken } from '../services/account.js'
+import { findUserbyUserId, findUserByEmail, storeNewUser } from '../services/user.js'
+import { findAccountByUsername, updatePasswordAndDeleteToken } from '../services/account.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
+
 // import constants
 import { email_template } from '../constants.js'
 import jwt from 'jsonwebtoken'
-import { prismaTransactions } from '../utils/db.js'
+
+// import middleware
+import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
+import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
+import { generateTokens } from '../utils/jwt.js'
+// import validations
+import { validateEmail, validatePasswords } from '../validations/input.js'
+// import Responses
+import { responseCode } from '../responses/responseCode.js'
+import { Response } from '../responses/response.js'
 
 const generateTokenProcedure = async (account) => {
     // Generate uuid
@@ -108,7 +112,7 @@ export const userRegister = async (req, res, next) => {
 
         // Hash password and store to DB
         const hashedPassword = hashText(password, generateSalt(12))
-        const account = await storeNewAccount({ email, hashedPassword, username, phoneNumber, name, role })
+        const account = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
 
         // Process of generating tokens
         const { accessToken, refreshToken } = await generateTokenProcedure(account)
@@ -142,6 +146,7 @@ export const resetPassword = async (req, res, next) => {
         jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
 
             if (err) throw new Response('Token invalid', 'res_forbidden')
+            const token = decodeEmailToken(req.params.token)
 
             userId = user.userId
 
@@ -223,4 +228,19 @@ export const sendEmailResetLink = async (req, res) => {
     } catch (err) {
         next(err)
     }
+}
+export const validateEmailAndPassword = async (req, res, next) => {
+    await Promise.all([validateEmail(req), validatePasswords(req)])
+        .then((value) => {
+            req.validate = {
+                status: true,
+            }
+        })
+        .catch((reject) => {
+            req.validate = {
+                status: false,
+                message: reject,
+            }
+        })
+    next()
 }
