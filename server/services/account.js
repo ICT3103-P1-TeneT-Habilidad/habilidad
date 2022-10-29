@@ -1,16 +1,5 @@
 import db from '../utils/db.js'
 
-export const updatePassword = async (user,hashedPassword) => {
-    return db.account.update({
-        where: {
-            username: user.username,
-        },
-        data: {
-            password: hashedPassword,
-        },
-    })
-}
-
 export const findAccountByUsername = async (username) => {
     return db.account.findUnique({
         where: {
