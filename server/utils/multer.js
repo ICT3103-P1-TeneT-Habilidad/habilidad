@@ -11,7 +11,7 @@ const whiteListFileExtension = [
 
 const storage = multer.memoryStorage()
 
-export const courseImageUpload = multer({
+export const imageUpload = multer({
     storage: multer.diskStorage({
         storage
     }),
@@ -24,7 +24,7 @@ export const courseImageUpload = multer({
         }
         cb(null, true)
     }
-}).single('courseImage')
+}).single('image')
 
 export const courseUpload = multer({
     storage: multer.diskStorage({
