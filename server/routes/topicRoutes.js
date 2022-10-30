@@ -1,10 +1,7 @@
 import express from 'express'
 // import controllers
-import { isAuthenticate } from '../controllers/auth.js'
-import {
-    getAllTopics,
-    createTopic
-} from '../controllers/topic.js'
+import { isAuthenticate } from '../controllers/authController.js'
+import { getAllTopics, createTopic } from '../controllers/topicController.js'
 import { imageUpload } from '../utils/multer.js'
 
 const router = express.Router()

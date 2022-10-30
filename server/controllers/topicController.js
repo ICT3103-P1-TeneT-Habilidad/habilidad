@@ -18,7 +18,7 @@ export const getAllTopics = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                topics
+                topics,
             },
         })
     } catch (err) {
@@ -38,7 +38,7 @@ export const createTopic = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                topic
+                topic,
             },
         })
     } catch (err) {

@@ -9,8 +9,7 @@ export const createNewTopic = async (topic) => {
         data: {
             topicName: topic.topicName,
             description: topic.description,
-            url: topic.url
-        }
+            url: topic.url,
+        },
     })
-
 }

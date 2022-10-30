@@ -102,3 +102,14 @@ export const findAllCourses = async () => {
 //         }
 //     });
 // }
+
+export const updateCourseApprovalStatus = async () => {
+    return db.course.update({
+        where: {
+            couseId: data.courseId,
+        },
+        data: {
+            approvalStatus: 'APPROVED',
+        },
+    })
+}

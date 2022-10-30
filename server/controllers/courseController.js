@@ -1,5 +1,4 @@
 import { responseCode } from '../responses/responseCode.js'
-import { Response } from '../responses/response.js'
 // import services
 import {
     createNewCourse,
@@ -9,6 +8,7 @@ import {
     findCoursesWhereSubscribable,
     findCourseDetail,
     findAllCourses,
+    updateCourseApprovalStatus
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
@@ -108,7 +108,7 @@ export const getPopularCourses = async (req, res, next) => {}
 /**
  * create new courses (instructor)
  */
-export const createNewCourse = async (req, res, next) => {
+export const instructorCreateCourse = async (req, res, next) => {
     try {
         const courseImage = req.file
 
@@ -131,6 +131,17 @@ export const createNewCourse = async (req, res, next) => {
             topicCourse: JSON.parse(topicCourse),
             imageUrl: uploadResult.secure_url,
         })
+
+        res.status(responseCode.res_ok).json({ result })
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const approveCourse = async (req, res, next) => {
+    try {
+        const { courseId } = req.body
+        const result = await updateCourseApprovalStatus()
 
         res.status(responseCode.res_ok).json({ result })
     } catch (err) {

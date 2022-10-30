@@ -1,6 +1,6 @@
 import express from 'express'
 // import controllers
-import { isAuthenticate } from '../controllers/auth.js'
+import { isAuthenticate } from '../controllers/authController.js'
 import {
     getAllUsers,
     getOneUser,
@@ -11,7 +11,7 @@ import {
     validateEmailAndPassword,
     sendEmailResetLink,
     resetPassword,
-} from '../controllers/users.js'
+} from '../controllers/usersController.js'
 
 const router = express.Router()
 

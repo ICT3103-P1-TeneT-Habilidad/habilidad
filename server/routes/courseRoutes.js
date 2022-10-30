@@ -1,6 +1,6 @@
 import express from 'express'
 // import controllers
-import { isAuthenticate } from '../controllers/auth.js'
+import { isAuthenticate } from '../controllers/authController.js'
 import {
     getCourseDetail,
     getAllCourses,
@@ -8,8 +8,9 @@ import {
     getCoursesPurchasedByStudent,
     getCoursesInTopCategories,
     getPopularCourses,
-    createCourse,
-} from '../controllers/course.js'
+    instructorCreateCourse,
+    approveCourse,
+} from '../controllers/courseController.js'
 import { imageUpload } from '../utils/multer.js'
 
 const router = express.Router()
@@ -33,6 +34,9 @@ router.route('/topCategories').get(getCoursesInTopCategories)
 router.route('/popularCourses').get(getPopularCourses)
 
 // create new course (instructor)
-router.route('/create').post(isAuthenticate, imageUpload, createCourse)
+router.route('/create').post(isAuthenticate, imageUpload, instructorCreateCourse)
+
+// approve course
+router.route('/approveCourse').patch(approveCourse)
 
 export default router
