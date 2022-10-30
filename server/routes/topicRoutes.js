@@ -5,6 +5,7 @@ import {
     allTopic,
     createTopic
 } from '../controllers/topic.js'
+import { imageUpload } from '../utils/multer.js'
 
 const router = express.Router()
 
@@ -12,6 +13,6 @@ const router = express.Router()
 router.route('/').get(isAuthenticate, allTopic)
 
 // Create new topic
-router.route('/create').post(isAuthenticate, createTopic)
+router.route('/create').post(isAuthenticate, imageUpload, createTopic)
 
 export default router
