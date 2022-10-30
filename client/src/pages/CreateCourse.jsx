@@ -1,17 +1,16 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../utils/Constants'
-// import { NewCourseMaterial } from '../components'
 import { v4 as uuid } from 'uuid'
 
 const CreateCourse = () => {
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
-    const [selectedFile, setSelectedFile] = useState({})
+    const [materialInfo, setMaterialInfo] = useState({})
     const [keysList, setKeysList] = useState([])
-    const [newCourseMaterialComponent, setNewCourseMaterialComponent] = useState({})
+    const [materialComponents, setMaterialComponents] = useState({})
     const topicOptions = languageOptions // get list from get all topics API
 
     const {
@@ -23,30 +22,87 @@ const CreateCourse = () => {
         mode: 'onBlur',
     })
 
+    const currentKeyList = useRef({})
+    currentKeyList.current = keysList
+
+    const currentMaterialComponents = useRef({})
+    currentMaterialComponents.current = materialComponents
+
+    const currentMaterialInfo = useRef({})
+    currentMaterialInfo.current = materialInfo
+
     useEffect(() => {
-        console.log('component: ', newCourseMaterialComponent)
-        console.log('files: ', selectedFile)
-        console.log('keys: ', keysList)
         checkEmptyUpload()
     })
 
     const NewCourseMaterial = ({ keyId }) => {
-        console.log(keyId)
         return (
-            <input
-                type="file"
-                onChange={(e) => {
-                    fileHandler(e.target.files[0], keyId)
-                }}
-                hidden
-            />
+            <>
+                <div className="flex flex-row w-full">
+                    <div className="w-10/12 p-3">
+                        <label
+                            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                            for={keyId}
+                        >
+                            Material Title
+                        </label>
+                        <Controller
+                            name={keyId}
+                            control={control}
+                            rules={{
+                                required: 'Please enter the title of the video',
+                            }}
+                            render={({ field }) => {
+                                return (
+                                    <input
+                                        {...field}
+                                        className="w-full border border-slate-300 rounded-md p-2"
+                                        id="materialTitle"
+                                        type="text"
+                                        onBlur={(e) => {
+                                            titleChangeHandler(e.target.value, keyId)
+                                        }}
+                                    />
+                                )
+                            }}
+                        />
+                        {errors[keyId] ? <span className="text-sm text-red-500">{errors[keyId].message}</span> : null}
+                    </div>
+                </div>
+                <div className="flex flex-row w-full">
+                    <div className="flex flex-col w-10/12 p-3">
+                        <label className="w-full border border-slate-300 rounded-md p-2 text-center">
+                            {currentMaterialInfo.current[keyId]['file']
+                                ? currentMaterialInfo.current[keyId]['file'].name
+                                : 'Choose a file to upload'}
+                            <input
+                                type="file"
+                                onChange={(e) => {
+                                    fileHandler(e.target.files[0], keyId)
+                                }}
+                                hidden
+                            />
+                        </label>
+                    </div>
+                    <div className="flex flex-col p-3">
+                        <button
+                            className="shadow focus:shadow-outline focus:outline-none bg-accent1 font-bold py-2 px-4 rounded"
+                            type="button"
+                            onClick={() => removeComponent(keyId)}
+                        >
+                            Remove
+                        </button>
+                    </div>
+                </div>
+                <hr />
+            </>
         )
     }
 
     const checkEmptyUpload = () => {
         setEmptyUpload(false)
-        Object.values(selectedFile).forEach((file) => {
-            if (file === null) {
+        Object.values(currentMaterialInfo.current).forEach((element) => {
+            if (element['file'] === null || element['title'] === null || element['title'] === '') {
                 setEmptyUpload(true)
             }
         })
@@ -57,53 +113,46 @@ const CreateCourse = () => {
     }
 
     const addComponent = () => {
-        if (!emptyUpload) {
-            const keyId = uuid()
-            setKeysList([...keysList, keyId])
-            setSelectedFile({ ...selectedFile, [keyId]: null })
-            setNewCourseMaterialComponent({
-                ...newCourseMaterialComponent,
-                [keyId]: <NewCourseMaterial keyId={keyId} />,
-                // [keyId]: <NewCourseMaterial fileHandler={fileHandler} keyId={keyId} />,
-            })
-            console.log('Addition: ', keyId)
-            setEmptyUpload(true)
-        }
-    }
-
-    const createCourseMaterial = () => {
         const keyId = uuid()
-        setKeysList([keyId])
-        setSelectedFile({ [keyId]: null })
-        setNewCourseMaterialComponent({
+        setKeysList([...keysList, keyId])
+        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: null } })
+        setMaterialComponents({
+            ...materialComponents,
             [keyId]: <NewCourseMaterial keyId={keyId} />,
-            // [keyId]: <NewCourseMaterial fileHandler={fileHandler} keyId={keyId} />,
         })
+        setEmptyUpload(true)
     }
 
     const removeComponent = (keyId) => {
-        console.log('Removal: ', keyId)
-        setNewCourseMaterialComponent((current) => {
+        setMaterialComponents((current) => {
             const copy = { ...current }
             delete copy[keyId]
             return copy
         })
-        setSelectedFile((current) => {
+        setMaterialInfo((current) => {
             const copy = { ...current }
             delete copy[keyId]
             return copy
         })
         setKeysList(keysList.filter((index) => index !== keyId))
-        setEmptyUpload(false)
+        checkEmptyUpload()
     }
 
     const fileHandler = (file, keyId) => {
-        setSelectedFile({ ...selectedFile, [keyId]: file })
+        const changed = currentMaterialInfo.current[keyId]
+        changed['file'] = file
+        setMaterialInfo({ ...currentMaterialInfo.current, [keyId]: changed })
         setEmptyUpload(false)
-        setNewCourseMaterialComponent({
-            ...newCourseMaterialComponent,
-            [keyId]: <NewCourseMaterial fileHandler={fileHandler} keyId={keyId} file={selectedFile[keyId]} />,
+        setMaterialComponents({
+            ...currentMaterialComponents.current,
+            [keyId]: <NewCourseMaterial keyId={keyId} />,
         })
+    }
+
+    const titleChangeHandler = (title, keyId) => {
+        const changed = currentMaterialInfo.current[keyId]
+        changed['title'] = title
+        setMaterialInfo({ ...currentMaterialInfo.current, [keyId]: changed })
     }
 
     return (
@@ -139,20 +188,20 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="courseDuration"
+                                        for="duration"
                                     >
                                         Course Duration (in hours)
                                     </label>
                                     <input
                                         className="w-full border border-slate-300 rounded-md p-2"
-                                        id="courseDuration"
+                                        id="duration"
                                         type="number"
-                                        {...register('courseDuration', {
+                                        {...register('duration', {
                                             required: 'Please enter how long it will take to complete the course',
                                         })}
                                     />
-                                    {errors.courseDuration ? (
-                                        <span className="text-sm text-red-500">{errors.courseDuration.message}</span>
+                                    {errors.duration ? (
+                                        <span className="text-sm text-red-500">{errors.duration.message}</span>
                                     ) : null}
                                 </div>
                             </div>
@@ -190,20 +239,20 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="coursePrice"
+                                        for="price"
                                     >
                                         Course Price (in SGD)
                                     </label>
                                     <input
                                         className="w-full border border-slate-300 rounded-md p-2"
-                                        id="coursePrice"
+                                        id="price"
                                         type="number"
-                                        {...register('coursePrice', {
+                                        {...register('price', {
                                             required: 'Please enter how long it will take to complete the course',
                                         })}
                                     />
-                                    {errors.coursePrice ? (
-                                        <span className="text-sm text-red-500">{errors.coursePrice.message}</span>
+                                    {errors.price ? (
+                                        <span className="text-sm text-red-500">{errors.price.message}</span>
                                     ) : null}
                                 </div>
                             </div>
@@ -213,12 +262,12 @@ const CreateCourse = () => {
                             <div className="p-3 w-full">
                                 <label
                                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                    for="topics"
+                                    for="topicCourse"
                                 >
                                     Relevant Topics
                                 </label>
                                 <Controller
-                                    name="topics"
+                                    name="topicCourse"
                                     control={control}
                                     rules={{
                                         required: 'Please select up to 5 topics relevant to this course',
@@ -241,8 +290,8 @@ const CreateCourse = () => {
                                         )
                                     }}
                                 />
-                                {errors.topics ? (
-                                    <span className="text-sm text-red-500">{errors.topics.message}</span>
+                                {errors.topicCourse ? (
+                                    <span className="text-sm text-red-500">{errors.topicCourse.message}</span>
                                 ) : null}
                             </div>
                         </div>
@@ -251,64 +300,42 @@ const CreateCourse = () => {
                             <div className="p-3 w-full">
                                 <label
                                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                    for="courseDesc"
+                                    for="courseDescription"
                                 >
                                     Description
                                 </label>
                                 <textarea
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    id="courseDesc"
-                                    {...register('courseDesc', {
+                                    id="courseDescription"
+                                    {...register('courseDescription', {
                                         required: 'Please enter a short description of the course',
                                     })}
                                 />
-                                {errors.courseDesc ? (
-                                    <span className="text-sm text-red-500">{errors.courseDesc.message}</span>
+                                {errors.courseDescription ? (
+                                    <span className="text-sm text-red-500">{errors.courseDescription.message}</span>
                                 ) : null}
                             </div>
                         </div>
+                        <hr className="p-3" />
                         {/* course materials section */}
                         <div className="flex flex-col w-full">
-                            <div className="flex flex-row">
-                                <div className="flex flex-col w-2/3">
-                                    <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
-                                </div>
-                                <div className="flex flex-col ">
+                            <div className="flex flex-row p-3">
+                                <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
+                            </div>
+                            {keysList.length === 0
+                                ? addComponent()
+                                : keysList.map((keyId) => <div id={keyId}>{materialComponents[keyId]}</div>)}
+                            <div className="flex flex-row p-3">
+                                {!emptyUpload ? (
                                     <button
-                                        disabled={emptyUpload}
                                         className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
                                         type="button"
                                         onClick={() => addComponent()}
                                     >
                                         Add Material
                                     </button>
-                                </div>
+                                ) : null}
                             </div>
-                            {keysList.length === 0
-                                ? createCourseMaterial()
-                                : keysList.map((keyId) => (
-                                      <div className="flex flex-row w-full pt-5" id={keyId}>
-                                          <div className="flex flex-col w-10/12">
-                                              <label className="border-2 font-bold py-2 px-4 rounded text-center cursor-pointer mr-10">
-                                                  {selectedFile[keyId]
-                                                      ? selectedFile[keyId].name
-                                                      : 'Choose a file to upload'}
-                                                  {newCourseMaterialComponent[keyId]}
-                                              </label>
-                                          </div>
-                                          {keysList.length > 1 ? (
-                                              <div className="flex flex-col">
-                                                  <button
-                                                      className="shadow focus:shadow-outline focus:outline-none bg-accent1 font-bold py-2 px-4 rounded"
-                                                      type="button"
-                                                      onClick={() => removeComponent(keyId)}
-                                                  >
-                                                      Remove
-                                                  </button>
-                                              </div>
-                                          ) : null}
-                                      </div>
-                                  ))}
                         </div>
                         {/* button row */}
                         <div className="flex flex-row pt-5">
