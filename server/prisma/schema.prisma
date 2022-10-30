@@ -1,7 +1,7 @@
 generator client {
-   provider      = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
-  previewFeatures = ["transactionApi"]
+  // previewFeatures = ["transactionApi"]
 }
 
 datasource db {
@@ -26,6 +26,7 @@ model User {
   rToken RefreshTokens[]
   oToken OtpToken?
   eToken EmailToken?
+  enabled Boolean @default(false)
   @@unique([email, phoneNumber])
 }
 
@@ -60,8 +61,8 @@ model Course{
   price Float
   description String
   language Language
-  status Status
-  approvalStatus Status
+  status CourseStatus
+  approvalStatus ApprovedStatus
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
   instructor Instructor @relation(fields: [instructorId], references: [instructorId])
@@ -81,7 +82,6 @@ model CourseMaterial {
 model Transaction {
   transactionId String @id @default(uuid())
   amountPaid Float
-  status Status
   createdOn DateTime @default(now())
   student Student @relation(fields: [studentId], references: [studentId])
   studentId String
@@ -104,8 +104,6 @@ model TopicCourse{
   topics Topics @relation(fields: [topicId], references: [topicId])
   topicId String
   @@unique([courseId, topicId])
-
-
 }
 
 model RefreshTokens {
@@ -139,28 +137,29 @@ model EmailToken {
 }
 
 enum Role {
-  User
-  Student
-  Instructor
-  Moderator
-  Employees
+  STUDENT
+  INSTRUCTOR
+  MODERATOR
 }
 
 enum Language {
-  Chinese
-  English
-  French
-  Indian
-  Japanese
-  Korean
-  Malay
+  CHINESE
+  ENGLISH
+  FRENCH
+  INDIAN
+  JAPANESE
+  KOREAN
+  MALAY
 }
 
-enum Status {
-  InProgress
-  Pending
-  Completed
-  Approved
-  Ongoing
-  Started
+enum ApprovedStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CourseStatus {
+  INPROGRESS
+  COMPLETED
+  STARTED
 }
