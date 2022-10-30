@@ -1,13 +1,17 @@
 import React from 'react'
 
-const NewCourseMaterial = (index) => {
-
-    console.log(index)
+const NewCourseMaterial = ({ fileHandler, keyId }) => {
 
     return (
-        <div>
-            <h1>Material</h1>
-        </div>
+        <>
+            <input
+                type="file"
+                onChange={(e) => {
+                    fileHandler(e.target.files[0], keyId)
+                }}
+                hidden
+            />
+        </>
     )
 }
 

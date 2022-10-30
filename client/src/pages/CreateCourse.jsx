@@ -1,14 +1,18 @@
-import { React, useState } from 'react'
+import { React, useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../utils/Constants'
-import { NewCourseMaterial } from '../components'
+// import { NewCourseMaterial } from '../components'
+import { v4 as uuid } from 'uuid'
 
 const CreateCourse = () => {
     const animatedComponents = makeAnimated()
-    // const [componentCounter, setComponentCounter] = useState(1)
-    const [newCourseMaterialComponent, setNewCourseMaterialComponent] = useState([<NewCourseMaterial />])
+    const [emptyUpload, setEmptyUpload] = useState(true)
+    const [selectedFile, setSelectedFile] = useState({})
+    const [keysList, setKeysList] = useState([])
+    const [newCourseMaterialComponent, setNewCourseMaterialComponent] = useState({})
+    const topicOptions = languageOptions // get list from get all topics API
 
     const {
         register,
@@ -19,21 +23,87 @@ const CreateCourse = () => {
         mode: 'onBlur',
     })
 
-    const topicOptions = languageOptions // get list from get all topics API
+    useEffect(() => {
+        console.log('component: ', newCourseMaterialComponent)
+        console.log('files: ', selectedFile)
+        console.log('keys: ', keysList)
+        checkEmptyUpload()
+    })
+
+    const NewCourseMaterial = ({ keyId }) => {
+        console.log(keyId)
+        return (
+            <input
+                type="file"
+                onChange={(e) => {
+                    fileHandler(e.target.files[0], keyId)
+                }}
+                hidden
+            />
+        )
+    }
+
+    const checkEmptyUpload = () => {
+        setEmptyUpload(false)
+        Object.values(selectedFile).forEach((file) => {
+            if (file === null) {
+                setEmptyUpload(true)
+            }
+        })
+    }
 
     const onSubmit = (data) => {
         console.log(data)
     }
 
     const addComponent = () => {
-        setNewCourseMaterialComponent([...newCourseMaterialComponent, <NewCourseMaterial />])
-        // setComponentCounter(componentCounter + 1)
+        if (!emptyUpload) {
+            const keyId = uuid()
+            setKeysList([...keysList, keyId])
+            setSelectedFile({ ...selectedFile, [keyId]: null })
+            setNewCourseMaterialComponent({
+                ...newCourseMaterialComponent,
+                [keyId]: <NewCourseMaterial keyId={keyId} />,
+                // [keyId]: <NewCourseMaterial fileHandler={fileHandler} keyId={keyId} />,
+            })
+            console.log('Addition: ', keyId)
+            setEmptyUpload(true)
+        }
     }
 
-    const removeComponent = (i) => {
-        setNewCourseMaterialComponent(newCourseMaterialComponent.filter(
-            (_, index) => (index !== i)
-        ))
+    const createCourseMaterial = () => {
+        const keyId = uuid()
+        setKeysList([keyId])
+        setSelectedFile({ [keyId]: null })
+        setNewCourseMaterialComponent({
+            [keyId]: <NewCourseMaterial keyId={keyId} />,
+            // [keyId]: <NewCourseMaterial fileHandler={fileHandler} keyId={keyId} />,
+        })
+    }
+
+    const removeComponent = (keyId) => {
+        console.log('Removal: ', keyId)
+        setNewCourseMaterialComponent((current) => {
+            const copy = { ...current }
+            delete copy[keyId]
+            return copy
+        })
+        setSelectedFile((current) => {
+            const copy = { ...current }
+            delete copy[keyId]
+            return copy
+        })
+        setKeysList(keysList.filter((index) => index !== keyId))
+        setEmptyUpload(false)
+    }
+
+    const fileHandler = (file, keyId) => {
+        setSelectedFile({ ...selectedFile, [keyId]: file })
+        setEmptyUpload(false)
+        setNewCourseMaterialComponent({
+            ...newCourseMaterialComponent,
+            [keyId]: <NewCourseMaterial fileHandler={fileHandler} keyId={keyId} file={selectedFile[keyId]} />,
+        })
     }
 
     return (
@@ -198,36 +268,48 @@ const CreateCourse = () => {
                             </div>
                         </div>
                         {/* course materials section */}
-                        <div className="flex flex-row">
-                            <div className="flex flex-col w-2/3">
-                                <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
+                        <div className="flex flex-col w-full">
+                            <div className="flex flex-row">
+                                <div className="flex flex-col w-2/3">
+                                    <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
+                                </div>
+                                <div className="flex flex-col ">
+                                    <button
+                                        disabled={emptyUpload}
+                                        className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                                        type="button"
+                                        onClick={() => addComponent()}
+                                    >
+                                        Add Material
+                                    </button>
+                                </div>
                             </div>
-                            <div className="flex flex-col">
-                                <button
-                                    className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                                    type="button"
-                                    onClick={() => addComponent()}
-                                >
-                                    Add Material
-                                </button>
-                            </div>
+                            {keysList.length === 0
+                                ? createCourseMaterial()
+                                : keysList.map((keyId) => (
+                                      <div className="flex flex-row w-full pt-5" id={keyId}>
+                                          <div className="flex flex-col w-10/12">
+                                              <label className="border-2 font-bold py-2 px-4 rounded text-center cursor-pointer mr-10">
+                                                  {selectedFile[keyId]
+                                                      ? selectedFile[keyId].name
+                                                      : 'Choose a file to upload'}
+                                                  {newCourseMaterialComponent[keyId]}
+                                              </label>
+                                          </div>
+                                          {keysList.length > 1 ? (
+                                              <div className="flex flex-col">
+                                                  <button
+                                                      className="shadow focus:shadow-outline focus:outline-none bg-accent1 font-bold py-2 px-4 rounded"
+                                                      type="button"
+                                                      onClick={() => removeComponent(keyId)}
+                                                  >
+                                                      Remove
+                                                  </button>
+                                              </div>
+                                          ) : null}
+                                      </div>
+                                  ))}
                         </div>
-                        {newCourseMaterialComponent.map((component, index) => (
-                            <div className="felx flex-row w-full">
-                                <div className="flex flex-col w-1/3">{component}</div>
-                                {newCourseMaterialComponent.length > 1 ? (
-                                    <div className="felx flex-col w-1/3">
-                                        <button
-                                            className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                                            type="button"
-                                            onClick={() => removeComponent(index)}
-                                        >
-                                            Remove Material
-                                        </button>
-                                    </div>
-                                ) : null}
-                            </div>
-                        ))}
                         {/* button row */}
                         <div className="flex flex-row pt-5">
                             <div className="flex items-center justify-between">
