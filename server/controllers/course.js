@@ -6,17 +6,16 @@ import {
     findCoursesWhereCreatedByInstructor,
     findCoursesWherePurchasedByStudent,
     findCoursesWhereSubscribable,
-    findCourseDetail
+    findCourseDetail,
 } from '../services/course.js'
-import { findInstructorIdByUserId, findStudentIdByUserId } from '../services/user.js'
+import { findInstructorIdByUserId } from '../services/instructor.js'
+import { findStudentIdByUserId } from '../services/student.js'
 import cloudinary from '../utils/cloudinary.js'
 import { Response } from '../responses/response.js'
 import fs from 'fs'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
-
-
 
 export const getCourseDetail = async (req, res, next) => {
     try {

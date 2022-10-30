@@ -31,22 +31,6 @@ export const findUserbyUserId = async (userId) => {
     })
 }
 
-export const findInstructorIdByUserId = async (userId) => {
-    return db.instructor.findUnique({
-        where: {
-            userId: userId,
-        },
-    })
-}
-
-export const findStudentIdByUserId = async (userId) => {
-    return db.student.findUnique({
-        where: {
-            userId: userId
-        }
-    })
-}
-
 export const findUserByEmail = async (email) => {
     return db.user.findMany({
         where: {
