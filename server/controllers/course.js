@@ -10,7 +10,9 @@ import {
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
-
+import cloudinary from '../utils/cloudinary.js'
+import { Response } from '../responses/response.js'
+import fs from 'fs'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -88,27 +90,35 @@ export const purchasedCourses = async (req, res, next) => {
     }
 }
 
-export const topCategories = async (req, res, next) => {}
+export const topCategories = async (req, res, next) => { }
 
-export const popularCourses = async (req, res, next) => {}
+export const popularCourses = async (req, res, next) => { }
 
 export const addNewCourse = async (req, res, next) => {
     try {
-        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topic } = req.body
+
+        const courseImage = req.file
+
+        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } = req.body
 
         const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
 
+        const uploadResult = await cloudinary.uploader.upload(courseImage.path)
+        fs.unlinkSync(courseImage.path)
+
         const result = await createNewCourse({
             courseName,
-            duration,
-            price,
+            duration: parseInt(duration),
+            price: parseFloat(price),
             courseDescription,
             language,
             status,
             approvalStatus,
             instructorId,
-            topic,
+            topicCourse: JSON.parse(topicCourse),
+            imageUrl: uploadResult.secure_url
         })
+
         res.status(responseCode.res_ok).json({ result })
     } catch (err) {
         next(err)
