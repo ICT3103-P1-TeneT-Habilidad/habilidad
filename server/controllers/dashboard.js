@@ -9,6 +9,7 @@ import { responseCode } from '../utils/responseCode.js'
 // import services
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
+import cloudinary from '../utils/cloudinary.js'
 
 export const indexCourses = async (req, res, next) => {
     try {
@@ -59,26 +60,32 @@ export const purchasedCourses = async (req, res, next) => {
     }
 }
 
-export const topCategories = async (req, res, next) => {}
+export const topCategories = async (req, res, next) => { }
 
-export const popularCourses = async (req, res, next) => {}
+export const popularCourses = async (req, res, next) => { }
 
 export const addNewCourse = async (req, res, next) => {
     try {
-        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topic } = req.body
+        console.log(req.file)
+
+        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } = req.body
 
         const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
+
+        const imageUrl = await cloudinary.uploader.upload(req.file.path)
+
+        console.log(imageUrl)
 
         const result = await createNewCourse({
             courseName,
             duration,
-            price,
+            price: parseFloat(price),
             courseDescription,
             language,
             status,
             approvalStatus,
             instructorId,
-            topic,
+            topicCourse,
         })
         res.status(responseCode.res_ok).json({ result })
     } catch (err) {
