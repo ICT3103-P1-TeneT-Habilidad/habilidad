@@ -162,4 +162,5 @@ enum CourseStatus {
   INPROGRESS
   COMPLETED
   STARTED
+  TOSTART
 }
