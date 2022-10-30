@@ -20,17 +20,16 @@ export const findCoursesWhereSubscribable = async () => {
             AND: [
                 {
                     approvalStatus: {
-                        equals: 'Approved'
-                    }
+                        equals: 'Approved',
+                    },
                 },
                 {
                     status: {
-                        in: ['Started', 'Ongoing', 'Completed']
-                    }
-                }
-
+                        in: ['Started', 'Ongoing', 'Completed'],
+                    },
+                },
             ],
-        }
+        },
     })
 }
 
@@ -38,11 +37,10 @@ export const findCoursesWhereCreatedByInstructor = async (instructorId) => {
     return db.course.findMany({
         where: {
             instructorId: {
-                equals: instructorId
-            }
-        }
+                equals: instructorId,
+            },
+        },
     })
-
 }
 
 export const findCoursesWherePurchasedByStudent = async (studentId) => {
@@ -50,20 +48,16 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
         where: {
             purchasedCourse: {
                 studentId: {
-                    equals: studentId
-                }
-            }
-        }
+                    equals: studentId,
+                },
+            },
+        },
     })
-
 }
 
-export const findCoursesSortedByPopularity = async () => {
-
-}
+export const findCoursesSortedByPopularity = async () => {}
 
 export const createNewCourse = async (info) => {
-
     return db.course.create({
         data: {
             courseName: info.courseName,
@@ -71,19 +65,22 @@ export const createNewCourse = async (info) => {
             price: info.price,
             description: info.courseDescription,
             language: info.language,
-            status: 'Pending',
-            approvalStatus: 'Pending',
+            status: 'TOSTART',
+            approvalStatus: 'PENDING',
             instructorId: info.instructorId,
             imageUrl: info.imageUrl,
             topicCourse: {
-                create: info.topicCourse
+                create: info.topicCourse,
             },
         },
         include: {
-            topicCourse: true
-        }
+            topicCourse: true,
+        },
     })
+}
 
+export const findAllCourses = async () => {
+    return db.course.findMany()
 }
 
 // export const storeNewAccount = async (user) => {
