@@ -63,7 +63,6 @@ export const findCoursesSortedByPopularity = async () => {
 }
 
 export const createNewCourse = async (info) => {
-    console.log(info.topic)
 
     return db.course.create({
         data: {
@@ -75,13 +74,13 @@ export const createNewCourse = async (info) => {
             status: 'Pending',
             approvalStatus: 'Pending',
             instructorId: info.instructorId,
-            imageUrl: info.url,
+            imageUrl: info.imageUrl,
             topicCourse: {
                 create: info.topicCourse
             },
         },
         include: {
-            topic: true
+            topicCourse: true
         }
     })
 

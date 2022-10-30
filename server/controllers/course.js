@@ -98,39 +98,14 @@ export const popularCourses = async (req, res, next) => { }
 export const addNewCourse = async (req, res, next) => {
     try {
 
-        // const { courseImage, courseMaterials } = await cloudinary.uploader.upload(req.files)
-        const { courseImageFiles, courseMaterialFiles } = req.files
+        const courseImage = req.file
 
-        console.log('------Image')
-        console.log(courseImage)
-        console.log(courseMaterials)
-        console.log('------Material')
-
-        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topic } = req.body
+        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } = req.body
 
         const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
 
-        // const uploadResult = {}
-
-        // for (const file in courseMaterials) {
-        //     uploadResult[file.originalname] = await cloudinary.uploader.upload_large(file.path)
-        //     fs.unlinkSync(file.path)
-        // }
-
-        // for (const file in courseImage){
-        //     uploadResult[file.originalname] = await cloudinary.uploader.upload(file.path)
-        //     fs.unlinkSync(file.path)
-        // }
-
-        const uploadResult = await Promise.all([
-            ...(courseMaterialFiles.map((file) => cloudinary.uploader.upload_large(file.path, { resource_type: 'video' })) || []),
-            ...(courseImageFiles.map((file) => cloudinary.uploader.upload(file.path)) || [])
-        ]).catch((err) => {
-            console.log(err)
-            throw new Response('File Size Too Large', 'res_badRequest')
-        })
-
-        console.log(uploadResult)
+        const uploadResult = await cloudinary.uploader.upload(courseImage.path)
+        fs.unlinkSync(courseImage.path)
 
         const result = await createNewCourse({
             courseName,
@@ -141,7 +116,8 @@ export const addNewCourse = async (req, res, next) => {
             status,
             approvalStatus,
             instructorId,
-            topic,
+            topicCourse: JSON.parse(topicCourse),
+            imageUrl: uploadResult.secure_url
         })
 
         res.status(responseCode.res_ok).json({ result })
