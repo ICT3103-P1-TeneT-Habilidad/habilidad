@@ -1,4 +1,5 @@
 import { responseCode } from '../responses/responseCode.js'
+import { Response } from '../responses/response.js'
 // import services
 import {
     createNewCourse,
@@ -7,16 +8,20 @@ import {
     findCoursesWherePurchasedByStudent,
     findCoursesWhereSubscribable,
     findCourseDetail,
+    findAllCourses,
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import cloudinary from '../utils/cloudinary.js'
-import { Response } from '../responses/response.js'
+
 import fs from 'fs'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
 
+/**
+ * Get course description for one course
+ */
 export const getCourseDetail = async (req, res, next) => {
     try {
         const { courseId } = req.sanitizedBody
@@ -41,16 +46,16 @@ export const getCourseDetail = async (req, res, next) => {
     }
 }
 
-export const indexCourses = async (req, res, next) => {
+/**
+ * get all courses (TODO)
+ */
+export const getAllCourses = async (req, res, next) => {
     try {
-        const courses = await findCoursesWhereSubscribable()
-        const { accessToken, refreshToken } = req.body
+        const courses = await findAllCourses()
 
         res.status(responseCode.res_ok).json({
             result: {
                 courses,
-                accessToken,
-                refreshToken,
             },
         })
     } catch (err) {
@@ -58,7 +63,10 @@ export const indexCourses = async (req, res, next) => {
     }
 }
 
-export const createdCourses = async (req, res, next) => {
+/**
+ * get all courses created by the instructor
+ */
+export const getCoursesCreatedByInstructor = async (req, res, next) => {
     try {
         const { userId } = req.payload
         const { instructorId } = await findInstructorIdByUserId(userId)
@@ -74,7 +82,10 @@ export const createdCourses = async (req, res, next) => {
     }
 }
 
-export const purchasedCourses = async (req, res, next) => {
+/**
+ * get all courses puchased by student
+ */
+export const getCoursesPurchasedByStudent = async (req, res, next) => {
     try {
         const { userId } = req.payload
         const { studentId } = await findStudentIdByUserId(userId)
@@ -90,19 +101,21 @@ export const purchasedCourses = async (req, res, next) => {
     }
 }
 
-export const topCategories = async (req, res, next) => { }
+export const getCoursesInTopCategories = async (req, res, next) => {}
 
-export const popularCourses = async (req, res, next) => { }
+export const getPopularCourses = async (req, res, next) => {}
 
-export const addNewCourse = async (req, res, next) => {
+/**
+ * create new courses (instructor)
+ */
+export const createNewCourse = async (req, res, next) => {
     try {
-
         const courseImage = req.file
 
-        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } = req.body
+        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } =
+            req.body
 
         const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
-
         const uploadResult = await cloudinary.uploader.upload(courseImage.path)
         fs.unlinkSync(courseImage.path)
 
@@ -116,7 +129,7 @@ export const addNewCourse = async (req, res, next) => {
             approvalStatus,
             instructorId,
             topicCourse: JSON.parse(topicCourse),
-            imageUrl: uploadResult.secure_url
+            imageUrl: uploadResult.secure_url,
         })
 
         res.status(responseCode.res_ok).json({ result })

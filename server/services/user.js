@@ -10,16 +10,16 @@ export const storeNewUser = async (user) => {
             phoneNumber: user.phoneNumber,
             role: user.role,
             deactivationDate: null,
-            [user.role.toLowerCase()]: { create: {} }
-        }
-    });
+            [user.role.toLowerCase()]: { create: {} },
+        },
+    })
 }
 
 export const findUserByUsername = async (username) => {
     return db.user.findUnique({
         where: {
             username: username,
-        }
+        },
     })
 }
 
@@ -44,7 +44,7 @@ export const updatePasswordAndDeleteToken = async (user) => {
         db.user.update({
             where: {
                 userId: user.userId,
-                username: user.username
+                username: user.username,
             },
             data: {
                 password: user.hashedPassword,
@@ -54,7 +54,10 @@ export const updatePasswordAndDeleteToken = async (user) => {
             where: {
                 userId: user.userId,
             },
-        })
-
+        }),
     ])
+}
+
+export const findAllUsers = async () => {
+    return db.user.findMany()
 }

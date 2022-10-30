@@ -12,7 +12,7 @@ import cloudinary from '../utils/cloudinary.js'
 import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
 
-export const allTopic = async (req, res, next) => {
+export const getAllTopics = async (req, res, next) => {
     try {
         const topics = await findAllTopics()
 
