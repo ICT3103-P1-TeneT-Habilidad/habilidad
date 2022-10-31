@@ -204,6 +204,41 @@ const CreateCourse = () => {
                                         <span className="text-sm text-red-500">{errors.duration.message}</span>
                                     ) : null}
                                 </div>
+                                <div className="p-3">
+                                    <label
+                                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                        for="topicCourse"
+                                    >
+                                        Relevant Topics
+                                    </label>
+                                    <Controller
+                                        name="topicCourse"
+                                        control={control}
+                                        rules={{
+                                            required: 'Please select up to 5 topics relevant to this course',
+                                            validate: (value) =>
+                                                value.length <= 5 || 'Please only select 5 relevant topics',
+                                        }}
+                                        render={({ field }) => {
+                                            return (
+                                                <Select
+                                                    {...field}
+                                                    isClearable={true}
+                                                    isMulti
+                                                    options={topicOptions}
+                                                    isSearchable={true}
+                                                    closeMenuOnSelect={false}
+                                                    components={animatedComponents}
+                                                    placeholder="Select a topic"
+                                                    className="w-full"
+                                                />
+                                            )
+                                        }}
+                                    />
+                                    {errors.topicCourse ? (
+                                        <span className="text-sm text-red-500">{errors.topicCourse.message}</span>
+                                    ) : null}
+                                </div>
                             </div>
                             <div className="flex flex-col w-1/2">
                                 <div className="p-3">
@@ -255,44 +290,25 @@ const CreateCourse = () => {
                                         <span className="text-sm text-red-500">{errors.price.message}</span>
                                     ) : null}
                                 </div>
-                            </div>
-                        </div>
-                        {/* topics row */}
-                        <div className="flex flex-row">
-                            <div className="p-3 w-full">
-                                <label
-                                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                    for="topicCourse"
-                                >
-                                    Relevant Topics
-                                </label>
-                                <Controller
-                                    name="topicCourse"
-                                    control={control}
-                                    rules={{
-                                        required: 'Please select up to 5 topics relevant to this course',
-                                        validate: (value) =>
-                                            value.length <= 5 || 'Please only select 5 relevant topics',
-                                    }}
-                                    render={({ field }) => {
-                                        return (
-                                            <Select
-                                                {...field}
-                                                isClearable={true}
-                                                isMulti
-                                                options={topicOptions}
-                                                isSearchable={true}
-                                                closeMenuOnSelect={false}
-                                                components={animatedComponents}
-                                                placeholder="Select a topic"
-                                                className="w-full"
-                                            />
-                                        )
-                                    }}
-                                />
-                                {errors.topicCourse ? (
-                                    <span className="text-sm text-red-500">{errors.topicCourse.message}</span>
-                                ) : null}
+                                <div className="p-3">
+                                    <label
+                                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                        for="coverImage"
+                                    >
+                                        Cover Image
+                                    </label>
+                                    <input
+                                        id="coverImage"
+                                        type="file"
+                                        className="w-full"
+                                        {...register('coverImage', {
+                                            required: 'Please upload a cover image for the course',
+                                        })}
+                                    />
+                                    {errors.coverImage ? (
+                                        <span className="text-sm text-red-500">{errors.coverImage.message}</span>
+                                    ) : null}
+                                </div>
                             </div>
                         </div>
                         {/* description row */}
