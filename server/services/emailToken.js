@@ -1,6 +1,6 @@
 import db from '../utils/db.js'
 
-export const findEmailToken = (user_id) => {
+export const findEmailToken = (user_id, token) => {
     return db.emailToken.findUnique({
         where: {
             userId: user_id,
@@ -30,6 +30,14 @@ export const replaceEmailToken = (user) => {
             token: user.token,
             updatedAt: user.updatedAt,
             expiredAt: user.expiredAt,
+        },
+    })
+}
+
+export const deleteEmailToken = (userId) => {
+    return db.emailToken.delete({
+        where: {
+            userId: userId,
         },
     })
 }

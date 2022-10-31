@@ -1,9 +1,14 @@
-import { Response } from '../utils/response.js'
+// import responses
+import { Response } from '../responses/response.js'
 import jwt from 'jsonwebtoken'
+import logger from '../utils/logging/log.js'
+import { LogMessage } from '../utils/logging/logMessage.js'
 
 export const isAuthenticate = async (req, res, next) => {
-
     try {
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         const { authorization } = req.headers
 
         if (!authorization) {
@@ -20,5 +25,5 @@ export const isAuthenticate = async (req, res, next) => {
         next(err)
     }
 
-    return next();
-} 
+    return next()
+}

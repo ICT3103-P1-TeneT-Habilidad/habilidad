@@ -1,6 +1,7 @@
 generator client {
-   provider      = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
+  // previewFeatures = ["transactionApi"]
 }
 
 datasource db {
@@ -8,25 +9,14 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-model Account {
-  accountId      String  @id @default(uuid())
-  username String @unique
-  password String
-  user User?
-  enabled Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@unique([accountId])
-}
-
 model User {
   userId   String  @id @default(uuid())
-  account   Account @relation(fields: [accountId], references: [accountId])
-  accountId String @unique
+  username String @unique
+  password String
   name String
   email String
   phoneNumber Int
-  deActivatedOn DateTime?
+  deactivationDate DateTime?
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
   role Role
@@ -36,7 +26,8 @@ model User {
   rToken RefreshTokens[]
   oToken OtpToken?
   eToken EmailToken?
-  @@unique([accountId, email, phoneNumber])
+  enabled Boolean @default(false)
+  @@unique([email, phoneNumber])
 }
 
 model Student{
@@ -59,6 +50,7 @@ model Moderator{
   moderatorId String @id @default(uuid())
   user User @relation(fields: [userId], references: [userId])
   userId String
+  course Course[]
   @@unique([userId])
 }
 
@@ -70,12 +62,14 @@ model Course{
   price Float
   description String
   language Language
-  status Status
-  approvalStatus Status
+  status CourseStatus
+  approvalStatus ApprovedStatus
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
-  instructor Instructor @relation(fields: [instructorId], references: [instructorId])
   instructorId String
+  approvedBy String?
+  moderator Moderator? @relation(fields: [approvedBy], references: [moderatorId])
+  instructor Instructor @relation(fields: [instructorId], references: [instructorId])
   courseMaterial CourseMaterial[]
   transactions Transaction[]
   topicCourse TopicCourse[]
@@ -91,7 +85,6 @@ model CourseMaterial {
 model Transaction {
   transactionId String @id @default(uuid())
   amountPaid Float
-  status Status
   createdOn DateTime @default(now())
   student Student @relation(fields: [studentId], references: [studentId])
   studentId String
@@ -114,8 +107,6 @@ model TopicCourse{
   topics Topics @relation(fields: [topicId], references: [topicId])
   topicId String
   @@unique([courseId, topicId])
-
-
 }
 
 model RefreshTokens {
@@ -149,28 +140,30 @@ model EmailToken {
 }
 
 enum Role {
-  User
-  Student
-  Instructor
-  Moderator
-  Employees
+  STUDENT
+  INSTRUCTOR
+  MODERATOR
 }
 
 enum Language {
-  Chinese
-  English
-  French
-  Indian
-  Japanese
-  Korean
-  Malay
+  CHINESE
+  ENGLISH
+  FRENCH
+  INDIAN
+  JAPANESE
+  KOREAN
+  MALAY
 }
 
-enum Status {
-  InProgress
-  Pending
-  Completed
-  Approved
-  Ongoing
-  Started
+enum ApprovedStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CourseStatus {
+  INPROGRESS
+  COMPLETED
+  STARTED
+  TOSTART
 }

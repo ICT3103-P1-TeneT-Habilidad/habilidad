@@ -1,17 +1,30 @@
 import express from 'express'
-import { isAuthenticate } from '../controllers/auth.js'
-
-import { getUser, userLogin, userLogout, userRegister, updateUser, sendEmailResetLink, resetPassword, sendEmailDeactivateAcc, userDeactivate } from '../controllers/users.js'
+// import controllers
+import { isAuthenticate } from '../controllers/authController.js'
+import {
+    getAllUsers,
+    getOneUser,
+    userLogin,
+    userLogout,
+    userRegister,
+    updateUser,
+    validateEmailAndPassword,
+    sendEmailResetLink,
+    resetPassword,
+    userDeactivate,
+    sendEmailDeactivateAcc,
+} from '../controllers/usersController.js'
 
 const router = express.Router()
 
+// Get all users
+router.route('/allUsers').get(isAuthenticate, getAllUsers)
+
 // Get user detail
-router.route('/').get(isAuthenticate, getUser)
+router.route('/').get(isAuthenticate, getOneUser)
 
 // Update user detail
 router.route('/update').post(updateUser)
-
-// Delete user account
 
 // login
 router.route('/login').post(userLogin)
