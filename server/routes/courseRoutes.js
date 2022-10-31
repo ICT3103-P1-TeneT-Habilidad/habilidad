@@ -2,7 +2,7 @@ import express from 'express'
 // import controllers
 import { isAuthenticate } from '../controllers/authController.js'
 import {
-    getCourseDetail,
+    getOneCourse,
     getAllCourses,
     getCoursesCreatedByInstructor,
     getCoursesPurchasedByStudent,
@@ -14,6 +14,7 @@ import {
 // import middleware
 import { imageUpload } from '../middleware/multer.js'
 import { isRoleInstructor, isRoleModerator, isRoleStudent } from '../middleware/checkRole.js'
+import { sanitizeBody } from '../validations/input.js'
 
 const router = express.Router()
 
@@ -21,24 +22,26 @@ const router = express.Router()
 router.route('/').get(getAllCourses)
 
 // Get course details
-router.route('/').get(isAuthenticate, getCourseDetail)
+router.route('/:courseId').get(isAuthenticate, getOneCourse)
 
 // Get all purchases courses by student
-router.route('/created').get(getCoursesPurchasedByStudent)
+router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
 
 // Get all courses instructor (owner) created
-router.route('/purchased').get(getCoursesCreatedByInstructor)
+router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesCreatedByInstructor)
 
-// get all courses that are top categories
+// Get all courses that are top categories
 router.route('/topCategories').get(getCoursesInTopCategories)
 
-// get all courses popular among new signups
+// Get all courses popular among new signups
 router.route('/popularCourses').get(getPopularCourses)
 
-// create new course (instructor)
+// Create new course (instructor)
 router.route('/create').post(isAuthenticate, isRoleInstructor, imageUpload, instructorCreateCourse)
 
-// approve course
-router.route('/approveCourse').patch(approveCourse)
+// Approve/reject course
+router.route('/:courseId').patch(isAuthenticate, isRoleModerator,sanitizeBody, approveCourse) //sanitize
+
+
 
 export default router

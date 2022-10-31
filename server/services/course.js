@@ -1,6 +1,6 @@
 import db from '../utils/db.js'
 
-export const findCourseDetail = async (courseId) => {
+export const findOneCourse = async (courseId) => {
     return db.course.findMany({
         where: {
             courseId: {
@@ -9,7 +9,7 @@ export const findCourseDetail = async (courseId) => {
         },
         include: {
             courseMaterial: true,
-            topic: true,
+            topicCourse: true,
         },
     })
 }
@@ -84,33 +84,15 @@ export const findAllCourses = async () => {
     return db.course.findMany()
 }
 
-// export const storeNewAccount = async (user) => {
-//     return db.account.create({
-//         data: {
-//             email: user.email,
-//             username: 'abs',
-//             password: user.password,
-//             phoneNumber: 12345678,
-//             enabled: true,
-//             user: {
-//                 create: {
-//                     name: 'abc',
-//                     role: 'Student',
-//                     deActivatedOn: null
-
-//                 }
-//             }
-//         }
-//     });
-// }
-
-export const updateCourseApprovalStatus = async () => {
+export const updateCourseApprovalStatus = async (data) => {
     return db.course.update({
         where: {
-            couseId: data.courseId,
+            courseId: data.courseId,
         },
         data: {
-            approvalStatus: 'APPROVED',
+            approvalStatus: data.approvalStatus,
+            approvedBy: data.moderatorId,
         },
     })
 }
+

@@ -1,20 +1,18 @@
 import { responseCode } from '../responses/responseCode.js'
+import cloudinary from '../utils/cloudinary.js'
+import fs from 'fs'
 // import services
 import {
     createNewCourse,
-    findCoursesSortedByPopularity,
     findCoursesWhereCreatedByInstructor,
     findCoursesWherePurchasedByStudent,
-    findCoursesWhereSubscribable,
-    findCourseDetail,
+    findOneCourse,
     findAllCourses,
     updateCourseApprovalStatus,
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
-import cloudinary from '../utils/cloudinary.js'
-
-import fs from 'fs'
+import { findModeratorIdByUserId } from '../services/moderator.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -22,11 +20,11 @@ import fs from 'fs'
 /**
  * Get course description for one course
  */
-export const getCourseDetail = async (req, res, next) => {
+export const getOneCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.sanitizedBody
+        const { courseId } = req.params
 
-        const course = await findCourseDetail(courseId)
+        const course = await findOneCourse(courseId)
 
         // Log for sending response
         // let logMsg = new LogMessage(200, req).msg
@@ -141,8 +139,11 @@ export const instructorCreateCourse = async (req, res, next) => {
 
 export const approveCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.body
-        const result = await updateCourseApprovalStatus()
+        const { courseId } = req.params
+        const { moderatorId } = req.payload
+        const { approvalStatus } = req.sanitizedBody
+
+        const result = await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
 
         res.status(responseCode.res_ok).json({ result })
     } catch (err) {
