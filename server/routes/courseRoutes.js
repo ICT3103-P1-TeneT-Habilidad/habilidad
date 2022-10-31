@@ -11,7 +11,9 @@ import {
     instructorCreateCourse,
     approveCourse,
 } from '../controllers/courseController.js'
-import { imageUpload } from '../utils/multer.js'
+// import middleware
+import { imageUpload } from '../middleware/multer.js'
+import { isRoleInstructor, isRoleModerator, isRoleStudent } from '../middleware/checkRole.js'
 
 const router = express.Router()
 
@@ -34,7 +36,7 @@ router.route('/topCategories').get(getCoursesInTopCategories)
 router.route('/popularCourses').get(getPopularCourses)
 
 // create new course (instructor)
-router.route('/create').post(isAuthenticate, imageUpload, instructorCreateCourse)
+router.route('/create').post(isAuthenticate, isRoleInstructor, imageUpload, instructorCreateCourse)
 
 // approve course
 router.route('/approveCourse').patch(approveCourse)

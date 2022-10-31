@@ -50,6 +50,7 @@ model Moderator{
   moderatorId String @id @default(uuid())
   user User @relation(fields: [userId], references: [userId])
   userId String
+  course Course[]
   @@unique([userId])
 }
 
@@ -65,8 +66,10 @@ model Course{
   approvalStatus ApprovedStatus
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
-  instructor Instructor @relation(fields: [instructorId], references: [instructorId])
   instructorId String
+  approvedBy String?
+  moderator Moderator? @relation(fields: [approvedBy], references: [moderatorId])
+  instructor Instructor @relation(fields: [instructorId], references: [instructorId])
   courseMaterial CourseMaterial[]
   transactions Transaction[]
   topicCourse TopicCourse[]

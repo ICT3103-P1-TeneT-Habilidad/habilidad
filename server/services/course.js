@@ -58,6 +58,7 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
 export const findCoursesSortedByPopularity = async () => {}
 
 export const createNewCourse = async (info) => {
+    console.log(info)
     return db.course.create({
         data: {
             courseName: info.courseName,

@@ -1,8 +1,8 @@
 import crypto from 'crypto'
 // import services
-import { addRefreshTokenToWhitelist } from '../services/auth.js'
+import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
 import { findUserbyUserId, findUserByEmail, storeNewUser, findUserByUsername, findAllUsers } from '../services/user.js'
-import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
+import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 
 // import constants
 import { email_template } from '../constants.js'
@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken'
 
 // import middleware
 import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
-import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../utils/email.js'
+import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../middleware/email.js'
 import { generateTokens } from '../utils/jwt.js'
 // import validations
 import { validateEmail, validatePasswords } from '../validations/input.js'

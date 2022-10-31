@@ -8,7 +8,7 @@ import {
     findCoursesWhereSubscribable,
     findCourseDetail,
     findAllCourses,
-    updateCourseApprovalStatus
+    updateCourseApprovalStatus,
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
@@ -115,9 +115,10 @@ export const instructorCreateCourse = async (req, res, next) => {
         const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } =
             req.body
 
-        const { instructorId } = await findInstructorIdByUserId(req.payload.userId)
         const uploadResult = await cloudinary.uploader.upload(courseImage.path)
         fs.unlinkSync(courseImage.path)
+
+        const { instructorId } = req.payload
 
         const result = await createNewCourse({
             courseName,
@@ -127,7 +128,7 @@ export const instructorCreateCourse = async (req, res, next) => {
             language,
             status,
             approvalStatus,
-            instructorId,
+            instructorId: instructorId,
             topicCourse: JSON.parse(topicCourse),
             imageUrl: uploadResult.secure_url,
         })
