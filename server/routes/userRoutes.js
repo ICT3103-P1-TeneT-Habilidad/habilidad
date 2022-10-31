@@ -11,7 +11,9 @@ import {
     validateEmailAndPassword,
     sendEmailResetLink,
     resetPassword,
+    reactivateUser,
 } from '../controllers/usersController.js'
+import { isRoleModerator } from '../middleware/checkRole.js'
 
 const router = express.Router()
 
@@ -40,5 +42,8 @@ router.route('/resetPassword').post(sendEmailResetLink)
 
 // reset password
 router.route('/resetPassword/:token').post(resetPassword)
+
+// reactivate account
+router.route('reactivate').patch(isAuthenticate, isRoleModerator, reactivateUser)
 
 export default router
