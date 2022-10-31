@@ -9,6 +9,7 @@ import {
     findOneCourse,
     findAllCourses,
     updateCourseApprovalStatus,
+    deleteOneCourse
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
@@ -144,6 +145,19 @@ export const approveCourse = async (req, res, next) => {
         const { approvalStatus } = req.sanitizedBody
 
         const result = await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
+
+        res.status(responseCode.res_ok).json({ result })
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const deleteCourse = async (req, res, next) => {
+    try {
+        const { courseId } = req.params
+        const { moderatorId } = req.payload
+
+        const result = await deleteOneCourse({ courseId, moderatorId })
 
         res.status(responseCode.res_ok).json({ result })
     } catch (err) {

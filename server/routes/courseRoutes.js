@@ -10,6 +10,7 @@ import {
     getPopularCourses,
     instructorCreateCourse,
     approveCourse,
+    deleteCourse,
 } from '../controllers/courseController.js'
 // import middleware
 import { imageUpload } from '../middleware/multer.js'
@@ -42,6 +43,7 @@ router.route('/create').post(isAuthenticate, isRoleInstructor, imageUpload, inst
 // Approve/reject course
 router.route('/:courseId').patch(isAuthenticate, isRoleModerator,sanitizeBody, approveCourse) //sanitize
 
-
+// Delete course
+// router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)
 
 export default router

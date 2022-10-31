@@ -96,3 +96,10 @@ export const updateCourseApprovalStatus = async (data) => {
     })
 }
 
+export const deleteOneCourse = async (data) => {
+    return db.course.delete({
+        where: {
+            courseId: data.courseId,
+        },
+    })
+}
