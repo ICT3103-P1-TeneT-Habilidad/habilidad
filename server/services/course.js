@@ -103,3 +103,19 @@ export const deleteOneCourse = async (data) => {
         },
     })
 }
+
+export const updateOneCourse = async (data) => {
+    console.log(data)
+    return db.course.update({
+        where: {
+            courseId: data.courseId,
+        },
+        data: {
+            courseName: data.courseName,
+            duration: data.duration,
+            price: data.price,
+            description: data.courseDescription,
+            language: data.language,
+        },
+    })
+}
