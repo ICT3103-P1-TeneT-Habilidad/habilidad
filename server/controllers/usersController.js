@@ -1,11 +1,10 @@
 import crypto from 'crypto'
 // import services
-import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
-import { findUserbyUserId, findUserByEmail, storeNewUser, findUserByUsername, findAllUsers } from '../services/user.js'
-import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
-
+import { addRefreshTokenToWhitelist } from '../services/auth.js'
+import { findUserbyUserId, findUserByEmail, deActivateUser } from '../services/user.js'
+import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
 // import constants
-import { email_template } from '../constants.js'
+import { email_template, email_template_deactivate } from '../constants.js'
 import jwt from 'jsonwebtoken'
 
 // import middleware
@@ -61,6 +60,22 @@ export const getOneUser = async (req, res, next) => {
         err = new Response(err)
         next(err)
     }
+}
+export const userDeactivate = async (req, res, next) => {
+
+    try {
+
+        const { userId } = req.payload
+
+        const result = await deActivateUser(userId)
+
+        next()
+
+    } catch (err) {
+        err = new Response(err)
+        next(err)
+    }
+
 }
 
 export const userLogin = async (req, res, next) => {
@@ -188,43 +203,63 @@ export const sendEmailResetLink = async (req, res) => {
 
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
+        if (!user) return res.status(responseCode.res_badRequest).send("User with given email doesn't exist")
+
         let token = await findEmailToken(user[0].userId)
 
-        let expiredAt
-        let issueAt
+        const currentDate = new Date(Date.now())
+        const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
 
-        // No valid email token in db
         if (!token) {
-            token = generateEmailToken({ userId: user[0].userId })
-            const tokenPayload = decodeEmailToken(token)
-            expiredAt = new Date(tokenPayload.exp * 1000)
-            await saveEmailToken({
+            token = generateEmailToken({ userId: user[0].userId, expiredAt: expiredDate, createdAt: currentDate })
+            const result = await saveEmailToken({
                 userId: user[0].userId,
                 token: token,
-                expiredAt: expiredAt,
-            })
-        }
-        // Has valid email token in db
-        else {
-            token = generateEmailToken({ userId: user[0].userId })
-            const tokenPayload = decodeEmailToken(token)
-            expiredAt = new Date(tokenPayload.exp * 1000)
-            issueAt = new Date(tokenPayload.iat * 1000)
-            await replaceEmailToken({
-                userId: user[0].userId,
-                token: token,
-                expiredAt: expiredAt,
-                updatedAt: issueAt,
+                expiredAt: expiredDate,
             })
         }
 
-        console.log(token)
+        if (token.expiredAt > token.createdAt) {
+            token = generateEmailToken(user[0].userId)
+            const result = await replaceEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredDate,
+                updatedAt: currentDate,
+            })
+        } else if (token.expiredAt < token.createdAt) {
+            throw new Error('Invalid Link')
+        }
+
         const emailMsg = email_template(token)
 
         await sendEmailLink(email, 'Password reset', emailMsg)
 
         res.status(responseCode.res_ok).json({
             status: 'Password reset link sent to your email account',
+        })
+    } catch (err) {
+        res.status(responseCode.res_internalServer).json({
+            status: 'Failed to send reset link',
+            message: err.message,
+        })
+    }
+}
+
+export const sendEmailDeactivateAcc = async (req, res) => {
+    try {
+        const email = req.body.user_email
+
+        const user = await findUserByEmail(email)
+
+        if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
+
+        const emailMsg = email_template_deactivate
+
+        await sendEmailLink(email, 'Deactivate Account', emailMsg)
+
+        res.status(responseCode.res_ok).json({
+            status: 'Account has been deactivated',
         })
     } catch (err) {
         next(err)
