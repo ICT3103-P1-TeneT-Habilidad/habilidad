@@ -12,13 +12,13 @@ import cloudinary from '../utils/cloudinary.js'
 import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
 
-export const allTopic = async (req, res, next) => {
+export const getAllTopics = async (req, res, next) => {
     try {
         const topics = await findAllTopics()
 
         res.status(responseCode.res_ok).json({
             result: {
-                topics
+                topics,
             },
         })
     } catch (err) {
@@ -38,7 +38,7 @@ export const createTopic = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                topic
+                topic,
             },
         })
     } catch (err) {

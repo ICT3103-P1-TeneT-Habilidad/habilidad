@@ -18,7 +18,6 @@ export const isAuthenticate = async (req, res, next) => {
         const token = authorization.split(' ')[1]
         const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
         req.payload = payload
-
     } catch (err) {
         if (err.name === 'TokenExpiredError') {
             next(new Response('Token Expired', 'res_unauthorised'))

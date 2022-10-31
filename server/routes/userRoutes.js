@@ -1,21 +1,25 @@
 import express from 'express'
 // import controllers
-import { isAuthenticate } from '../controllers/auth.js'
+import { isAuthenticate } from '../controllers/authController.js'
 import {
-    getUser,
+    getAllUsers,
+    getOneUser,
     userLogin,
     userLogout,
     userRegister,
     updateUser,
     validateEmailAndPassword,
     sendEmailResetLink,
-    resetPassword
-} from '../controllers/users.js'
+    resetPassword,
+} from '../controllers/usersController.js'
 
 const router = express.Router()
 
+// Get all users
+router.route('/allUsers').get(isAuthenticate, getAllUsers)
+
 // Get user detail
-router.route('/').get(isAuthenticate, getUser)
+router.route('/').get(isAuthenticate, getOneUser)
 
 // Update user detail
 router.route('/update').post(updateUser)

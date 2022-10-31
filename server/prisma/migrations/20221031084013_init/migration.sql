@@ -58,6 +58,7 @@ CREATE TABLE `Course` (
     `createdOn` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedOn` DATETIME(3) NOT NULL,
     `instructorId` VARCHAR(191) NOT NULL,
+    `approvedBy` VARCHAR(191) NULL,
 
     PRIMARY KEY (`courseId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -148,6 +149,9 @@ ALTER TABLE `Instructor` ADD CONSTRAINT `Instructor_userId_fkey` FOREIGN KEY (`u
 
 -- AddForeignKey
 ALTER TABLE `Moderator` ADD CONSTRAINT `Moderator_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`userId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Course` ADD CONSTRAINT `Course_approvedBy_fkey` FOREIGN KEY (`approvedBy`) REFERENCES `Moderator`(`moderatorId`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Course` ADD CONSTRAINT `Course_instructorId_fkey` FOREIGN KEY (`instructorId`) REFERENCES `Instructor`(`instructorId`) ON DELETE RESTRICT ON UPDATE CASCADE;
