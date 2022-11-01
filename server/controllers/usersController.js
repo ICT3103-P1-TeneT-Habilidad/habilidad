@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
-import { findUserbyUserId, findUserByEmail, deActivateUser, findUserByUsername, storeNewUser } from '../services/user.js'
+import { findUserbyUserId, findUserByEmail, storeNewUser, findUserByUsername, findAllUsers, updateDeactivationDate, deActivateUser } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
 import { email_template, email_template_deactivate } from '../constants.js'
@@ -279,4 +279,21 @@ export const validateEmailAndPassword = async (req, res, next) => {
             }
         })
     next()
+}
+
+export const reactivateUser = async (req, res, next) => {
+    try {
+        const { userId } = req.payload
+
+        const result = await updateDeactivationDate({ userId })
+
+        if (!result) throw new Response('Fail to reactivate account', 'res_badRequest')
+
+        res.status(responseCode.res_ok).json({
+            status: 'Reactivate acccount sucessfully',
+        })
+    } catch (err) {
+        next(err)
+    }
+
 }
