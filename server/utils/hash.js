@@ -21,12 +21,14 @@ export const hashId = (id, type) => {
         .digest('hex')
 }
 
-export const decipherId = (id, type) => {
+export const compareHashedId = (id, type, hashedId) => {
     const secret = idSecrets[type]
 
     if (!secret) throw new Response('Internal Server Error', 'res_internalServer')
 
-    return crypto.createHmac('sha512', secret)
+    const newId = crypto.createHmac('sha512', secret)
         .update(id)
         .digest('hex')
+
+    return newId == hashedId
 }
