@@ -1,8 +1,8 @@
 import crypto from 'crypto'
 // import services
-import { addRefreshTokenToWhitelist } from '../services/auth.js'
+import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
 import { findUserbyUserId, findUserByEmail, deActivateUser } from '../services/user.js'
-import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/token.js'
+import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
 import { email_template, email_template_deactivate } from '../constants.js'
 import jwt from 'jsonwebtoken'
