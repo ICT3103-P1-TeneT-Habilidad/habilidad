@@ -1,4 +1,5 @@
 import express from 'express'
+import multer from 'multer'
 // import controllers
 import { isAuthenticate } from '../controllers/authController.js'
 import {
@@ -48,6 +49,5 @@ router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, 
 router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)
 
 // Edit course
-router.route('/:courseId').put(isAuthenticate, isRoleInstructor, editCourse) //sanitize
-
+router.route('/:courseId').put(isAuthenticate, isRoleInstructor, imageUpload, editCourse) //sanitize
 export default router

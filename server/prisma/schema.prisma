@@ -58,6 +58,8 @@ model Course{
   courseId String @id @default(uuid()) 
   courseName String
   imageUrl String
+  imageAssetId String
+  imagePublicId String
   duration Int
   price Float
   description String

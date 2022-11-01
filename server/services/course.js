@@ -55,7 +55,7 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
     })
 }
 
-export const findCoursesSortedByPopularity = async () => {}
+export const findCoursesSortedByPopularity = async () => { }
 
 export const createNewCourse = async (info) => {
     console.log(info)
@@ -70,6 +70,8 @@ export const createNewCourse = async (info) => {
             approvalStatus: 'PENDING',
             instructorId: info.instructorId,
             imageUrl: info.imageUrl,
+            imagePublicId: info.imagePublicId,
+            imageAssetId: info.imageAssetId,
             topicCourse: {
                 create: info.topicCourse,
             },
@@ -116,6 +118,25 @@ export const updateOneCourse = async (data) => {
             price: data.price,
             description: data.courseDescription,
             language: data.language,
+            topicCourse: {
+                create: data.topicCourse != null ? data.topicCourse : undefined
+            },
+            imageAssetId: data.uploadResult != null ? data.imageAssetId : undefined,
+            imagePublicId: data.uploadResult != null ? data.imagePublicId : undefined
         },
+    })
+}
+
+export const findPublicAndAssetId = async (courseId) => {
+    return db.course.findUnique({
+        where: {
+            courseId
+        },
+        select: {
+            imageAssetId: true,
+            imagePublicId: true,
+            imageUrl: true
+        }
+
     })
 }
