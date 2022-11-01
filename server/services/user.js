@@ -38,13 +38,13 @@ export const findUserByEmail = async (email) => {
         },
     })
 }
-export const deActivateUser = async (userId) => {
+export const updateDeactivateDate = async (data) => {
     return db.user.update({
         where: {
-            userId: userId
+            userId: data.userId,
         },
         data: {
-            deActivatedOn: new Date()
+            deactivationDate: new Date(),
         },
     })
 }
@@ -72,10 +72,22 @@ export const findAllUsers = async () => {
     return db.user.findMany()
 }
 
-export const updateDeactivationDate = async (user) => {
+export const updateUserByUserId = async (data) => {
+    return db.user.update({
+        where: { userId: data.userId },
+        data: {
+            name: data.name,
+            password: data.password,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
+        },
+    })
+}
+
+export const updateDeactivationDateToNull = async (data) => {
     return db.user.update({
         where: {
-            userId: user.userId
+            userId: data.userId
         },
         data: {
             deactivationDate: null

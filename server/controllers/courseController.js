@@ -13,6 +13,7 @@ import {
     updateOneCourse,
     findPublicAndAssetId
 } from '../services/course.js'
+
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
