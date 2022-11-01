@@ -38,10 +38,10 @@ export const findUserByEmail = async (email) => {
         },
     })
 }
-export const updateDeactivateDate = async (userId) => {
+export const updateDeactivateDate = async (data) => {
     return db.user.update({
         where: {
-            userId: userId,
+            userId: data.userId,
         },
         data: {
             deactivationDate: new Date(),
@@ -81,5 +81,16 @@ export const updateUserByUserId = async (data) => {
             email: data.email,
             phoneNumber: data.phoneNumber,
         },
+    })
+}
+
+export const updateDeactivationDateToNull = async (user) => {
+    return db.user.update({
+        where: {
+            userId: user.userId
+        },
+        data: {
+            deactivationDate: null
+        }
     })
 }

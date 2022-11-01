@@ -8,6 +8,8 @@ import {
     findUserByUsername,
     updateUserByUserId,
     storeNewUser,
+    findAllUsers,
+    updateDeactivationDateToNull,
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
@@ -72,7 +74,7 @@ export const deactivateUser = async (req, res, next) => {
     try {
         const { userId } = req.payload
 
-        const result = await updateDeactivateDate(userId)
+        const result = await updateDeactivateDate({userId})
 
         next()
     } catch (err) {
@@ -306,4 +308,20 @@ export const validateEmailAndPassword = async (req, res, next) => {
             }
         })
     next()
+}
+
+export const reactivateUser = async (req, res, next) => {
+    try {
+        const { userId } = req.payload
+
+        const result = await updateDeactivationDateToNull({ userId })
+
+        if (!result) throw new Response('Fail to reactivate account', 'res_badRequest')
+
+        res.status(responseCode.res_ok).json({
+            status: 'Reactivate acccount sucessfully',
+        })
+    } catch (err) {
+        next(err)
+    }
 }
