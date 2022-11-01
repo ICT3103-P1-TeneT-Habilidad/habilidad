@@ -87,23 +87,24 @@ export const createNewCourse = async (info) => {
 
 }
 
-// export const storeNewAccount = async (user) => {
-//     return db.account.create({
-//         data: {
-//             email: user.email,
-//             username: 'abs',
-//             password: user.password,
-//             phoneNumber: 12345678,
-//             enabled: true,
-//             user: {
-//                 create: {
-//                     name: 'abc',
-//                     role: 'Student',
-//                     deActivatedOn: null
-
-//                 }
-//             }
-//         }
-//     });
-// }
-
+export const updateOneCourse = async (data) => {
+    console.log(data)
+    return db.course.update({
+        where: {
+            courseId: data.courseId,
+        },
+        data: {
+            courseName: data.courseName,
+            duration: data.duration,
+            price: data.price,
+            description: data.courseDescription,
+            language: data.language,
+            topicCourse: {
+                create: data.topicCourse != null ? data.topicCourse : undefined
+            },
+            imageAssetId: data.uploadResult != null ? data.imageAssetId : undefined,
+            imagePublicId: data.uploadResult != null ? data.imagePublicId : undefined,
+            approvalStatus: data.approvalStatus
+        },
+    })
+}
