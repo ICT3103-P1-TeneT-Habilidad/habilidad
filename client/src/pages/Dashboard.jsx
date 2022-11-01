@@ -3,6 +3,7 @@ import Banner from '../assets/banner.png'
 import { PopularCourse, TopCategories } from '../components/index'
 
 const Dashboard = () => {
+
     return (
         <div className="min-h-screen bg-background">
             <div className="px-4 py-4 flex mx-24 border border-black space-y-2 mr-24">

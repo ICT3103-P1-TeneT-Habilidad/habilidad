@@ -1,8 +1,10 @@
 import { React, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import AnonProfile from '../assets/anon-profile.svg'
+import AnonProfile from '../assets/anon-profile.svg'    
+// import { useAppContext } from '../context/appContext'
 
 const Profile = () => {
+
     const [isDisabled, setIsDisabled] = useState(true)
     const [hasChanged, setHasChanged] = useState(false)
 
@@ -33,7 +35,7 @@ const Profile = () => {
     }
 
     const onDeactivation = () => {
-        console.log("send access code")
+        console.log('send access code')
     }
 
     const ShowEditButton = () => {

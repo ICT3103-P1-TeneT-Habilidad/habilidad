@@ -20,6 +20,11 @@ import {
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
+    GET_ALL_COURSES_BEGIN,
+    GET_ALL_COURSES_SUCCESS,
+    // GET_ALL_COURSES_ERROR,
+    GET_ALL_TOPICS_BEGIN,
+    GET_ALL_TOPICS_SUCCESS,
 } from './action'
 
 const token = localStorage.getItem('token')
@@ -33,11 +38,14 @@ export const initialState = {
     openModal: false,
     loginFail: false,
     showAlert: false,
+    redirect: true,
 
     user_data: {},
     user_type: '',
     alert_msg: '',
     alert_type: '',
+    courses: null,
+    topics: null
 }
 
 const AppContext = React.createContext()
@@ -49,7 +57,6 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            console.log(config)
             config.headers['Authorization'] = `Bearer ${state.token}`
             return config
         },
@@ -102,7 +109,7 @@ const AppProvider = ({ children }) => {
     const setUser = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            const { data } = await axios.post(`api/users/login`, user_data)
+            const { data } = await axios.post(`/api/users/login`, user_data)
             const { result, token } = data
             console.log(data)
             dispatch({
@@ -116,6 +123,11 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.error.message },
             })
         }
+    }
+
+    const logout = () => {
+        dispatch({ type: LOGOUT })
+        removeUserFromLocalStorage()
     }
 
     const createUser = async (user_data) => {
@@ -133,9 +145,38 @@ const AppProvider = ({ children }) => {
         }
     }
 
-    const logout = () => {
-        dispatch({ type: LOGOUT })
-        removeUserFromLocalStorage()
+    const getAllCourses = async () => {
+        dispatch({ type: GET_ALL_COURSES_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/course/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_COURSES_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
+        } catch (err) {
+            console.log(err.response)
+            logout()
+        }
+    }
+
+    const getAllTopics = async () => {
+        dispatch({ type: GET_ALL_TOPICS_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/topics/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_TOPICS_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
+        } catch (err) {
+            console.log(err.response)
+            logout()
+        }
     }
 
     return (
@@ -148,6 +189,8 @@ const AppProvider = ({ children }) => {
                 setUser,
                 logout,
                 createUser,
+                getAllCourses,
+                getAllTopics
             }}
         >
             {children}
