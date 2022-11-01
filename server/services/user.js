@@ -71,3 +71,14 @@ export const updatePasswordAndDeleteToken = async (user) => {
 export const findAllUsers = async () => {
     return db.user.findMany()
 }
+
+export const updateDeactivationDate = async (user) => {
+    return db.user.update({
+        where: {
+            userId: user.userId
+        },
+        data: {
+            deactivationDate: null
+        }
+    })
+}
