@@ -30,7 +30,7 @@ const CourseCard = (props) => {
                         </p>
                         <p className="text-sm text-gray-500">{course.description}</p>
                         <div className="flex-1 flex flex-col justify-end">
-                            <p className="text-base font-medium text-gray-900">{course.price}</p>
+                            <p className="text-base font-medium text-gray-900">{course.price} SGD</p>
                         </div>
                     </div>
 
