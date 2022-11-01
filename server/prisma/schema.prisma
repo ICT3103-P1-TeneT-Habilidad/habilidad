@@ -80,6 +80,8 @@ model Course{
 model CourseMaterial {
   courseMaterialId String @id @default(uuid())
   url String
+  assetId String
+  publicId String
   course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
@@ -155,6 +157,7 @@ enum Language {
   JAPANESE
   KOREAN
   MALAY
+  PUNDEK
 }
 
 enum ApprovedStatus {
