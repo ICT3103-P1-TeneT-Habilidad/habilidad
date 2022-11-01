@@ -8,28 +8,34 @@ import { v4 as uuid } from 'uuid'
 const CreateCourse = () => {
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
+
+    const [coverImageFile, setCoverImageFile] = useState()
+    const currentCoverImage = useRef({})
+    currentCoverImage.current = coverImageFile
+
     const [materialInfo, setMaterialInfo] = useState({})
+    const currentMaterialInfo = useRef({})
+    currentMaterialInfo.current = materialInfo
+
     const [keysList, setKeysList] = useState([])
+    const currentKeyList = useRef({})
+    currentKeyList.current = keysList
+
     const [materialComponents, setMaterialComponents] = useState({})
+    const currentMaterialComponents = useRef({})
+    currentMaterialComponents.current = materialComponents
+
     const topicOptions = languageOptions // get list from get all topics API
 
     const {
         register,
+        unregister,
         handleSubmit,
         formState: { errors },
         control,
     } = useForm({
         mode: 'onBlur',
     })
-
-    const currentKeyList = useRef({})
-    currentKeyList.current = keysList
-
-    const currentMaterialComponents = useRef({})
-    currentMaterialComponents.current = materialComponents
-
-    const currentMaterialInfo = useRef({})
-    currentMaterialInfo.current = materialInfo
 
     useEffect(() => {
         checkEmptyUpload()
@@ -41,10 +47,10 @@ const CreateCourse = () => {
                 <div className="flex flex-row w-full">
                     <div className="w-10/12 p-3">
                         <label
-                            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                            className="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-2"
                             for={keyId}
                         >
-                            Material Title
+                            Lesson {currentKeyList.current.length}
                         </label>
                         <Controller
                             name={keyId}
@@ -56,6 +62,7 @@ const CreateCourse = () => {
                                 return (
                                     <input
                                         {...field}
+                                        placeholder="Title of lesson, e.g. Lesson 1: Basics of React"
                                         className="w-full border border-slate-300 rounded-md p-2"
                                         id="materialTitle"
                                         type="text"
@@ -84,15 +91,6 @@ const CreateCourse = () => {
                             />
                         </label>
                     </div>
-                    <div className="flex flex-col p-3">
-                        <button
-                            className="shadow focus:shadow-outline focus:outline-none bg-accent1 font-bold py-2 px-4 rounded"
-                            type="button"
-                            onClick={() => removeComponent(keyId)}
-                        >
-                            Remove
-                        </button>
-                    </div>
                 </div>
                 <hr />
             </>
@@ -108,14 +106,26 @@ const CreateCourse = () => {
         })
     }
 
+    const dataCleanUp = (data) => {
+        data.materials = currentMaterialInfo.current
+        data.image = currentCoverImage.current
+        data.language = data.language['value']
+
+        // // remove keys
+        currentKeyList.current.map((key) => delete data[key])
+
+        return data
+    }
+
     const onSubmit = (data) => {
+        data = dataCleanUp(data)
         console.log(data)
     }
 
     const addComponent = () => {
         const keyId = uuid()
         setKeysList([...keysList, keyId])
-        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: null } })
+        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: currentKeyList.current.length } })
         setMaterialComponents({
             ...materialComponents,
             [keyId]: <NewCourseMaterial keyId={keyId} />,
@@ -123,7 +133,9 @@ const CreateCourse = () => {
         setEmptyUpload(true)
     }
 
-    const removeComponent = (keyId) => {
+    const removeComponent = () => {
+        const keyId = currentKeyList.current.at(-1)
+        unregister(keyId)
         setMaterialComponents((current) => {
             const copy = { ...current }
             delete copy[keyId]
@@ -147,6 +159,10 @@ const CreateCourse = () => {
             ...currentMaterialComponents.current,
             [keyId]: <NewCourseMaterial keyId={keyId} />,
         })
+    }
+
+    const coverImageFileHandler = (file) => {
+        setCoverImageFile(file)
     }
 
     const titleChangeHandler = (title, keyId) => {
@@ -293,20 +309,21 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="coverImage"
+                                        for="image"
                                     >
                                         Cover Image
                                     </label>
                                     <input
-                                        id="coverImage"
+                                        id="image"
                                         type="file"
                                         className="w-full"
-                                        {...register('coverImage', {
+                                        {...register('image', {
                                             required: 'Please upload a cover image for the course',
+                                            onChange: (e) => coverImageFileHandler(e.target.files[0]),
                                         })}
                                     />
-                                    {errors.coverImage ? (
-                                        <span className="text-sm text-red-500">{errors.coverImage.message}</span>
+                                    {errors.image ? (
+                                        <span className="text-sm text-red-500">{errors.image.message}</span>
                                     ) : null}
                                 </div>
                             </div>
@@ -341,15 +358,29 @@ const CreateCourse = () => {
                             {keysList.length === 0
                                 ? addComponent()
                                 : keysList.map((keyId) => <div id={keyId}>{materialComponents[keyId]}</div>)}
-                            <div className="flex flex-row p-3">
+                            <div className="flex flex-row">
                                 {!emptyUpload ? (
-                                    <button
-                                        className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                                        type="button"
-                                        onClick={() => addComponent()}
-                                    >
-                                        Add Material
-                                    </button>
+                                    <div className="flex flex-col p-3">
+                                        <button
+                                            className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() => addComponent()}
+                                        >
+                                            Add Material
+                                        </button>
+                                    </div>
+                                ) : null}
+
+                                {currentKeyList.current.length > 1 ? (
+                                    <div className="flex flex-col p-3">
+                                        <button
+                                            className="shadow focus:shadow-outline focus:outline-none bg-accent1 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() => removeComponent()}
+                                        >
+                                            Remove Last Material Added
+                                        </button>
+                                    </div>
                                 ) : null}
                             </div>
                         </div>
