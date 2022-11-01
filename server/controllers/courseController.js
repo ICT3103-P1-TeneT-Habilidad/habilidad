@@ -10,7 +10,7 @@ import {
     findAllCourses,
     updateCourseApprovalStatus,
     deleteOneCourse,
-    updateOneCourse
+    updateOneCourse,
 } from '../services/course.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'

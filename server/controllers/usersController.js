@@ -1,7 +1,16 @@
 import crypto from 'crypto'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
-import { findUserbyUserId, findUserByEmail, storeNewUser, findUserByUsername, findAllUsers, updateDeactivationDate, deActivateUser } from '../services/user.js'
+import {
+    findUserbyUserId,
+    findUserByEmail,
+    updateDeactivateDate,
+    findUserByUsername,
+    updateUserByUserId,
+    storeNewUser,
+    findAllUsers,
+    updateDeactivationDateToNull,
+} from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
 import { email_template, email_template_deactivate } from '../constants.js'
@@ -61,21 +70,17 @@ export const getOneUser = async (req, res, next) => {
         next(err)
     }
 }
-export const userDeactivate = async (req, res, next) => {
-
+export const deactivateUser = async (req, res, next) => {
     try {
-
         const { userId } = req.payload
 
-        const result = await deActivateUser(userId)
+        const result = await updateDeactivateDate({ userId })
 
         next()
-
     } catch (err) {
         err = new Response(err)
         next(err)
     }
-
 }
 
 export const userLogin = async (req, res, next) => {
@@ -148,8 +153,29 @@ export const userRegister = async (req, res, next) => {
 }
 
 export const updateUser = async (req, res, next) => {
-    const err = new Response('updateUser not implemented', 'res_notImplemented')
-    next(err)
+    const { userId } = req.payload
+    const { password, phoneNumber, email, name } = req.body
+
+    const hashedPassword = hashText(password, generateSalt(12))
+    const user = await updateUserByUserId({
+        userId,
+        email,
+        hashedPassword,
+        email,
+        name,
+        phoneNumber,
+    })
+
+    res.status(responseCode.res_ok).json({
+        result: {
+            user,
+        },
+    })
+
+    try {
+    } catch (err) {
+        next(err)
+    }
 }
 
 export const userVerify = async (req, res, next) => {
@@ -246,12 +272,15 @@ export const sendEmailResetLink = async (req, res) => {
     }
 }
 
-export const sendEmailDeactivateAcc = async (req, res) => {
+export const sendEmailDeactivateAcc = async (req, res, next) => {
     try {
-        const email = req.body.user_email
+        const email = req.body.email
+
+        if (!email) throw new Response('email is empty')
 
         const user = await findUserByEmail(email)
 
+        console.log(user)
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
         const emailMsg = email_template_deactivate
@@ -283,9 +312,9 @@ export const validateEmailAndPassword = async (req, res, next) => {
 
 export const reactivateUser = async (req, res, next) => {
     try {
-        const { userId } = req.payload
+        const userId = req.body.userId
 
-        const result = await updateDeactivationDate({ userId })
+        const result = await updateDeactivationDateToNull({ userId })
 
         if (!result) throw new Response('Fail to reactivate account', 'res_badRequest')
 
@@ -295,5 +324,4 @@ export const reactivateUser = async (req, res, next) => {
     } catch (err) {
         next(err)
     }
-
 }
