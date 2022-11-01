@@ -74,7 +74,7 @@ export const deactivateUser = async (req, res, next) => {
     try {
         const { userId } = req.payload
 
-        const result = await updateDeactivateDate({userId})
+        const result = await updateDeactivateDate({ userId })
 
         next()
     } catch (err) {
@@ -312,7 +312,7 @@ export const validateEmailAndPassword = async (req, res, next) => {
 
 export const reactivateUser = async (req, res, next) => {
     try {
-        const { userId } = req.payload
+        const userId = req.body.userId
 
         const result = await updateDeactivationDateToNull({ userId })
 

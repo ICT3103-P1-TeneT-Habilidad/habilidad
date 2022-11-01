@@ -84,10 +84,10 @@ export const updateUserByUserId = async (data) => {
     })
 }
 
-export const updateDeactivationDateToNull = async (user) => {
+export const updateDeactivationDateToNull = async (data) => {
     return db.user.update({
         where: {
-            userId: user.userId
+            userId: data.userId
         },
         data: {
             deactivationDate: null
