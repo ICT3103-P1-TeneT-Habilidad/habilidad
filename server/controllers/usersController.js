@@ -7,7 +7,7 @@ import {
     updateDeactivateDate,
     findUserByUsername,
     updateUserByUserId,
-    storeNewUser
+    storeNewUser,
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
@@ -161,7 +161,7 @@ export const updateUser = async (req, res, next) => {
         hashedPassword,
         email,
         name,
-        phoneNumber
+        phoneNumber,
     })
 
     res.status(responseCode.res_ok).json({
@@ -274,7 +274,7 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
     try {
         const email = req.body.email
 
-        if(!email) throw new Response ('email is empty')
+        if (!email) throw new Response('email is empty')
 
         const user = await findUserByEmail(email)
 

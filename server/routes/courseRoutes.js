@@ -49,4 +49,5 @@ router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse
 
 // Edit course
 router.route('/:courseId').put(isAuthenticate, isRoleInstructor, editCourse) //sanitize
+
 export default router
