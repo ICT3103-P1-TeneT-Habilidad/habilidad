@@ -16,11 +16,11 @@ pipeline {
             steps {
                 sh 'npm install'
                 sh 'chmod +x -R ./jenkins/scripts'
-                sh 'cd ./client && npm list'
             }
         }
         stage('Test') {
             steps {
+                sh 'cd ./client'
                 sh './jenkins/scripts/test.sh'
             }
         }
