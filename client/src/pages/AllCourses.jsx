@@ -56,4 +56,4 @@ const AllCourses = () => {
     )
 }
 
-export default <AllCourses></AllCourses>
+export default AllCourses

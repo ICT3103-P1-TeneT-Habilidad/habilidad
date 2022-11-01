@@ -99,7 +99,7 @@ const reducer = (state, action) => {
         case GET_ALL_TOPICS_SUCCESS:
             return {
                 ...state,
-                topics: action.payload.topics,
+                topics: action.payload.result,
             }
         default:
             throw new Error(`no such action: ${action.type}`)
