@@ -1,5 +1,3 @@
-// @src/components/useVideoPlayer.jsx
-// Will use useState() and useEffect()
 import { useState, useEffect } from 'react'
 
 const UseVideoPlayer = (videoElement) => {
@@ -37,6 +35,14 @@ const UseVideoPlayer = (videoElement) => {
         })
     }
 
+    const seekVideo = (Number) => {
+        videoElement.current.currentTime = (videoElement.current.duration / 100) * Number
+        setPlayerState({
+            ...playerState,
+            progress: Number,
+        })
+    }
+
     const handleVideoSpeed = (event) => {
         const speed = Number(event.target.value)
         videoElement.current.playbackRate = speed
@@ -57,7 +63,7 @@ const UseVideoPlayer = (videoElement) => {
         playerState.isMuted ? (videoElement.current.muted = true) : (videoElement.current.muted = false)
     }, [playerState.isMuted, videoElement])
 
-    return { playerState, togglePlay, handleOnTimeUpdate, handleVideoProgress, handleVideoSpeed, toggleMute }
+    return { playerState, togglePlay, handleOnTimeUpdate, handleVideoProgress, handleVideoSpeed, toggleMute, seekVideo }
 }
 
 export default UseVideoPlayer

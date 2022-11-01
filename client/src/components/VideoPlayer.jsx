@@ -1,27 +1,28 @@
 import React from 'react'
 import { useRef } from 'react'
 import UseVideoPlayer from '../hooks/UseVideoPlayer'
-//load dynamiclly
-// import video from '../assets/temp_video1.mp4'
 
 const VideoPlayer = ({ setURL }) => {
     const videoElement = useRef(null)
-    const { playerState, togglePlay, handleOnTimeUpdate, handleVideoProgress, handleVideoSpeed, toggleMute } =
-        UseVideoPlayer(videoElement)
+    const {
+        playerState,
+        togglePlay,
+        handleOnTimeUpdate,
+        handleVideoProgress,
+        handleVideoSpeed,
+        toggleMute,
+        seekVideo,
+    } = UseVideoPlayer(videoElement)
 
     return (
-        // video = https://www.youtube.com/watch?v=wOMx9xXGuME
-        <div className="">
-            <div className="video-wrapper">
-                <video src={setURL} ref={videoElement} onTimeUpdate={handleOnTimeUpdate} />
+        <div className="video-wrapper ">
+            <div className="video-src grid place-items-center bg-background bg-slate-600 py-0.5 ">
+                <video className="max-h-96" src={setURL.url} ref={videoElement} onTimeUpdate={handleOnTimeUpdate} />
             </div>
-            <div className="controls">
-                <div className="actions">
-                    <button onClick={togglePlay}>
-                        {!playerState.isPlaying ? <i className="bx bx-play"></i> : <i className="bx bx-pause"></i>} Play
-                        Btn "(no CSS)"
-                    </button>
-                </div>
+            <div className="video-controls border border-slate-300/75 rounded-md p-2 bg-background bg-slate-600	py-1.5">
+                <button className="p-1.5" onClick={togglePlay}>
+                    {!playerState.isPlaying ? <i className="bx bx-play"></i> : <i className="bx bx-pause"></i>} Play Btn
+                </button>
                 <input
                     type="range"
                     min="0"
@@ -42,13 +43,7 @@ const VideoPlayer = ({ setURL }) => {
                         <i className="bx bxs-volume-mute"></i>
                     )}
                 </button>
-                {/* <select className="Segments" value={playerState.progress} onChange={(e) => handleVideoProgress(e)}>
-                    <option value={playerState.progress}>Chapter</option>
-                    <option value="0">Start</option>
-                    <option value="25">Chapter 1</option>
-                    <option value="50">Chapter 2</option>
-                    <option value="75">Chapter 3</option>
-                </select> */}
+
                 <button
                     onClick={(e) => {
                         e.target.value = 0
@@ -58,7 +53,6 @@ const VideoPlayer = ({ setURL }) => {
                     Restart
                 </button>
             </div>
-            <div></div>
         </div>
     )
 }
