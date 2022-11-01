@@ -38,7 +38,7 @@ export const findUserByEmail = async (email) => {
         },
     })
 }
-export const deActivateUser = async (userId) => {
+export const updateDeactivateDate = async (userId) => {
     return db.user.update({
         where: {
             userId: userId,

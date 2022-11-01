@@ -4,7 +4,7 @@ import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
 import {
     findUserbyUserId,
     findUserByEmail,
-    deActivateUser,
+    updateDeactivateDate,
     findUserByUsername,
     updateUserByUserId,
 } from '../services/user.js'
@@ -67,11 +67,11 @@ export const getOneUser = async (req, res, next) => {
         next(err)
     }
 }
-export const userDeactivate = async (req, res, next) => {
+export const deactivateUser = async (req, res, next) => {
     try {
         const { userId } = req.payload
 
-        const result = await deActivateUser(userId)
+        const result = await updateDeactivateDate(userId)
 
         next()
     } catch (err) {

@@ -8,11 +8,10 @@ import {
     userLogout,
     userRegister,
     updateUser,
-    validateEmailAndPassword,
     sendEmailResetLink,
     resetPassword,
-    userDeactivate,
     sendEmailDeactivateAcc,
+    deactivateUser,
 } from '../controllers/usersController.js'
 
 const router = express.Router()
@@ -44,6 +43,6 @@ router.route('/resetPassword').post(sendEmailResetLink)
 router.route('/resetPassword/:token').post(resetPassword)
 
 // Deactivate user account
-router.route('/deactivate').post(isAuthenticate, userDeactivate, sendEmailDeactivateAcc)
+router.route('/deactivate').post(isAuthenticate, deactivateUser, sendEmailDeactivateAcc)
 
 export default router
