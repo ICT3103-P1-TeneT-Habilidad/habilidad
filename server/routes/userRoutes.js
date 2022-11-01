@@ -24,7 +24,7 @@ router.route('/allUsers').get(isAuthenticate, getAllUsers)
 router.route('/').get(isAuthenticate, getOneUser)
 
 // Update user detail
-router.route('/update').post(updateUser)
+router.route('/').patch(isAuthenticate, updateUser)
 
 // login
 router.route('/login').post(userLogin)

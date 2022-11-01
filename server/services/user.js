@@ -41,10 +41,10 @@ export const findUserByEmail = async (email) => {
 export const deActivateUser = async (userId) => {
     return db.user.update({
         where: {
-            userId: userId
+            userId: userId,
         },
         data: {
-            deActivatedOn: new Date()
+            deActivatedOn: new Date(),
         },
     })
 }
@@ -70,4 +70,16 @@ export const updatePasswordAndDeleteToken = async (user) => {
 
 export const findAllUsers = async () => {
     return db.user.findMany()
+}
+
+export const updateUserByUserId = async (data) => {
+    return db.user.update({
+        where: { userId: data.userId },
+        data: {
+            name: data.name,
+            password: data.password,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
+        },
+    })
 }

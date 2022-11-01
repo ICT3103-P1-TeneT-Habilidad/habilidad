@@ -1,7 +1,13 @@
 import crypto from 'crypto'
 // import services
 import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
-import { findUserbyUserId, findUserByEmail, deActivateUser } from '../services/user.js'
+import {
+    findUserbyUserId,
+    findUserByEmail,
+    deActivateUser,
+    findUserByUsername,
+    updateUserByUserId,
+} from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
 import { email_template, email_template_deactivate } from '../constants.js'
@@ -62,20 +68,16 @@ export const getOneUser = async (req, res, next) => {
     }
 }
 export const userDeactivate = async (req, res, next) => {
-
     try {
-
         const { userId } = req.payload
 
         const result = await deActivateUser(userId)
 
         next()
-
     } catch (err) {
         err = new Response(err)
         next(err)
     }
-
 }
 
 export const userLogin = async (req, res, next) => {
@@ -148,8 +150,29 @@ export const userRegister = async (req, res, next) => {
 }
 
 export const updateUser = async (req, res, next) => {
-    const err = new Response('updateUser not implemented', 'res_notImplemented')
-    next(err)
+    const { userId } = req.payload
+    const { password, phoneNumber, email, name } = req.body
+
+    const hashedPassword = hashText(password, generateSalt(12))
+    const user = await updateUserByUserId({
+        userId,
+        email,
+        hashedPassword,
+        email,
+        name,
+        phoneNumber
+    })
+
+    res.status(responseCode.res_ok).json({
+        result: {
+            user,
+        },
+    })
+
+    try {
+    } catch (err) {
+        next(err)
+    }
 }
 
 export const userVerify = async (req, res, next) => {
