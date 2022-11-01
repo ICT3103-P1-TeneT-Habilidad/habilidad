@@ -16,7 +16,7 @@ pipeline {
             steps {
                 sh 'npm install'
                 sh 'chmod +x -R ./jenkins/scripts'
-                sh 'cd ./client'
+                sh 'pwd'
                 sh 'npm list'
             }
         }
