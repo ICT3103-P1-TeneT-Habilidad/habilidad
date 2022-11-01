@@ -55,7 +55,7 @@ export const getAllCourses = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses,
+                courses
             },
         })
     } catch (err) {
@@ -101,9 +101,9 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => {}
+export const getCoursesInTopCategories = async (req, res, next) => { }
 
-export const getPopularCourses = async (req, res, next) => {}
+export const getPopularCourses = async (req, res, next) => { }
 
 /**
  * create new courses (instructor)
