@@ -44,7 +44,7 @@ export const updateDeactivateDate = async (userId) => {
             userId: userId,
         },
         data: {
-            deActivatedOn: new Date(),
+            deactivationDate: new Date(),
         },
     })
 }

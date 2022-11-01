@@ -43,6 +43,6 @@ router.route('/resetPassword').post(sendEmailResetLink)
 router.route('/resetPassword/:token').post(resetPassword)
 
 // Deactivate user account
-router.route('/deactivate').post(isAuthenticate, deactivateUser, sendEmailDeactivateAcc)
+router.route('/deactivate').patch(isAuthenticate, deactivateUser, sendEmailDeactivateAcc)
 
 export default router

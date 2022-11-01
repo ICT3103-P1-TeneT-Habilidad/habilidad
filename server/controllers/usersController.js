@@ -7,6 +7,7 @@ import {
     updateDeactivateDate,
     findUserByUsername,
     updateUserByUserId,
+    storeNewUser
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
@@ -269,12 +270,15 @@ export const sendEmailResetLink = async (req, res) => {
     }
 }
 
-export const sendEmailDeactivateAcc = async (req, res) => {
+export const sendEmailDeactivateAcc = async (req, res, next) => {
     try {
-        const email = req.body.user_email
+        const email = req.body.email
+
+        if(!email) throw new Response ('email is empty')
 
         const user = await findUserByEmail(email)
 
+        console.log(user)
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
         const emailMsg = email_template_deactivate
