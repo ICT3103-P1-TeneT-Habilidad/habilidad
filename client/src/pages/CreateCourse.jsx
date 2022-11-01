@@ -4,10 +4,13 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../utils/Constants'
 import { v4 as uuid } from 'uuid'
+import imagePlaceholder from '../assets/no-image.jpg'
 
 const CreateCourse = () => {
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
+
+    const [coverImagePreview, setCoverImagePreview] = useState(imagePlaceholder)
 
     const [coverImageFile, setCoverImageFile] = useState()
     const currentCoverImage = useRef({})
@@ -84,6 +87,7 @@ const CreateCourse = () => {
                                 : 'Choose a file to upload'}
                             <input
                                 type="file"
+                                accept="video/*"
                                 onChange={(e) => {
                                     fileHandler(e.target.files[0], keyId)
                                 }}
@@ -163,6 +167,11 @@ const CreateCourse = () => {
 
     const coverImageFileHandler = (file) => {
         setCoverImageFile(file)
+        let reader = new FileReader()
+        reader.onload = (e) => {
+            setCoverImagePreview(e.target.result)
+        }
+        reader.readAsDataURL(file)
     }
 
     const titleChangeHandler = (title, keyId) => {
@@ -255,6 +264,24 @@ const CreateCourse = () => {
                                         <span className="text-sm text-red-500">{errors.topicCourse.message}</span>
                                     ) : null}
                                 </div>
+                                <div className="flex flex-col p-3">
+                                    <label
+                                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                        for="courseDescription"
+                                    >
+                                        Description
+                                    </label>
+                                    <textarea
+                                        className="w-full border border-slate-300 rounded-md p-2"
+                                        id="courseDescription"
+                                        {...register('courseDescription', {
+                                            required: 'Please enter a short description of the course',
+                                        })}
+                                    />
+                                    {errors.courseDescription ? (
+                                        <span className="text-sm text-red-500">{errors.courseDescription.message}</span>
+                                    ) : null}
+                                </div>
                             </div>
                             <div className="flex flex-col w-1/2">
                                 <div className="p-3">
@@ -313,40 +340,27 @@ const CreateCourse = () => {
                                     >
                                         Cover Image
                                     </label>
-                                    <input
-                                        id="image"
-                                        type="file"
-                                        className="w-full"
-                                        {...register('image', {
-                                            required: 'Please upload a cover image for the course',
-                                            onChange: (e) => coverImageFileHandler(e.target.files[0]),
-                                        })}
-                                    />
-                                    {errors.image ? (
-                                        <span className="text-sm text-red-500">{errors.image.message}</span>
-                                    ) : null}
+                                    <div className="flex flex-row">
+                                        <div className="flex flex-col p-3">
+                                            <input
+                                                id="image"
+                                                type="file"
+                                                className="w-full"
+                                                accept="image/png, image/jpg, image/jpeg"
+                                                {...register('image', {
+                                                    required: 'Please upload a cover image for the course',
+                                                    onChange: (e) => coverImageFileHandler(e.target.files[0]),
+                                                })}
+                                            />
+                                            {errors.image ? (
+                                                <span className="text-sm text-red-500">{errors.image.message}</span>
+                                            ) : null}
+                                        </div>
+                                        <div className="flex flex-col w-1/3 h-1/3">
+                                            <img src={coverImagePreview} alt="cover for course" className="w-auto h-auto" />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        {/* description row */}
-                        <div className="flex flex-row">
-                            <div className="p-3 w-full">
-                                <label
-                                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                    for="courseDescription"
-                                >
-                                    Description
-                                </label>
-                                <textarea
-                                    className="w-full border border-slate-300 rounded-md p-2"
-                                    id="courseDescription"
-                                    {...register('courseDescription', {
-                                        required: 'Please enter a short description of the course',
-                                    })}
-                                />
-                                {errors.courseDescription ? (
-                                    <span className="text-sm text-red-500">{errors.courseDescription.message}</span>
-                                ) : null}
                             </div>
                         </div>
                         <hr className="p-3" />
