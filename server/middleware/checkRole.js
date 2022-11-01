@@ -4,6 +4,7 @@ import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
+import { findModeratorIdByUserId } from '../services/moderator.js'
 
 export const isRoleInstructor = async (req, res, next) => {
     try {
@@ -31,7 +32,7 @@ export const isRoleModerator = async (req, res, next) => {
 
         const { userId } = req.payload
 
-        const moderator = await findStudentIdByUserId(userId)
+        const moderator = await findModeratorIdByUserId(userId)
 
         if (!moderator) {
             throw new Response('Not authorized', 'res_unauthorised')

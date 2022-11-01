@@ -68,8 +68,8 @@ model Course{
   updatedOn DateTime @updatedAt
   instructorId String
   approvedBy String?
-  moderator Moderator? @relation(fields: [approvedBy], references: [moderatorId])
-  instructor Instructor @relation(fields: [instructorId], references: [instructorId])
+  moderator Moderator? @relation(fields: [approvedBy], references: [moderatorId], onDelete: Cascade)
+  instructor Instructor @relation(fields: [instructorId], references: [instructorId], onDelete: Cascade)
   courseMaterial CourseMaterial[]
   transactions Transaction[]
   topicCourse TopicCourse[]
@@ -78,7 +78,7 @@ model Course{
 model CourseMaterial {
   courseMaterialId String @id @default(uuid())
   url String
-  course Course @relation(fields: [courseId], references: [courseId])
+  course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
 
@@ -88,7 +88,7 @@ model Transaction {
   createdOn DateTime @default(now())
   student Student @relation(fields: [studentId], references: [studentId])
   studentId String
-  course Course @relation(fields: [courseId], references: [courseId])
+  course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
 
@@ -102,7 +102,7 @@ model Topics {
 
 model TopicCourse{
   topicCourseId String @id @default(uuid())
-  course Course @relation(fields: [courseId], references: [courseId])
+  course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
   topics Topics @relation(fields: [topicId], references: [topicId])
   topicId String
