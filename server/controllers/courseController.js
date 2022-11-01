@@ -10,8 +10,10 @@ import {
     findAllCourses,
     updateCourseApprovalStatus,
     deleteOneCourse,
-    updateOneCourse
+    updateOneCourse,
+    findPublicAndAssetId
 } from '../services/course.js'
+
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
@@ -55,7 +57,7 @@ export const getAllCourses = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses,
+                courses
             },
         })
     } catch (err) {
@@ -101,9 +103,9 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => {}
+export const getCoursesInTopCategories = async (req, res, next) => { }
 
-export const getPopularCourses = async (req, res, next) => {}
+export const getPopularCourses = async (req, res, next) => { }
 
 /**
  * create new courses (instructor)
@@ -131,6 +133,8 @@ export const instructorCreateCourse = async (req, res, next) => {
             instructorId: instructorId,
             topicCourse: JSON.parse(topicCourse),
             imageUrl: uploadResult.secure_url,
+            imageAssetId: uploadResult.asset_id,
+            imagePublicId: uploadResult.public_id
         })
 
         res.status(responseCode.res_ok).json({ result })
@@ -167,11 +171,24 @@ export const deleteCourse = async (req, res, next) => {
 }
 
 export const editCourse = async (req, res, next) => {
-    console.log(req)
     try {
+        const courseImage = req.file
+
         const { courseId } = req.params
-        console.log(courseId)
-        const { courseName, duration, price, courseDescription, language } = req.body
+        const { courseName, duration, price, courseDescription, language, topicCourse } =
+            req.body
+
+        const course = await findPublicAndAssetId(courseId)
+
+        if (!course) throw new Response('Internal Server Error', 'res_internalServer')
+
+        const { imageAssetId, imagePublicId } = course
+
+        let uploadResult
+        if (courseImage) {
+            uploadResult = await cloudinary.uploader.upload(courseImage.path, { asset_id: imageAssetId, public_id: imagePublicId })
+            fs.unlinkSync(courseImage.path)
+        }
 
         const result = await updateOneCourse({
             courseId,
@@ -180,6 +197,9 @@ export const editCourse = async (req, res, next) => {
             price: parseFloat(price),
             courseDescription,
             language,
+            topicCourse: topicCourse ? JSON.parse(topicCourse) : null,
+            imageAssetId: uploadResult ? uploadResult.imageAssetId : null,
+            imagePublicId: uploadResult ? uploadResult.imagePublicId : null
         })
 
         res.status(responseCode.res_ok).json({ result })

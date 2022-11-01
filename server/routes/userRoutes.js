@@ -8,12 +8,11 @@ import {
     userLogout,
     userRegister,
     updateUser,
-    validateEmailAndPassword,
     sendEmailResetLink,
     resetPassword,
     reactivateUser,
-    userDeactivate,
     sendEmailDeactivateAcc,
+    deactivateUser,
 } from '../controllers/usersController.js'
 import { isRoleModerator } from '../middleware/checkRole.js'
 
@@ -26,7 +25,7 @@ router.route('/allUsers').get(isAuthenticate, getAllUsers)
 router.route('/').get(isAuthenticate, getOneUser)
 
 // Update user detail
-router.route('/update').post(updateUser)
+router.route('/').patch(isAuthenticate, updateUser)
 
 // login
 router.route('/login').post(userLogin)
@@ -47,7 +46,8 @@ router.route('/resetPassword/:token').post(resetPassword)
 
 // reactivate account
 router.route('/reactivate').patch(isAuthenticate, isRoleModerator, reactivateUser)
+
 // Deactivate user account
-router.route('/deactivate').post(isAuthenticate, userDeactivate, sendEmailDeactivateAcc)
+router.route('/deactivate').patch(isAuthenticate, deactivateUser, sendEmailDeactivateAcc)
 
 export default router
