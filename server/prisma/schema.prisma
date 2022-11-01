@@ -1,7 +1,7 @@
 generator client {
-   provider      = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
-  previewFeatures = ["transactionApi"]
+  // previewFeatures = ["transactionApi"]
 }
 
 datasource db {
@@ -26,6 +26,7 @@ model User {
   rToken RefreshTokens[]
   oToken OtpToken?
   eToken EmailToken?
+  enabled Boolean @default(false)
   @@unique([email, phoneNumber])
 }
 
@@ -49,6 +50,7 @@ model Moderator{
   moderatorId String @id @default(uuid())
   user User @relation(fields: [userId], references: [userId])
   userId String
+  course Course[]
   @@unique([userId])
 }
 
@@ -60,12 +62,14 @@ model Course{
   price Float
   description String
   language Language
-  status Status
-  approvalStatus Status
+  status CourseStatus
+  approvalStatus ApprovedStatus
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt
-  instructor Instructor @relation(fields: [instructorId], references: [instructorId])
   instructorId String
+  approvedBy String?
+  moderator Moderator? @relation(fields: [approvedBy], references: [moderatorId], onDelete: Cascade)
+  instructor Instructor @relation(fields: [instructorId], references: [instructorId], onDelete: Cascade)
   courseMaterial CourseMaterial[]
   transactions Transaction[]
   topicCourse TopicCourse[]
@@ -74,18 +78,17 @@ model Course{
 model CourseMaterial {
   courseMaterialId String @id @default(uuid())
   url String
-  course Course @relation(fields: [courseId], references: [courseId])
+  course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
 
 model Transaction {
   transactionId String @id @default(uuid())
   amountPaid Float
-  status Status
   createdOn DateTime @default(now())
   student Student @relation(fields: [studentId], references: [studentId])
   studentId String
-  course Course @relation(fields: [courseId], references: [courseId])
+  course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
 
@@ -99,13 +102,11 @@ model Topics {
 
 model TopicCourse{
   topicCourseId String @id @default(uuid())
-  course Course @relation(fields: [courseId], references: [courseId])
+  course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
   topics Topics @relation(fields: [topicId], references: [topicId])
   topicId String
   @@unique([courseId, topicId])
-
-
 }
 
 model RefreshTokens {
@@ -139,28 +140,30 @@ model EmailToken {
 }
 
 enum Role {
-  User
-  Student
-  Instructor
-  Moderator
-  Employees
+  STUDENT
+  INSTRUCTOR
+  MODERATOR
 }
 
 enum Language {
-  Chinese
-  English
-  French
-  Indian
-  Japanese
-  Korean
-  Malay
+  CHINESE
+  ENGLISH
+  FRENCH
+  INDIAN
+  JAPANESE
+  KOREAN
+  MALAY
 }
 
-enum Status {
-  InProgress
-  Pending
-  Completed
-  Approved
-  Ongoing
-  Started
+enum ApprovedStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CourseStatus {
+  INPROGRESS
+  COMPLETED
+  STARTED
+  TOSTART
 }

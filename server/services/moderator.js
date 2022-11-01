@@ -1,7 +1,7 @@
 import db from '../utils/db.js'
 
-export const findInstructorIdByUserId = async (userId) => {
-    return db.instructor.findUnique({
+export const findModeratorIdByUserId = async (userId) => {
+    return db.moderator.findUnique({
         where: {
             userId: userId,
         },

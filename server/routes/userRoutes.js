@@ -1,21 +1,29 @@
 import express from 'express'
 // import controllers
-import { isAuthenticate } from '../controllers/auth.js'
+import { isAuthenticate } from '../controllers/authController.js'
 import {
-    getUser,
+    getAllUsers,
+    getOneUser,
     userLogin,
     userLogout,
     userRegister,
     updateUser,
     validateEmailAndPassword,
     sendEmailResetLink,
-    resetPassword
-} from '../controllers/users.js'
+    resetPassword,
+    reactivateUser,
+    userDeactivate,
+    sendEmailDeactivateAcc,
+} from '../controllers/usersController.js'
+import { isRoleModerator } from '../middleware/checkRole.js'
 
 const router = express.Router()
 
+// Get all users
+router.route('/allUsers').get(isAuthenticate, getAllUsers)
+
 // Get user detail
-router.route('/').get(isAuthenticate, getUser)
+router.route('/').get(isAuthenticate, getOneUser)
 
 // Update user detail
 router.route('/update').post(updateUser)
@@ -36,5 +44,10 @@ router.route('/resetPassword').post(sendEmailResetLink)
 
 // reset password
 router.route('/resetPassword/:token').post(resetPassword)
+
+// reactivate account
+router.route('/reactivate').patch(isAuthenticate, isRoleModerator, reactivateUser)
+// Deactivate user account
+router.route('/deactivate').post(isAuthenticate, userDeactivate, sendEmailDeactivateAcc)
 
 export default router
