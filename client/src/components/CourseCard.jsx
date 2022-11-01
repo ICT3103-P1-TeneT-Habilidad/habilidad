@@ -1,95 +1,43 @@
 import React from 'react'
-import Temp_photo from '../assets/temp_course_card.jpg'
+import NoImage from '../assets/noimage.jpg'
 
-const CourseCard = () => {
-    const data = [
-        {
-            courseId: '123123',
-            courseName: 'Learning Python',
-            duration: '10 mins',
-            price: 20,
-            description: "print('hello world')",
-            language: 'English',
-            status: 'Ongoing',
-            approvalStatus: 'Completed',
-            createdOn: '26/05/22',
-            updatedOn: '26/05/22',
-            instructor: 'John Tan',
-            instructorId: '0123-4567-8901-2345',
-        },
-        {
-            courseId: '321321',
-            courseName: 'Learning C#',
-            duration: '10 mins',
-            price: 20,
-            description: "print('hello world')",
-            language: 'English',
-            status: 'Ongoing',
-            approvalStatus: 'Completed',
-            createdOn: '26/05/22',
-            updatedOn: '26/05/22',
-            instructor: 'John Tan',
-            instructorId: '0123-4567-8901-2345',
-        },
-        {
-            courseId: '321321',
-            courseName: 'Learning C#',
-            duration: '10 mins',
-            price: 20,
-            description: "print('hello world')",
-            language: 'English',
-            status: 'Ongoing',
-            approvalStatus: 'Completed',
-            createdOn: '26/05/22',
-            updatedOn: '26/05/22',
-            instructor: 'John Tan',
-            instructorId: '0123-4567-8901-2345',
-        },
-        {
-            courseId: '321321',
-            courseName: 'Learning C#',
-            duration: '10 mins',
-            price: 20,
-            description: "print('hello world')",
-            language: 'English',
-            status: 'Ongoing',
-            approvalStatus: 'Completed',
-            createdOn: '26/05/22',
-            updatedOn: '26/05/22',
-            instructor: 'John Tan',
-            instructorId: '0123-4567-8901-2345',
-        },
-        {
-            courseId: '321321',
-            courseName: 'Learning C#',
-            duration: '10 mins',
-            price: 20,
-            description: "print('hello world')",
-            language: 'English',
-            status: 'Ongoing',
-            approvalStatus: 'Completed',
-            createdOn: '26/05/22',
-            updatedOn: '26/05/22',
-            instructor: 'John Tan',
-            instructorId: '0123-4567-8901-2345',
-        },
-    ]
+const CourseCard = (props) => {
+    const courses = props.data.courses
+
+    console.log(courses)
 
     return (
         <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">
-            {data.map((data) => (
+            {courses.map((course) => (
                 <div
-                    key={data.courseId}
-                    className="bg-white border border-black flex flex-col overflow-hidden h-full relative w-auto"
+                    key={course.courseId}
+                    className="bg-white border border-black flex flex-col overflow-hidden w-min h-auto relative"
                 >
-                    <div className="aspect-square relative">
-                        <img src={Temp_photo} alt="card" className="w-full h-full object-scale-down"></img>
+                    <div>
+                        <div className="aspect-square bg-gray-200 group-hover:opacity-75 p-2 align-center flex h-48 w-auto items-center">
+                            {/* image */}
+                            <img
+                                src={course.imageUrl ? course.imageUrl : NoImage}
+                                alt="card"
+                                className="w-full h-full object-scale-down"
+                            ></img>
+                        </div>
                     </div>
                     {/* description */}
-                    <div className="flex flex-col p-5">
-                        <span className="text-lg">{data.courseName}</span>
-                        <span className="text-md">{data.instructor}</span>
+                    <div className='space-y-2 p-4'>
+                        <p>
+                            <span className="text-sm font-medium text-gray-900">{course.courseName}</span>
+                        </p>
+                        <p className="text-sm text-gray-500">{course.description}</p>
+                        <div className="flex-1 flex flex-col justify-end">
+                            <p className="text-base font-medium text-gray-900">{course.price}</p>
+                        </div>
                     </div>
+
+                    {/* <div className="flex flex-col p-5">
+                        <span className="text-lg">{course.courseName}</span>
+                        <span className="text-md">{course.instructorId}</span>
+                    </div> */}
                 </div>
             ))}
         </div>

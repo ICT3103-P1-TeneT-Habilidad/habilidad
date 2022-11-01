@@ -4,9 +4,9 @@ import reducer from './reducer'
 import axios from '../utils/axios'
 
 import {
+    LOGIN_USER,
     SHOW_MODAL,
     CLEAR_VALUES,
-    CLEAR_ALERT,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
     SET_USER_ERROR,
@@ -20,26 +20,33 @@ import {
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
+    GET_ALL_COURSES_BEGIN,
+    GET_ALL_COURSES_SUCCESS,
+    // GET_ALL_COURSES_ERROR,
+    GET_ALL_TOPICS_BEGIN,
+    GET_ALL_TOPICS_SUCCESS,
 } from './action'
 
-const access_token = localStorage.getItem('access_token')
-const refresh_token = localStorage.getItem('refresh_token')
+const token = localStorage.getItem('token')
 const user = localStorage.getItem('user')
 
 export const initialState = {
     user: user ? JSON.parse(user) : null,
-    access_token: access_token ? access_token : null,
-    refresh_token: refresh_token ? refresh_token : null,
+    token: token ? token : null,
 
     showNavbarModal: false,
     openModal: false,
     loginFail: false,
     showAlert: false,
+    redirect: true,
     isLoading: false,
 
     user_data: {},
+    user_type: '',
     alert_msg: '',
     alert_type: '',
+    courses: null,
+    topics: null
 }
 
 const AppContext = React.createContext()
@@ -51,8 +58,7 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            console.log(config)
-            config.headers['Authorization'] = `Bearer ${state.access_token}`
+            config.headers['Authorization'] = `Bearer ${state.token}`
             return config
         },
         (err) => {
@@ -65,22 +71,21 @@ const AppProvider = ({ children }) => {
             return response
         },
         (err) => {
-            if (err.response.status === 401) {
+            console.log(err)
+            if (err.response.status !== 401) {
                 logout()
             }
             return Promise.reject(err)
         }
     )
 
-    const addUserToLocalStorage = ({ result, access_token, refresh_token }) => {
+    const addUserToLocalStorage = ({ result, token }) => {
         localStorage.setItem('user', JSON.stringify(result))
-        localStorage.setItem('access_token', access_token)
-        localStorage.setItem('refresh_token', refresh_token)
+        localStorage.setItem('token', token)
     }
 
     const removeUserFromLocalStorage = () => {
-        localStorage.removeItem('access_token')
-        localStorage.removeItem('refresh_token')
+        localStorage.removeItem('token')
         localStorage.removeItem('user')
     }
 
@@ -90,35 +95,40 @@ const AppProvider = ({ children }) => {
         })
     }
 
-    const clearValues = () => {
-        dispatch({ type: CLEAR_VALUES })
+    const setUserType = (user_type) => {
+        clearValues()
+        dispatch({
+            type: LOGIN_USER,
+            payload: { user_type },
+        })
     }
 
-    const clearAlert = () => {
-        setTimeout(() => {
-            dispatch({
-                type: CLEAR_ALERT,
-            })
-        }, 3000)
+    const clearValues = () => {
+        dispatch({ type: CLEAR_VALUES })
     }
 
     const setUser = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            const { data } = await axios.post(`api/users/login`, user_data)
-            const { result, access_token, refresh_token } = data
+            const { data } = await axios.post(`/api/users/login`, user_data)
+            const { result, token } = data
             console.log(data)
             dispatch({
                 type: SET_USER_SUCCESS,
-                payload: { result, access_token, refresh_token },
+                payload: { result, token },
             })
-            addUserToLocalStorage({ result, access_token, refresh_token })
+            addUserToLocalStorage({ result, token })
         } catch (err) {
             dispatch({
                 type: SET_USER_ERROR,
                 payload: { msg: err.response.data.error.message },
             })
         }
+    }
+
+    const logout = () => {
+        dispatch({ type: LOGOUT })
+        removeUserFromLocalStorage()
     }
 
     const createUser = async (user_data) => {
@@ -134,12 +144,40 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.error.message },
             })
         }
-        clearAlert()
     }
 
-    const logout = () => {
-        dispatch({ type: LOGOUT })
-        removeUserFromLocalStorage()
+    const getAllCourses = async () => {
+        dispatch({ type: GET_ALL_COURSES_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/course/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_COURSES_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
+        } catch (err) {
+            console.log(err.response)
+            logout()
+        }
+    }
+
+    const getAllTopics = async () => {
+        dispatch({ type: GET_ALL_TOPICS_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/topics/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_TOPICS_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
+        } catch (err) {
+            console.log(err.response)
+            logout()
+        }
     }
 
     return (
@@ -147,11 +185,13 @@ const AppProvider = ({ children }) => {
             value={{
                 ...state,
                 showModal,
+                setUserType,
                 clearValues,
-                clearAlert,
                 setUser,
                 logout,
                 createUser,
+                getAllCourses,
+                getAllTopics
             }}
         >
             {children}

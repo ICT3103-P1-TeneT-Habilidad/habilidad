@@ -1,7 +1,7 @@
 import {
+    LOGIN_USER,
     SHOW_MODAL,
     CLEAR_VALUES,
-    CLEAR_ALERT,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
     SET_USER_ERROR,
@@ -15,12 +15,22 @@ import {
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
+    GET_ALL_COURSES_BEGIN,
+    GET_ALL_COURSES_SUCCESS,
+    // GET_ALL_COURSES_ERROR,
+    GET_ALL_TOPICS_BEGIN,
+    GET_ALL_TOPICS_SUCCESS,
 } from './action'
 
 import { initialState } from './appContext'
 
 const reducer = (state, action) => {
     switch (action.type) {
+        case LOGIN_USER:
+            return {
+                ...state,
+                user_type: action.payload.user_type,
+            }
         case SHOW_MODAL:
             return {
                 ...state,
@@ -28,16 +38,10 @@ const reducer = (state, action) => {
             }
         case CLEAR_VALUES: {
             const initialState = {
+                user_type: '',
                 alert_msg: '',
             }
             return { ...state, ...initialState }
-        }
-        case CLEAR_ALERT: {
-            return {
-                ...state,
-                showAlert: false,
-                alert_msg: '',
-            }
         }
         case SET_USER_BEGIN:
             return {
@@ -47,15 +51,14 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 user: action.payload.result,
-                access_token: action.payload.access_token,
-                refresh_token: action.payload.refresh_token,
+                token: action.payload.token,
+                redirect: false,
             }
         case SET_USER_ERROR:
             return {
                 ...state,
                 loginFail: true,
                 alert_msg: action.payload.msg,
-                alert_type: 'danger',
             }
         case LOGOUT:
             return {
@@ -79,6 +82,24 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_msg: action.payload.msg,
                 alert_type: 'danger',
+            }
+        case GET_ALL_COURSES_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_COURSES_SUCCESS:
+            return {
+                ...state,
+                courses: action.payload.result,
+            }
+        case GET_ALL_TOPICS_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_TOPICS_SUCCESS:
+            return {
+                ...state,
+                topics: action.payload.result,
             }
         default:
             throw new Error(`no such action: ${action.type}`)
