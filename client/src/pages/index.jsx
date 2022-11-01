@@ -1,3 +1,4 @@
+import AllCourses from './AllCourses'
 import Dashboard from './Dashboard'
 import Error404 from './Error404'
 import Error500 from './Error500'
@@ -6,4 +7,4 @@ import Login from './Login'
 import Register from './Register'
 import Profile from './Profile'
 
-export { Dashboard, Error404, Error500, ForgetResetPwd, Login, Register, Profile }
+export { AllCourses, Dashboard, Error404, Error500, ForgetResetPwd, Login, Register, Profile }

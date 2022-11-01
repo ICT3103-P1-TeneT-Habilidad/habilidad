@@ -41,7 +41,7 @@ export const initialState = {
     user_type: '',
     alert_msg: '',
     alert_type: '',
-    courses: {},
+    courses: null,
 }
 
 const AppContext = React.createContext()
@@ -53,7 +53,6 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            console.log(config)
             config.headers['Authorization'] = `Bearer ${state.token}`
             return config
         },
@@ -142,19 +141,23 @@ const AppProvider = ({ children }) => {
         }
     }
 
+
     const getAllCourses = async () => {
-        dispatch({ type: GET_ALL_COURSES_BEGIN })
+        dispatch({ type: GET_ALL_COURSES_BEGIN });
         try {
-            const { data } = await authFetch.get(`/api/course/`)
-            const { result } = data
-            dispatch({
-                type: GET_ALL_COURSES_SUCCESS,
-                payload: { result },
-            })
+          const { data } = await axios.get(`/api/course/`);
+          const { result } = data;
+          dispatch({
+            type: GET_ALL_COURSES_SUCCESS,
+            payload: {
+              result
+            }
+          });
         } catch (err) {
-            console.log(err)
+          console.log(err.response);
+          logout();
         }
-    }
+      };
 
     return (
         <AppContext.Provider
@@ -166,7 +169,7 @@ const AppProvider = ({ children }) => {
                 setUser,
                 logout,
                 createUser,
-                getAllCourses
+                getAllCourses,
             }}
         >
             {children}
