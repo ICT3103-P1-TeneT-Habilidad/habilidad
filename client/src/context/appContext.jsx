@@ -23,6 +23,8 @@ import {
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ALL_COURSES_ERROR,
+    GET_ALL_TOPICS_BEGIN,
+    GET_ALL_TOPICS_SUCCESS,
 } from './action'
 
 const token = localStorage.getItem('token')
@@ -36,12 +38,14 @@ export const initialState = {
     openModal: false,
     loginFail: false,
     showAlert: false,
+    redirect: true,
 
     user_data: {},
     user_type: '',
     alert_msg: '',
     alert_type: '',
     courses: null,
+    topics: null
 }
 
 const AppContext = React.createContext()
@@ -141,23 +145,39 @@ const AppProvider = ({ children }) => {
         }
     }
 
-
     const getAllCourses = async () => {
-        dispatch({ type: GET_ALL_COURSES_BEGIN });
+        dispatch({ type: GET_ALL_COURSES_BEGIN })
         try {
-          const { data } = await axios.get(`/api/course/`);
-          const { result } = data;
-          dispatch({
-            type: GET_ALL_COURSES_SUCCESS,
-            payload: {
-              result
-            }
-          });
+            const { data } = await axios.get(`/api/course/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_COURSES_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
         } catch (err) {
-          console.log(err.response);
-          logout();
+            console.log(err.response)
+            logout()
         }
-      };
+    }
+
+    const getAllTopics = async () => {
+        dispatch({ type: GET_ALL_TOPICS_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/topics/`)
+            const { result } = data
+            dispatch({
+                type: GET_ALL_TOPICS_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
+        } catch (err) {
+            console.log(err.response)
+            logout()
+        }
+    }
 
     return (
         <AppContext.Provider
@@ -170,6 +190,7 @@ const AppProvider = ({ children }) => {
                 logout,
                 createUser,
                 getAllCourses,
+                getAllTopics
             }}
         >
             {children}
