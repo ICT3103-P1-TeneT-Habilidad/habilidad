@@ -50,7 +50,7 @@ const CreateCourse = () => {
                             name={keyId}
                             control={control}
                             rules={{
-                                required: 'Please enter the title of the video',
+                                required: 'Please enter the title of the Video',
                             }}
                             render={({ field }) => {
                                 return (
