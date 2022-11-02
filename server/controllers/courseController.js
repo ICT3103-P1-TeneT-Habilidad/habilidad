@@ -12,7 +12,11 @@ import {
     updateCourseApprovalStatus,
     deleteOneCourse,
     updateOneCourse,
-    findPublicAndAssetId
+    findPublicAndAssetId,
+    findPopularCourse,
+    findPopularCourseByTopic,
+    updateCourseToNotPopular,
+    updateCourseToPopular
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
@@ -114,9 +118,38 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => { }
+export const getCoursesInTopCategories = async (req, res, next) => {
+    try {
+        const { topicName } = req.body
+        if (!topicName) throw new Response('Bad Request', 'res_badRequest')
+        const courses = await findPopularCourseByTopic(topicName)
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
 
-export const getPopularCourses = async (req, res, next) => { }
+export const getPopularCourses = async (req, res, next) => {
+    try {
+        const courses = await findPopularCourse()
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
 
 /**
  * create new courses (instructor)
@@ -248,6 +281,47 @@ export const editCourse = async (req, res, next) => {
             imageAssetId: uploadResult ? uploadResult.imageAssetId : null,
             imagePublicId: uploadResult ? uploadResult.imagePublicId : null
         })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const setCoursePopular = async (req, res, next) => {
+    try {
+        const { courseId } = req.sanitizedBody
+
+        const result = await updateCourseToPopular(courseId)
+
+        if (!result) throw new Response('Bad Request', 'res_badRequest')
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const setCourseNotPopular = async (req, res, next) => {
+    try {
+
+        const { courseId } = req.sanitizedBody
+
+        const result = await updateCourseToNotPopular(courseId)
+
+        if (!result) throw new Response('Bad Request', 'res_badRequest')
 
         res.status(responseCode.res_ok).json({
             result: {

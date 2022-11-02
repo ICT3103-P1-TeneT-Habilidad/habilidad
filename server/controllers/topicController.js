@@ -1,5 +1,5 @@
 // services
-import { createNewTopic, findAllTopics } from '../services/topic.js'
+import { createNewTopic, findAllTopics, findPopularTopic } from '../services/topic.js'
 
 // responses
 import { Response } from '../responses/response.js'
@@ -47,6 +47,24 @@ export const createTopic = async (req, res, next) => {
             },
         })
     } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const getPopularTopics = async (req, res, next) => {
+    try {
+
+        const topics = await findPopularTopic()
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: topics,
+            },
+        })
+    } catch (err) {
+        console.log(err)
         const error = getErrorResponse(err)
         next(error)
     }
