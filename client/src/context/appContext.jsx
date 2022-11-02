@@ -56,47 +56,55 @@ const AppProvider = ({ children }) => {
 
     const authFetch = axios
 
-    // // interceptors
-    // authFetch.interceptors.request.use(
-    //     (config) => {
-    //         // config.headers['Authorization'] = `Bearer ${state.token}`
-    //         const token = getAccessToken()
-    //         if (token) {
-    //             config.headers['x-access-token'] = token
-    //         }
+    // interceptors
+    authFetch.interceptors.request.use(
+        (config) => {
+            const token = getAccessToken()
+            if (token) {
+                config.headers.common['authorization'] = `Bearer ${token}`
+            }
+            return config
+        },
+        (error) => {
+            return Promise.reject(error)
+        }
+    )
 
-    //         return config
-    //     },
-    //     (err) => {
-    //         return Promise.reject(err)
-    //     }
-    // )
+    authFetch.interceptors.response.use(
+        (res) => {
+            return res
+        },
+        async (err) => {
+            const originalConfig = err.config
+            if (err.response) {
+                // If access token is expired
+                if (err.response.data.status === 401 && !originalConfig._retry) {
+                    originalConfig._retry = true
 
-    // authFetch.interceptors.response.use(
-    //     (response) => {
-    //         return response
-    //     },
-    //     async (err) => {
-    //         const orgConfig = err.config
-    //         if (orgConfig.url !== '/api/users/login' && err.response) {
-    //             // access token expired
-    //             if (err.response.status === 401 && !orgConfig._retry) {
-    //                 orgConfig._retry = true
+                    try {
+                        const rs = await getRefreshToken()
+                        const { accessToken } = rs.data
+                        updateAccessToken(accessToken)
+                        authFetch.headers.common['authorization'] = `Bearer ${accessToken}`
 
-    //                 try {
-    //                     const result = await authFetch.post('/api/users/refreshAccessToken', {
-    //                         refreshToken: getRefreshToken(),
-    //                     })
-    //                     const { accessToken } = result.data.result
-    //                     updateAccessToken(accessToken)
-    //                     return authFetch(orgConfig)
-    //                 } catch (_err) {
-    //                     return Promise.reject(_err)
-    //                 }
-    //             }
-    //         }
-    //     }
-    // )
+                        return authFetch(originalConfig)
+                    } catch (_error) {
+                        if (_error.response && _error.response.data) {
+                            return Promise.reject(_error.response.data)
+                        }
+
+                        return Promise.reject(_error)
+                    }
+                }
+
+                if (err.response.data.status === 403 && err.response.data) {
+                    return Promise.reject(err.response.data)
+                }
+            }
+
+            return Promise.reject(err)
+        }
+    )
 
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
@@ -232,6 +240,7 @@ const AppProvider = ({ children }) => {
             }
         }
     }
+
     const createNewCourse = async (course_data) => {
         dispatch({ type: CREATE_COURSE_BEGIN })
         try {

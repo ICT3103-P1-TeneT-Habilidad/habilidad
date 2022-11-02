@@ -74,7 +74,7 @@ export const userLogin = async (req, res, next) => {
         const user = await findUserByUsername(username)
 
         if (!user) {
-            throw new Response('Wrong credentials', 'res_unauthorised')
+            throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
         // Verify password
