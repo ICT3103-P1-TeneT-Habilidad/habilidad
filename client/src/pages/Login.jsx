@@ -5,7 +5,7 @@ import { Alert } from '../components'
 import { Link } from 'react-router-dom'
 
 const Login = () => {
-    const { showAlert, setUser } = useAppContext()
+    const { showAlert, login } = useAppContext()
 
     const {
         register,
@@ -15,7 +15,7 @@ const Login = () => {
 
     const onSubmit = (data) => {
         console.log(data)
-        setUser(data)
+        login(data)
     }
 
     return (
