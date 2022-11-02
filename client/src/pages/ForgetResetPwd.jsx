@@ -1,5 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { useAppContext } from '../context/appContext'
+import { Alert } from '../components'
 
 export default function ForgetResetPwd() {
     const {
@@ -8,7 +10,12 @@ export default function ForgetResetPwd() {
         formState: { errors },
     } = useForm()
 
-    const onSubmit = (data) => console.log(data)
+    const { showAlert, sendPasswordResetLink } = useAppContext()
+
+    const onSubmit = (data) => {
+        console.log(data)
+        sendPasswordResetLink(data.email)
+    }
 
     return (
         <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -21,6 +28,7 @@ export default function ForgetResetPwd() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <div className="mb-5 text-sm">{showAlert && <Alert />}</div>
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
