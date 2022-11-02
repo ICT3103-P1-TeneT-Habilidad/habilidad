@@ -1,7 +1,9 @@
-import { React } from 'react'
-import EditCourse from './EditCourse'
+import { React, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { useAppContext } from '../context/appContext'
 
 const ViewCourse = () => {
+    const { edit_course } = useAppContext()
     const courseData = {
         courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
         courseName: 'dumb',
@@ -41,6 +43,10 @@ const ViewCourse = () => {
         ],
     }
 
+    useEffect(() => {
+        edit_course = courseData
+    })
+
     const sortCourseMaterials = (materials) => {
         const sortedMaterials = []
         console.log(materials)
@@ -60,6 +66,7 @@ const ViewCourse = () => {
             }
         })
         console.log(sortedMaterials)
+        courseData.courseMaterial = sortedMaterials
         return sortedMaterials
     }
 
@@ -67,13 +74,12 @@ const ViewCourse = () => {
         <div className="min-h-screen bg-background py-12 sm:px-6 lg:px-8 w-full">
             <div className="bg-white rounded-lg px-6 py-10 mx-auto relative">
                 <div className="flex justify-end">
-                    <button
+                    <Link
                         className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                        type="button"
-                        href=""
+                        to="/editcourse"
                     >
                         Edit Course
-                    </button>
+                    </Link>
                 </div>
                 <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">
                     <img

@@ -48,6 +48,8 @@ export const initialState = {
     alert_type: '',
     courses: null,
     topics: null,
+
+    edit_course: null,
 }
 
 const AppContext = React.createContext()
