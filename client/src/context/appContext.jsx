@@ -43,7 +43,6 @@ export const initialState = {
     isLoading: false,
 
     user_data: {},
-    user_type: '',
     alert_msg: '',
     alert_type: '',
     courses: null,
