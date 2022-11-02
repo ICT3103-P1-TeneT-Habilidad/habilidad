@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
-import { AllCourses, Dashboard, Error404, Error500, ForgetResetPwd, Login, Register, Profile } from './pages/index'
+import { AllCourses, Dashboard, Error404, Error500, ForgetResetPwd, Login, Register, Profile, CreateCourse } from './pages/index'
 import { Footer, Navbar } from './components/index'
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/courses" element={<AllCourses />} />
+                <Route path="/createcourse" element={<CreateCourse />} />
             </Routes>
             <Footer />
         </BrowserRouter>

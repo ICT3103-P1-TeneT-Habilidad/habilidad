@@ -23,6 +23,9 @@ import {
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ALL_COURSES_ERROR,
+    CREATE_COURSE_BEGIN,
+    CREATE_COURSE_SUCCESS,
+    // CREATE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     RESET_PASSWORD_LINK_BEGIN,
@@ -199,6 +202,19 @@ const AppProvider = ({ children }) => {
             }
         }
     }
+    const createNewCourse = async (course_data) => {
+        dispatch({ type: CREATE_COURSE_BEGIN })
+        try {
+            const { data } = await authFetch.post(`/api/course/create`, course_data)
+            const { result } = data
+            dispatch({
+                type: CREATE_COURSE_SUCCESS,
+            })
+            dispatch({ type: CLEAR_VALUES })
+        } catch (error) {
+            console.log(error.response)
+        }
+    }
 
     return (
         <AppContext.Provider
@@ -213,6 +229,7 @@ const AppProvider = ({ children }) => {
                 getAllCourses,
                 getAllTopics,
                 sendPasswordResetLink,
+                createNewCourse,
             }}
         >
             {children}

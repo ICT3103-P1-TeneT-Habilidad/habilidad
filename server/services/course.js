@@ -58,14 +58,13 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
 export const findCoursesSortedByPopularity = async () => { }
 
 export const createNewCourse = async (info) => {
-    console.log(info)
     return db.course.create({
         data: {
             courseName: info.courseName,
             duration: info.duration,
             price: info.price,
             description: info.courseDescription,
-            language: info.language,
+            language: info.language.toUpperCase(),
             status: 'TOSTART',
             approvalStatus: 'PENDING',
             instructorId: info.instructorId,
@@ -75,6 +74,9 @@ export const createNewCourse = async (info) => {
             topicCourse: {
                 create: info.topicCourse,
             },
+            courseMaterial: {
+                create: info.courseMaterials
+            }
         },
         include: {
             topicCourse: true,

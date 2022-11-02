@@ -3,6 +3,7 @@ import { Response } from '../responses/response.js'
 import jwt from 'jsonwebtoken'
 import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
+import { getErrorResponse } from '../utils/error.js'
 
 export const isAuthenticate = async (req, res, next) => {
     try {
@@ -18,12 +19,17 @@ export const isAuthenticate = async (req, res, next) => {
         const token = authorization.split(' ')[1]
         const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
         req.payload = payload
-    } catch (err) {
-        if (err.name === 'TokenExpiredError') {
-            next(new Response('Token Expired', 'res_unauthorised'))
-        }
-        next(err)
-    }
 
-    return next()
+        next()
+
+    } catch (err) {
+        let error
+        if (err.name === 'TokenExpiredError') {
+            error = new Response('Token Expired', 'res_unauthorised')
+        }
+        else {
+            error = getErrorResponse(err)
+        }
+        next(error)
+    }
 }

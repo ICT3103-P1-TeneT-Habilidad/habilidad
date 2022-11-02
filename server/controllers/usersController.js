@@ -25,6 +25,7 @@ import { validateEmail, validatePasswords } from '../validations/input.js'
 // import Responses
 import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
+import { getErrorResponse } from '../utils/error.js'
 
 const generateTokenProcedure = async (user) => {
     // Generate uuid
@@ -49,10 +50,12 @@ export const getAllUsers = async (req, res, next) => {
         const result = await findAllUsers()
 
         res.status(responseCode.res_ok).json({
-            result,
+            status: responseCode.res_ok,
+            data: result,
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -66,8 +69,8 @@ export const getOneUser = async (req, res, next) => {
             result,
         })
     } catch (err) {
-        err = new Response(err)
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 export const deactivateUser = async (req, res, next) => {
@@ -78,8 +81,8 @@ export const deactivateUser = async (req, res, next) => {
 
         next()
     } catch (err) {
-        err = new Response(err)
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -111,7 +114,8 @@ export const userLogin = async (req, res, next) => {
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -148,33 +152,37 @@ export const userRegister = async (req, res, next) => {
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
 export const updateUser = async (req, res, next) => {
-    const { userId } = req.payload
-    const { password, phoneNumber, email, name } = req.body
 
-    const hashedPassword = hashText(password, generateSalt(12))
-    const user = await updateUserByUserId({
-        userId,
-        email,
-        hashedPassword,
-        email,
-        name,
-        phoneNumber,
-    })
-
-    res.status(responseCode.res_ok).json({
-        result: {
-            user,
-        },
-    })
 
     try {
+        const { userId } = req.payload
+        const { password, phoneNumber, email, name } = req.body
+
+        const hashedPassword = hashText(password, generateSalt(12))
+        const user = await updateUserByUserId({
+            userId,
+            email,
+            hashedPassword,
+            email,
+            name,
+            phoneNumber,
+        })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            },
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -217,16 +225,17 @@ export const resetPassword = async (req, res, next) => {
             throw new Response('Failed to reset password', 'res_internalServer')
         }
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
-export const sendEmailResetLink = async (req, res) => {
+export const sendEmailResetLink = async (req, res, next) => {
     try {
         const email = req.body.email
         const user = await findUserByEmail(email)
 
-        if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
+        if (user.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
 
         if (!user) return res.status(responseCode.res_badRequest).send("User with given email doesn't exist")
 
@@ -253,7 +262,7 @@ export const sendEmailResetLink = async (req, res) => {
                 updatedAt: currentDate,
             })
         } else if (token.expiredAt < token.createdAt) {
-            throw new Error('Invalid Link')
+            throw new Response('Invalid Link', 'res_unauthorised')
         }
 
         const emailMsg = email_template(token)
@@ -261,13 +270,15 @@ export const sendEmailResetLink = async (req, res) => {
         await sendEmailLink(email, 'Password reset', emailMsg)
 
         res.status(responseCode.res_ok).json({
-            message: 'Password reset link sent to your email account',
+            result: {
+                status: responseCode.res_ok,
+                message: 'Password reset link sent to your email account',
+            }
         })
     } catch (err) {
-        res.status(responseCode.res_internalServer).json({
-            status: 'Failed to send reset link',
-            message: err.message,
-        })
+        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to send reset link')
+        console.log(error)
+        next(error)
     }
 }
 
@@ -287,10 +298,12 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
         await sendEmailLink(email, 'Deactivate Account', emailMsg)
 
         res.status(responseCode.res_ok).json({
-            status: 'Account has been deactivated',
+            status: responseCode.res_ok,
+            message: 'Account has been deactivated',
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 export const validateEmailAndPassword = async (req, res, next) => {
@@ -318,9 +331,11 @@ export const reactivateUser = async (req, res, next) => {
         if (!result) throw new Response('Fail to reactivate account', 'res_badRequest')
 
         res.status(responseCode.res_ok).json({
-            status: 'Reactivate acccount sucessfully',
+            message: 'Reactivate acccount sucessfully',
+            status: responseCode.res_ok
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }

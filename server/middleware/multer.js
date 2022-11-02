@@ -32,4 +32,4 @@ export const courseUpload = multer({
         }
         cb(null, true)
     },
-}).fields([{ name: 'courseImageFiles', maxCount: 1 }, { name: 'courseMaterialFiles' }])
+}).fields([{ name: 'image', maxCount: 1 }, { name: 'materialFiles' }])
