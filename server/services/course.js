@@ -142,3 +142,18 @@ export const findPublicAndAssetId = async (courseId) => {
 
     })
 }
+
+export const findPopularCourse = async () => {
+    return db.course.findMany({
+        where: {
+            isPopular: true
+        },
+        select: {
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}

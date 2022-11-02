@@ -24,9 +24,6 @@ const router = express.Router()
 // Get all courses (unauth)
 router.route('/').get(getAllCourses)
 
-// Get course details
-router.route('/:courseId').get(isAuthenticate, getOneCourse)
-
 // Get all purchases courses by student
 router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
 
@@ -44,6 +41,9 @@ router.route('/create').post(isAuthenticate, isRoleInstructor, courseUpload, ins
 
 // Approve/reject course
 router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse) //sanitize
+
+// Get course details
+router.route('/:courseId').get(isAuthenticate, getOneCourse)
 
 // Delete course
 router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)

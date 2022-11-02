@@ -12,13 +12,14 @@ import {
     updateCourseApprovalStatus,
     deleteOneCourse,
     updateOneCourse,
-    findPublicAndAssetId
+    findPublicAndAssetId,
+    findPopularCourse
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
-import { findTopicByName } from '../services/topic.js'
+import { findPopularTopic, findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
 // logs
 // import logger from '../utils/log.js'
@@ -114,9 +115,31 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => { }
+export const getCoursesInTopCategories = async (req, res, next) => {
+    try {
+        const result = await findPopularTopic()
 
-export const getPopularCourses = async (req, res, next) => { }
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const getPopularCourses = async (req, res, next) => {
+    try {
+        const courses = await findPopularCourse()
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
 
 /**
  * create new courses (instructor)
