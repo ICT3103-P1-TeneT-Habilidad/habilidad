@@ -24,6 +24,9 @@ import {
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
+    EDIT_COURSE_BEGIN,
+    EDIT_COURSE_SUCCESS,
+    EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     RESET_PASSWORD_LINK_BEGIN,
@@ -246,6 +249,10 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const setEditCourseDetails = (course_data) => {
+        dispatch({ type: EDIT_COURSE_BEGIN, payload: course_data })
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -265,6 +272,7 @@ const AppProvider = ({ children }) => {
                 getAllTopics,
                 sendPasswordResetLink,
                 createNewCourse,
+                setEditCourseDetails,
             }}
         >
             {children}

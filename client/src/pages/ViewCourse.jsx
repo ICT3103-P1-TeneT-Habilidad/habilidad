@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 
 const ViewCourse = () => {
-    const { edit_course } = useAppContext()
+    const { setEditCourseDetails } = useAppContext()
     const courseData = {
         courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
         courseName: 'dumb',
@@ -42,10 +42,6 @@ const ViewCourse = () => {
             },
         ],
     }
-
-    useEffect(() => {
-        edit_course = courseData
-    })
 
     const sortCourseMaterials = (materials) => {
         const sortedMaterials = []
