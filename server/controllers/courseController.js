@@ -13,13 +13,14 @@ import {
     deleteOneCourse,
     updateOneCourse,
     findPublicAndAssetId,
-    findPopularCourse
+    findPopularCourse,
+    findPopularCourseByTopic
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
-import { findPopularTopic, findTopicByName } from '../services/topic.js'
+import { findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
 // logs
 // import logger from '../utils/log.js'
@@ -117,8 +118,15 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
 
 export const getCoursesInTopCategories = async (req, res, next) => {
     try {
-        const result = await findPopularTopic()
-
+        const { topicName } = req.body
+        if (!topicName) throw new Response('Bad Request', 'res_badRequest')
+        const courses = await findPopularCourseByTopic(topicName)
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
     } catch (err) {
         const error = getErrorResponse(err)
         next(error)

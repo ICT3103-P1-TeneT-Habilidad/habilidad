@@ -157,3 +157,24 @@ export const findPopularCourse = async () => {
         }
     })
 }
+
+export const findPopularCourseByTopic = async (topic) => {
+    return db.course.findMany({
+        where: {
+            topicCourse: {
+                some: {
+                    topics: {
+                        topicName: topic
+                    }
+                }
+            }
+        },
+        select: {
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}
