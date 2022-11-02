@@ -15,7 +15,7 @@ import {
     editCourse,
 } from '../controllers/courseController.js'
 // import middleware
-import { imageUpload } from '../middleware/multer.js'
+import { courseUpload, imageUpload } from '../middleware/multer.js'
 import { isRoleInstructor, isRoleModerator, isRoleStudent } from '../middleware/checkRole.js'
 import { sanitizeBody } from '../validations/input.js'
 
@@ -40,7 +40,7 @@ router.route('/topCategories').get(getCoursesInTopCategories)
 router.route('/popularCourses').get(getPopularCourses)
 
 // Create new course (instructor)
-router.route('/create').post(isAuthenticate, isRoleInstructor, imageUpload, instructorCreateCourse)
+router.route('/create').post(isAuthenticate, isRoleInstructor, courseUpload, instructorCreateCourse)
 
 // Approve/reject course
 router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse) //sanitize

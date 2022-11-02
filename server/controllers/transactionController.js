@@ -4,6 +4,7 @@ import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
 // import services
 import { addOneCoursePurchased } from '../services/transaction.js'
+import { getErrorResponse } from '../utils/error.js'
 
 export const purchaseOneCourse = async (req, res, next) => {
     try {
@@ -14,10 +15,12 @@ export const purchaseOneCourse = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                result,
+                status: responseCode.res_ok,
+                message: 'success',
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }

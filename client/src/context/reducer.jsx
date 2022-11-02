@@ -18,6 +18,9 @@ import {
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ALL_COURSES_ERROR,
+    CREATE_COURSE_BEGIN,
+    CREATE_COURSE_SUCCESS,
+    // CREATE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
 } from './action'
@@ -100,6 +103,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 topics: action.payload.result,
+            }
+        case CREATE_COURSE_BEGIN:
+            return {
+                ...state,
+            }
+        case CREATE_COURSE_SUCCESS:
+            return {
+                ...state,
+                showAlert: true,
+                alert_type: 'success',
             }
         default:
             throw new Error(`no such action: ${action.type}`)

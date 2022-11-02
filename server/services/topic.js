@@ -13,3 +13,17 @@ export const createNewTopic = async (topic) => {
         },
     })
 }
+
+export const findTopicByName = async (topicCourse) => {
+    const transactions = topicCourse.map((ele) => {
+        return db.topics.findUnique({
+            where: {
+                topicName: ele.value,
+            },
+            select: {
+                topicId: true
+            }
+        })
+    })
+    return db.$transaction(transactions)
+}
