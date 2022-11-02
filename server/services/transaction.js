@@ -7,5 +7,9 @@ export const addOneCoursePurchased = async (data) => {
             courseId: data.courseId,
             amountPaid: data.amountPaid,
         },
+        include: {
+            student: true,
+            course: true
+        }
     })
 }
