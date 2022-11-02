@@ -1,10 +1,8 @@
 import React, { useReducer, useContext } from 'react'
-// import axios from 'axios'
 import reducer from './reducer'
 import axios from '../utils/axios'
-
+// import service
 import {
-    LOGIN_USER,
     SHOW_MODAL,
     CLEAR_VALUES,
     SET_USER_BEGIN,
@@ -25,19 +23,18 @@ import {
     // GET_ALL_COURSES_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
-    // CREATE_COURSE_ERROR,
+    CREATE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
-    CREATE_COURSE_ERROR,
 } from './action'
 
-const token = localStorage.getItem('accessToken')
+const user = localStorage.getItem('user')
 
 export const initialState = {
-    token: token ? token : null,
+    user: user ? JSON.parse(user) : null,
 
     showNavbarModal: false,
     openModal: false,
@@ -62,7 +59,12 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            config.headers['Authorization'] = `Bearer ${state.token}`
+            // config.headers['Authorization'] = `Bearer ${state.token}`
+            const token = getAccessToken()
+            if (token) {
+                config.headers['x-access-token'] = token
+            }
+
             return config
         },
         (err) => {
@@ -74,21 +76,67 @@ const AppProvider = ({ children }) => {
         (response) => {
             return response
         },
-        (err) => {
-            console.log(err)
-            if (err.response.status !== 401) {
-                logout()
+        async (err) => {
+            const orgConfig = err.config
+            if (orgConfig.url !== '/api/users/login' && err.response) {
+                // access token expired
+                if (err.response.status === 401 && !orgConfig._retry) {
+                    orgConfig._retry = true
+
+                    try {
+                        const result = await authFetch.post('/api/refreshToken', {
+                            refreshToken: getRefreshToken(),
+                        })
+                        const { accessToken } = result.data.result
+                        updateAccessToken(accessToken)
+                        return authFetch(orgConfig)
+                    } catch (_err) {
+                        return Promise.reject(_err)
+                    }
+                }
             }
-            return Promise.reject(err)
+            // console.log(err)
+            // if (err.response.status !== 401) {
+            //     logout()
+            // }
+            // return Promise.reject(err)
         }
     )
 
-    const addTokenToLocalStorage = ({ accessToken, refreshToken }) => {
-        localStorage.setItem('accessToken', accessToken)
+    // const addTokenToLocalStorage = ({ accessToken, refreshToken }) => {
+    //     localStorage.setItem('accessToken', accessToken)
+    // }
+
+    // const removeTokenFromLocalStorage = () => {
+    //     localStorage.removeItem('accessToken')
+    // }
+
+    const getRefreshToken = () => {
+        const user = localStorage.getItem('user')
+        return user?.refreshToken
     }
 
-    const removeTokenFromLocalStorage = () => {
-        localStorage.removeItem('accessToken')
+    const getAccessToken = () => {
+        const user = localStorage.getItem('user')
+        return user?.accessToken
+    }
+
+    const updateAccessToken = (token) => {
+        let user = localStorage.getItem('user')
+        user.accessToken = token
+        localStorage.setItem('user', JSON.stringify(user))
+    }
+
+    const getUser = () => {
+        return localStorage.getItem('user')
+    }
+
+    const setUser = (user) => {
+        localStorage.setItem('user', JSON.stringify(user))
+    }
+
+    const removeUser = () => {
+        localStorage.removeItem('user')
     }
 
     const showModal = () => {
@@ -97,30 +145,24 @@ const AppProvider = ({ children }) => {
         })
     }
 
-    const setUserType = (user_type) => {
-        clearValues()
-        dispatch({
-            type: LOGIN_USER,
-            payload: { user_type },
-        })
-    }
-
     const clearValues = () => {
         dispatch({ type: CLEAR_VALUES })
     }
 
-    const setUser = async (user_data) => {
+    const login = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
+            console.log("hit");
             const { data } = await axios.post(`/api/users/login`, user_data)
-            const { accessToken } = data.result
+            console.log("hit2")
+            const result = data.result
             console.log('data')
             console.log(data)
             dispatch({
                 type: SET_USER_SUCCESS,
-                payload: { accessToken },
+                payload: result,
             })
-            addTokenToLocalStorage({ accessToken })
+            setUser(result)
         } catch (err) {
             dispatch({
                 type: SET_USER_ERROR,
@@ -131,7 +173,7 @@ const AppProvider = ({ children }) => {
 
     const logout = () => {
         dispatch({ type: LOGOUT })
-        removeTokenFromLocalStorage()
+        removeUser()
     }
 
     const createUser = async (user_data) => {
@@ -213,7 +255,7 @@ const AppProvider = ({ children }) => {
             console.log(err.response)
             dispatch({
                 type: CREATE_COURSE_ERROR,
-                payload: {msg: err.response.data.result.message}
+                payload: { msg: err.response.data.result.message },
             })
         }
     }
@@ -222,10 +264,15 @@ const AppProvider = ({ children }) => {
         <AppContext.Provider
             value={{
                 ...state,
-                showModal,
-                setUserType,
-                clearValues,
+                getRefreshToken,
+                getAccessToken,
+                updateAccessToken,
+                getUser,
                 setUser,
+                removeUser,
+                showModal,
+                clearValues,
+                login,
                 logout,
                 createUser,
                 getAllCourses,
