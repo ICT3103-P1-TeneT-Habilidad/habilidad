@@ -1,7 +1,7 @@
 import {
-    LOGIN_USER,
     SHOW_MODAL,
     CLEAR_VALUES,
+    CLEAR_ALERT,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
     SET_USER_ERROR,
@@ -26,17 +26,14 @@ import {
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
+    SEND_OTP_BEGIN,
+    SEND_OTP_SUCCESS,
 } from './action'
 
 import { initialState } from './appContext'
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case LOGIN_USER:
-            return {
-                ...state,
-                user_type: action.payload.user_type,
-            }
         case SHOW_MODAL:
             return {
                 ...state,
@@ -49,6 +46,13 @@ const reducer = (state, action) => {
             }
             return { ...state, ...initialState }
         }
+        case CLEAR_ALERT:
+            return {
+                ...state,
+                showAlert: false,
+                alert_msg: '',
+                alert_type: '',
+            }
         case SET_USER_BEGIN:
             return {
                 ...state,
@@ -57,13 +61,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 user: action.payload.user,
+                showAlert: true,
+                alert_type: 'success',
+                alert_msg: action.payload.msg,
             }
         case SET_USER_ERROR:
             return {
                 ...state,
-                loginFail: true,
-                alert_msg: action.payload.msg,
+                showAlert: true,
                 alert_type: 'danger',
+                alert_msg: action.payload.msg,
             }
         case LOGOUT:
             return {
@@ -80,13 +87,14 @@ const reducer = (state, action) => {
                 ...state,
                 showAlert: true,
                 alert_type: 'success',
+                alert_msg: action.payload.msg,
             }
         case CREATE_USER_ERROR:
             return {
                 ...state,
                 showAlert: true,
-                alert_msg: action.payload.msg,
                 alert_type: 'danger',
+                alert_msg: action.payload.msg,
             }
         case GET_ALL_COURSES_BEGIN:
             return {
@@ -141,6 +149,14 @@ const reducer = (state, action) => {
                 alert_msg: action.payload.msg,
                 alert_type: 'danger',
             }
+        case SEND_OTP_BEGIN:
+            return{
+                
+            }
+            case SEND_OTP_SUCCESS:
+                return{
+
+                }
         default:
             throw new Error(`no such action: ${action.type}`)
     }

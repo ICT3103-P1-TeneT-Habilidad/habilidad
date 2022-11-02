@@ -1,10 +1,10 @@
 import React, { useReducer, useContext } from 'react'
 import reducer from './reducer'
 import axios from '../utils/axios'
-// import service
 import {
     SHOW_MODAL,
     CLEAR_VALUES,
+    CLEAR_ALERT,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
     SET_USER_ERROR,
@@ -38,7 +38,7 @@ export const initialState = {
 
     showNavbarModal: false,
     openModal: false,
-    loginFail: false,
+    // loginFail: false,
     showAlert: false,
     isLoading: false,
 
@@ -56,47 +56,47 @@ const AppProvider = ({ children }) => {
 
     const authFetch = axios
 
-    // interceptors
-    authFetch.interceptors.request.use(
-        (config) => {
-            // config.headers['Authorization'] = `Bearer ${state.token}`
-            const token = getAccessToken()
-            if (token) {
-                config.headers['x-access-token'] = token
-            }
+    // // interceptors
+    // authFetch.interceptors.request.use(
+    //     (config) => {
+    //         // config.headers['Authorization'] = `Bearer ${state.token}`
+    //         const token = getAccessToken()
+    //         if (token) {
+    //             config.headers['x-access-token'] = token
+    //         }
 
-            return config
-        },
-        (err) => {
-            return Promise.reject(err)
-        }
-    )
+    //         return config
+    //     },
+    //     (err) => {
+    //         return Promise.reject(err)
+    //     }
+    // )
 
-    authFetch.interceptors.response.use(
-        (response) => {
-            return response
-        },
-        async (err) => {
-            const orgConfig = err.config
-            if (orgConfig.url !== '/api/users/login' && err.response) {
-                // access token expired
-                if (err.response.status === 401 && !orgConfig._retry) {
-                    orgConfig._retry = true
+    // authFetch.interceptors.response.use(
+    //     (response) => {
+    //         return response
+    //     },
+    //     async (err) => {
+    //         const orgConfig = err.config
+    //         if (orgConfig.url !== '/api/users/login' && err.response) {
+    //             // access token expired
+    //             if (err.response.status === 401 && !orgConfig._retry) {
+    //                 orgConfig._retry = true
 
-                    try {
-                        const result = await authFetch.post('/api/refreshToken', {
-                            refreshToken: getRefreshToken(),
-                        })
-                        const { accessToken } = result.data.result
-                        updateAccessToken(accessToken)
-                        return authFetch(orgConfig)
-                    } catch (_err) {
-                        return Promise.reject(_err)
-                    }
-                }
-            }
-        }
-    )
+    //                 try {
+    //                     const result = await authFetch.post('/api/users/refreshAccessToken', {
+    //                         refreshToken: getRefreshToken(),
+    //                     })
+    //                     const { accessToken } = result.data.result
+    //                     updateAccessToken(accessToken)
+    //                     return authFetch(orgConfig)
+    //                 } catch (_err) {
+    //                     return Promise.reject(_err)
+    //                 }
+    //             }
+    //         }
+    //     }
+    // )
 
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
@@ -141,18 +141,19 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.post(`/api/users/login`, user_data)
             const result = data.result
-            console.log(data)
             dispatch({
                 type: SET_USER_SUCCESS,
-                payload: result,
+                payload: { user: result, msg: 'Successfully Login' },
             })
             setUser(result)
         } catch (err) {
+            console.log(err)
             dispatch({
                 type: SET_USER_ERROR,
                 payload: { msg: err.response.data.result.message },
             })
         }
+        clearAlert()
     }
 
     const logout = () => {
@@ -164,7 +165,10 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CREATE_USER_BEGIN })
         try {
             await axios.post(`/api/users/register`, user_data)
-            dispatch({ type: CREATE_USER_SUCCESS })
+            dispatch({
+                type: CREATE_USER_SUCCESS,
+                payload: { msg: 'Successfully Created' },
+            })
             dispatch({ type: CLEAR_VALUES })
         } catch (err) {
             console.log(err)
@@ -173,6 +177,7 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.result.message },
             })
         }
+        clearAlert()
     }
 
     const getAllCourses = async () => {
@@ -244,6 +249,14 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const clearAlert = () => {
+        setTimeout(() => {
+            dispatch({
+                type: CLEAR_ALERT,
+            })
+        }, 5000)
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -256,6 +269,7 @@ const AppProvider = ({ children }) => {
                 removeUser,
                 showModal,
                 clearValues,
+                clearAlert,
                 login,
                 logout,
                 createUser,

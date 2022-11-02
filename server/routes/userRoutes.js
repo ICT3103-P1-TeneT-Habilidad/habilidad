@@ -50,7 +50,7 @@ router.route('/reactivate').patch(isAuthenticate, isRoleModerator, reactivateUse
 // Deactivate user account
 router.route('/deactivate').patch(isAuthenticate, deactivateUser, sendEmailDeactivateAcc)
 
-// Referesh access token
+// Refresh access token
 router.route('/refreshAccessToken').post(isRefreshTokenValid, refreshAccessToken)
 
 export default router

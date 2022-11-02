@@ -2,6 +2,7 @@
 export const LOGIN_USER = 'LOGIN_USER'
 export const SHOW_MODAL = 'SHOW_MODAL'
 export const CLEAR_VALUES = 'CLEAR_VALUES'
+export const CLEAR_ALERT = 'CLEAR_ALERT'
 export const LOGOUT = 'LOGOUT'
 
 /*------------------------------------------------------------------------------------
@@ -26,6 +27,9 @@ export const DELETE_USER_ERROR = 'DELETE_USER_ERROR'
 export const RESET_PASSWORD_LINK_BEGIN = 'RESET_PASSWORD_LINK_BEGIN'
 export const RESET_PASSWORD_LINK_SUCCESS = 'RESET_PASSWORD_LINK_SUCCESS'
 export const RESET_PASSWORD_LINK_ERROR = 'RESET_PASSWORD_LINK_ERROR'
+
+export const SEND_OTP_BEGIN = 'SEND_OTP_BEGIN'
+export const SEND_OTP_SUCCESS = 'SEND_OTP_SUCCESS'
 
 /*------------------------------------------------------------------------------------
 COURSES RELATED
