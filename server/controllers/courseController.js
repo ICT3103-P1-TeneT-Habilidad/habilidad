@@ -14,7 +14,9 @@ import {
     updateOneCourse,
     findPublicAndAssetId,
     findPopularCourse,
-    findPopularCourseByTopic
+    findPopularCourseByTopic,
+    updateCourseToNotPopular,
+    updateCourseToPopular
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
@@ -279,6 +281,47 @@ export const editCourse = async (req, res, next) => {
             imageAssetId: uploadResult ? uploadResult.imageAssetId : null,
             imagePublicId: uploadResult ? uploadResult.imagePublicId : null
         })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const setCoursePopular = async (req, res, next) => {
+    try {
+        const { courseId } = req.sanitizedBody
+
+        const result = await updateCourseToPopular(courseId)
+
+        if (!result) throw new Response('Bad Request', 'res_badRequest')
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const setCourseNotPopular = async (req, res, next) => {
+    try {
+
+        const { courseId } = req.sanitizedBody
+
+        const result = await updateCourseToNotPopular(courseId)
+
+        if (!result) throw new Response('Bad Request', 'res_badRequest')
 
         res.status(responseCode.res_ok).json({
             result: {

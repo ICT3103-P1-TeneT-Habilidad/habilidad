@@ -149,6 +149,7 @@ export const findPopularCourse = async () => {
             isPopular: true
         },
         select: {
+            courseId: true,
             courseName: true,
             imageUrl: true,
             description: true,
@@ -170,11 +171,36 @@ export const findPopularCourseByTopic = async (topic) => {
             }
         },
         select: {
+            courseId: true,
             courseName: true,
             imageUrl: true,
             description: true,
             price: true,
             duration: true
         }
+    })
+}
+
+export const updateCourseToPopular = async (courseId) => {
+    return db.course.update({
+        where: {
+            courseId: courseId
+        },
+        data: {
+            isPopular: true
+        }
+
+    })
+}
+
+export const updateCourseToNotPopular = async (courseId) => {
+    return db.course.update({
+        where: {
+            courseId: courseId
+        },
+        data: {
+            isPopular: false
+        }
+
     })
 }
