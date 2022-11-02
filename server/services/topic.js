@@ -27,3 +27,19 @@ export const findTopicByName = async (topicCourse) => {
     })
     return db.$transaction(transactions)
 }
+
+export const findPopularTopic = async () => {
+    return db.topics.findMany({
+        include: {
+            _count: {
+                select: { topicCourse: true }
+            }
+        },
+        orderBy: {
+            topicCourse: {
+                _count: 'desc'
+            }
+        }
+
+    })
+}
