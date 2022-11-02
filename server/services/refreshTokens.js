@@ -8,39 +8,50 @@ export const addRefreshTokenToWhitelist = ({ jti, refreshToken, userId }) => {
         data: {
             token: hashToken(refreshToken),
             userId: userId,
-            expiredAt: new Date(decodeToken(refreshToken, 1).exp),
+            expiredAt: new Date(decodeToken(refreshToken, 1).exp * 1000),
         },
     })
 }
 
 // used to check if the token sent by the client is in the database.
-function findRefreshTokenById(id) {
-    return db.refreshTokens.findUnique({
+export const findRefreshTokenByUserId = (userId) => {
+    return db.refreshTokens.findMany({
         where: {
-            id,
+            userId,
         },
+        orderBy: {
+            createdAt: 'desc'
+        }
     })
 }
 
-// soft delete tokens after usage.
-function deleteRefreshToken(id) {
-    return db.refreshTokens.update({
+// Delet tokens
+export const deleteRefreshTokenByUserId = (userId) => {
+    return db.refreshTokens.deleteMany({
         where: {
-            id,
-        },
-        data: {
-            revoked: true,
-        },
+            userId,
+        }
     })
 }
 
-function revokeTokens(userId) {
+export const revokeTokensByUserId = (userId) => {
     return db.refreshTokens.updateMany({
         where: {
             userId,
         },
         data: {
-            revoked: true,
+            revokedAt: new Date(),
         },
+    })
+}
+
+export const revokeLastTokenById = (rTokenId) => {
+    return db.refreshTokens.update({
+        where: {
+            rTokenId
+        },
+        data: {
+            revokedAt: new Date()
+        }
     })
 }
