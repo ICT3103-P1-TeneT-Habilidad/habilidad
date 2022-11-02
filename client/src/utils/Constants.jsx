@@ -9,3 +9,13 @@ export const filterOptions = [
     { value: 'highest', label: 'Highest Rated' },
     { value: 'newest', label: 'Newest' },
 ]
+
+export const languageOptions = [
+    {value: "Chinese", label: "Chinese" },
+    {value: "English", label: "English" },
+    {value: "French", label: "French" },
+    {value: "Indian", label: "Indian" },
+    {value: "Japanese", label: "Japanese" },
+    {value: "Korean", label: "Korean" },
+    {value: "Malay", label: "Malay" },
+]

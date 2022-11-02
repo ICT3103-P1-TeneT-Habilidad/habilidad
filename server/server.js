@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 // Error Handling all errors
 app.use((err, req, res, next) => {
     res.status(err.statusCode || 500).json({
-        error: {
+        result: {
             status: err.statusCode || 500,
             message: err.message || 'Internal Server Error',
         },

@@ -61,6 +61,7 @@ model Course{
   imageAssetId String
   imagePublicId String
   duration Int
+  isPopular Boolean @default(false)
   price Float
   description String
   language Language
@@ -80,6 +81,10 @@ model Course{
 model CourseMaterial {
   courseMaterialId String @id @default(uuid())
   url String
+  assetId String
+  publicId String
+  order Int
+  title String
   course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
@@ -96,7 +101,7 @@ model Transaction {
 
 model Topics {
   topicId String @id @default(uuid())
-  topicName String
+  topicName String @unique
   description String
   url String
   topicCourse TopicCourse[]
@@ -155,6 +160,7 @@ enum Language {
   JAPANESE
   KOREAN
   MALAY
+  PUNDEK
 }
 
 enum ApprovedStatus {

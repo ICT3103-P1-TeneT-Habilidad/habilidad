@@ -1,5 +1,6 @@
 import { responseCode } from '../responses/responseCode.js'
 import cloudinary from '../utils/cloudinary.js'
+import { Prisma } from '@prisma/client'
 import fs from 'fs'
 // import services
 import {
@@ -11,12 +12,18 @@ import {
     updateCourseApprovalStatus,
     deleteOneCourse,
     updateOneCourse,
-    findPublicAndAssetId
+    findPublicAndAssetId,
+    findPopularCourse,
+    findPopularCourseByTopic,
+    updateCourseToNotPopular,
+    updateCourseToPopular
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
+import { findTopicByName } from '../services/topic.js'
+import { getErrorResponse } from '../utils/error.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -36,7 +43,8 @@ export const getOneCourse = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                course,
+                status: responseCode.res_ok,
+                data: course,
             },
         })
     } catch (err) {
@@ -44,7 +52,8 @@ export const getOneCourse = async (req, res, next) => {
         // let logMsg = new LogMessage(err.statusCode, req).msg
         // logger.error(logMsg)
 
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -57,11 +66,13 @@ export const getAllCourses = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses
+                status: responseCode.res_ok,
+                data: courses
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -76,11 +87,13 @@ export const getCoursesCreatedByInstructor = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses,
+                status: responseCode.res_ok,
+                data: courses,
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -95,51 +108,106 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses,
+                status: responseCode.res_ok,
+                data: courses,
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => { }
+export const getCoursesInTopCategories = async (req, res, next) => {
+    try {
+        const { topicName } = req.body
+        if (!topicName) throw new Response('Bad Request', 'res_badRequest')
+        const courses = await findPopularCourseByTopic(topicName)
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
 
-export const getPopularCourses = async (req, res, next) => { }
+export const getPopularCourses = async (req, res, next) => {
+    try {
+        const courses = await findPopularCourse()
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
 
 /**
  * create new courses (instructor)
  */
 export const instructorCreateCourse = async (req, res, next) => {
     try {
-        const courseImage = req.file
+        const { image, materialFiles } = req.files
 
-        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } =
+        const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.body
 
-        const uploadResult = await cloudinary.uploader.upload(courseImage.path)
-        fs.unlinkSync(courseImage.path)
+        const topics = await findTopicByName(JSON.parse(topicCourse))
+
+        const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
+        fs.unlinkSync(image[0].path)
+
+        const materialUpload = materialFiles.map((ele) => cloudinary.uploader.upload(ele.path, { resource_type: 'video' }))
+        const uploadResult = await Promise.all(materialUpload)
+        for (const file in materialFiles) {
+            fs.unlinkSync(materialFiles[file].path)
+        }
+        const courseMaterials = JSON.parse(materials)
+        for (const material in courseMaterials) {
+            courseMaterials[material].url = uploadResult[material].secure_url
+            courseMaterials[material].publicId = uploadResult[material].public_id
+            courseMaterials[material].assetId = uploadResult[material].asset_id
+        }
 
         const { instructorId } = req.payload
 
-        const result = await createNewCourse({
+        await createNewCourse({
             courseName,
             duration: parseInt(duration),
             price: parseFloat(price),
             courseDescription,
             language,
-            status,
-            approvalStatus,
-            instructorId: instructorId,
-            topicCourse: JSON.parse(topicCourse),
-            imageUrl: uploadResult.secure_url,
-            imageAssetId: uploadResult.asset_id,
-            imagePublicId: uploadResult.public_id
+            instructorId,
+            topicCourse: topics,
+            imageUrl: imageUploadResult.secure_url,
+            imageAssetId: imageUploadResult.asset_id,
+            imagePublicId: imageUploadResult.public_id,
+            courseMaterials
         })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: "success"
+            }
+        })
     } catch (err) {
-        next(err)
+        let error
+        if (err instanceof Prisma.PrismaClientKnownRequestError) {
+            error = new Response('Internal Server Error', 'res_internalServer')
+        } else {
+            error = new Response('Internal Server Error', 'res_internalServer')
+        }
+        next(error)
     }
 }
 
@@ -149,11 +217,17 @@ export const approveCourse = async (req, res, next) => {
         const { moderatorId } = req.payload
         const { approvalStatus } = req.sanitizedBody
 
-        const result = await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
+        await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -164,9 +238,15 @@ export const deleteCourse = async (req, res, next) => {
 
         const result = await deleteOneCourse({ courseId, moderatorId })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -190,7 +270,7 @@ export const editCourse = async (req, res, next) => {
             fs.unlinkSync(courseImage.path)
         }
 
-        const result = await updateOneCourse({
+        await updateOneCourse({
             courseId,
             courseName,
             duration: parseInt(duration),
@@ -202,8 +282,55 @@ export const editCourse = async (req, res, next) => {
             imagePublicId: uploadResult ? uploadResult.imagePublicId : null
         })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const setCoursePopular = async (req, res, next) => {
+    try {
+        const { courseId } = req.sanitizedBody
+
+        const result = await updateCourseToPopular(courseId)
+
+        if (!result) throw new Response('Bad Request', 'res_badRequest')
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const setCourseNotPopular = async (req, res, next) => {
+    try {
+
+        const { courseId } = req.sanitizedBody
+
+        const result = await updateCourseToNotPopular(courseId)
+
+        if (!result) throw new Response('Bad Request', 'res_badRequest')
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
     }
 }

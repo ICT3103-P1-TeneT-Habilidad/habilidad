@@ -13,3 +13,33 @@ export const createNewTopic = async (topic) => {
         },
     })
 }
+
+export const findTopicByName = async (topicCourse) => {
+    const transactions = topicCourse.map((ele) => {
+        return db.topics.findUnique({
+            where: {
+                topicName: ele.value,
+            },
+            select: {
+                topicId: true
+            }
+        })
+    })
+    return db.$transaction(transactions)
+}
+
+export const findPopularTopic = async () => {
+    return db.topics.findMany({
+        include: {
+            _count: {
+                select: { topicCourse: true }
+            }
+        },
+        orderBy: {
+            topicCourse: {
+                _count: 'desc'
+            }
+        }
+
+    })
+}

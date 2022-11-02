@@ -9,7 +9,9 @@ export const findOneCourse = async (courseId) => {
         },
         include: {
             courseMaterial: true,
-            topicCourse: true,
+            topicCourse: {
+                include: { topics: true }
+            },
         },
     })
 }
@@ -58,14 +60,13 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
 export const findCoursesSortedByPopularity = async () => { }
 
 export const createNewCourse = async (info) => {
-    console.log(info)
     return db.course.create({
         data: {
             courseName: info.courseName,
             duration: info.duration,
             price: info.price,
             description: info.courseDescription,
-            language: info.language,
+            language: info.language.toUpperCase(),
             status: 'TOSTART',
             approvalStatus: 'PENDING',
             instructorId: info.instructorId,
@@ -75,6 +76,9 @@ export const createNewCourse = async (info) => {
             topicCourse: {
                 create: info.topicCourse,
             },
+            courseMaterial: {
+                create: info.courseMaterials
+            }
         },
         include: {
             topicCourse: true,
@@ -136,6 +140,68 @@ export const findPublicAndAssetId = async (courseId) => {
             imageAssetId: true,
             imagePublicId: true,
             imageUrl: true
+        }
+
+    })
+}
+
+export const findPopularCourse = async () => {
+    return db.course.findMany({
+        where: {
+            isPopular: true
+        },
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}
+
+export const findPopularCourseByTopic = async (topic) => {
+    return db.course.findMany({
+        where: {
+            topicCourse: {
+                some: {
+                    topics: {
+                        topicName: topic
+                    }
+                }
+            }
+        },
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}
+
+export const updateCourseToPopular = async (courseId) => {
+    return db.course.update({
+        where: {
+            courseId: courseId
+        },
+        data: {
+            isPopular: true
+        }
+
+    })
+}
+
+export const updateCourseToNotPopular = async (courseId) => {
+    return db.course.update({
+        where: {
+            courseId: courseId
+        },
+        data: {
+            isPopular: false
         }
 
     })
