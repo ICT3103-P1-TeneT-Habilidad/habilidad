@@ -5,6 +5,9 @@ export const findEmailToken = (user_id, token) => {
         where: {
             userId: user_id,
         },
+        include: {
+            user: true
+        }
     })
 }
 

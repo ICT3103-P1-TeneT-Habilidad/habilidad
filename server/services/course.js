@@ -42,6 +42,9 @@ export const findCoursesWhereCreatedByInstructor = async (instructorId) => {
                 equals: instructorId,
             },
         },
+        include: {
+            instructor: true
+        }
     })
 }
 
@@ -54,6 +57,9 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
                 },
             },
         },
+        include: {
+            instructorId: true
+        }
     })
 }
 
@@ -99,6 +105,10 @@ export const updateCourseApprovalStatus = async (data) => {
             approvalStatus: data.approvalStatus,
             approvedBy: data.moderatorId,
         },
+        include: {
+            instructor: true,
+            moderator: true
+        }
     })
 }
 
@@ -156,7 +166,11 @@ export const findPopularCourse = async () => {
             imageUrl: true,
             description: true,
             price: true,
-            duration: true
+            duration: true,
+            instructor: true
+        },
+        include: {
+            instructor: true
         }
     })
 }
