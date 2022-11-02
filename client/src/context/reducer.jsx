@@ -53,9 +53,8 @@ const reducer = (state, action) => {
         case SET_USER_SUCCESS:
             return {
                 ...state,
-                user: action.payload.result,
-                token: action.payload.token,
-                redirect: false,
+                accessToken: action.payload.accessToken,
+                refreshToken: action.payload.refreshToken,
             }
         case SET_USER_ERROR:
             return {

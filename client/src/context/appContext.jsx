@@ -30,18 +30,15 @@ import {
     RESET_PASSWORD_LINK_ERROR,
 } from './action'
 
-const token = localStorage.getItem('token')
-const user = localStorage.getItem('user')
+const token = localStorage.getItem('accessToken')
 
 export const initialState = {
-    user: user ? JSON.parse(user) : null,
     token: token ? token : null,
 
     showNavbarModal: false,
     openModal: false,
     loginFail: false,
     showAlert: false,
-    redirect: true,
     isLoading: false,
 
     user_data: {},
@@ -82,14 +79,14 @@ const AppProvider = ({ children }) => {
         }
     )
 
-    const addUserToLocalStorage = ({ result, token }) => {
-        localStorage.setItem('user', JSON.stringify(result))
-        localStorage.setItem('token', token)
+    const addTokenToLocalStorage = ({ accessToken, refreshToken }) => {
+        localStorage.setItem('accessToken', accessToken)
+        localStorage.setItem('refreshToken', refreshToken)
     }
 
-    const removeUserFromLocalStorage = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
+    const removeTokenFromLocalStorage = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
     }
 
     const showModal = () => {
@@ -114,13 +111,14 @@ const AppProvider = ({ children }) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
             const { data } = await axios.post(`/api/users/login`, user_data)
-            const { result, token } = data
+            const { accessToken, refreshToken } = data.result
+            console.log('data')
             console.log(data)
             dispatch({
                 type: SET_USER_SUCCESS,
-                payload: { result, token },
+                payload: { accessToken, refreshToken },
             })
-            addUserToLocalStorage({ result, token })
+            addTokenToLocalStorage({ accessToken, refreshToken })
         } catch (err) {
             dispatch({
                 type: SET_USER_ERROR,
@@ -131,7 +129,7 @@ const AppProvider = ({ children }) => {
 
     const logout = () => {
         dispatch({ type: LOGOUT })
-        removeUserFromLocalStorage()
+        removeTokenFromLocalStorage()
     }
 
     const createUser = async (user_data) => {
