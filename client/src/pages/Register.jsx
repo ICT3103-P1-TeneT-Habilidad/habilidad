@@ -1,17 +1,30 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAppContext } from '../context/appContext'
+import { Alert } from '../components/index'
 
 const Register = () => {
+    const { createUser, showAlert } = useAppContext()
+
     const {
         register,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm()
 
-    // const onSubmit = (data) = console.log(data)
+    const password = useRef({})
+    password.current = watch('password', '')
+
+    const formatData = (data) => {
+        data.role = 'Student'
+        delete data.re_pwd
+    }
 
     const onSubmit = (data) => {
         console.log(data)
+        formatData(data)
+        createUser(data)
     }
 
     return (
@@ -22,9 +35,10 @@ const Register = () => {
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                        {showAlert && <Alert />}
                         <div>
                             <label>Username</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="username"
                                     name="username"
@@ -48,7 +62,7 @@ const Register = () => {
                                     placeholder="Enter Name"
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('name', { required: 'Please enter your name' })}
-                                />{' '}
+                                />
                                 {errors.name ? (
                                     <span className="text-sm text-red-500">{errors.name.message}</span>
                                 ) : null}
@@ -63,8 +77,14 @@ const Register = () => {
                                     type="email"
                                     placeholder="Enter Email"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('email', { required: 'Please enter your email' })}
-                                />{' '}
+                                    {...register('email', {
+                                        required: 'Please enter your email',
+                                        pattern: {
+                                            value: /\S+@\S+\.\S+/,
+                                            message: 'Entered value does not match email format',
+                                        },
+                                    })}
+                                />
                                 {errors.email ? (
                                     <span className="text-sm text-red-500">{errors.email.message}</span>
                                 ) : null}
@@ -74,21 +94,22 @@ const Register = () => {
                             <label>Phone Number</label>
                             <div classname="mt-1">
                                 <input
-                                    id="phone_number"
-                                    name="phone_number"
+                                    id="phoneNumber"
+                                    name="phoneNumber"
                                     type="number"
                                     placeholder="Enter Phone Number"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('phone_number', {
+                                    {...register('phoneNumber', {
                                         required: 'Please enter your phone number',
                                         maxLength: {
                                             value: 8,
                                             message: 'Maximum only 8 digits!',
                                         },
+                                        valueAsNumber: true,
                                     })}
-                                />{' '}
-                                {errors.phone_number ? (
-                                    <span className="text-sm text-red-500">{errors.phone_number.message}</span>
+                                />
+                                {errors.phoneNumber ? (
+                                    <span className="text-sm text-red-500">{errors.phoneNumber.message}</span>
                                 ) : null}
                             </div>
                         </div>
@@ -104,11 +125,11 @@ const Register = () => {
                                     {...register('password', {
                                         required: 'Please enter your password',
                                         minLength: {
-                                            value: 6,
-                                            message: 'Need to be more than 6 characters!',
+                                            value: 8,
+                                            message: 'Password must have at least 8 characters',
                                         },
                                     })}
-                                />{' '}
+                                />
                                 {errors.password ? (
                                     <span className="text-sm text-red-500">{errors.password.message}</span>
                                 ) : null}
@@ -124,13 +145,9 @@ const Register = () => {
                                     placeholder="Re-Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('re_pwd', {
-                                        required: 'Please enter your password again',
-                                        minLength: {
-                                            value: 6,
-                                            message: 'Need to be more than 6 characters!',
-                                        },
+                                        validate: (value) => value === password.current || 'The passwords do not match',
                                     })}
-                                />{' '}
+                                />
                                 {errors.re_pwd ? (
                                     <span className="text-sm text-red-500">{errors.re_pwd.message}</span>
                                 ) : null}

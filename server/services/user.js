@@ -1,51 +1,96 @@
 import db from '../utils/db.js'
 
-export const findAccountByEmail = async (email) => {
-    return db.account.findUnique({
-        where: {
-            email: email,
-        },
-    });
-}
-
-export const storeNewAccount = async (user) => {
-    return db.account.create({
+export const storeNewUser = async (user) => {
+    return db.user.create({
         data: {
-            email: user.email,
             username: user.username,
             password: user.hashedPassword,
+            name: user.name,
+            email: user.email,
             phoneNumber: user.phoneNumber,
-            enabled: true,
-            user: {
-                create: {
-                    name: user.name,
-                    role: user.role,
-                    deActivatedOn: null
-
-                }
-            }
+            role: user.role,
+            deactivationDate: null,
+            [user.role.toLowerCase()]: { create: {} },
         },
-        include: {
-            user: true
-        }
-    });
+    })
 }
 
-export const findAccountByUsername = async (username) => {
-    return db.account.findUnique({
+export const findUserByUsername = async (username) => {
+    return db.user.findUnique({
         where: {
             username: username,
         },
-        include: {
-            user: true
-        }
-    });
+    })
 }
 
 export const findUserbyUserId = async (userId) => {
     return db.user.findUnique({
         where: {
-            userId: userId
+            userId: userId,
+        },
+    })
+}
+
+export const findUserByEmail = async (email) => {
+    return db.user.findMany({
+        where: {
+            email: email,
+        },
+    })
+}
+export const updateDeactivateDate = async (data) => {
+    return db.user.update({
+        where: {
+            userId: data.userId,
+        },
+        data: {
+            deactivationDate: new Date(),
+        },
+    })
+}
+
+export const updatePasswordAndDeleteToken = async (user) => {
+    return db.$transaction([
+        db.user.update({
+            where: {
+                userId: user.userId,
+                username: user.username,
+            },
+            data: {
+                password: user.hashedPassword,
+            },
+        }),
+        db.emailToken.delete({
+            where: {
+                userId: user.userId,
+            },
+        }),
+    ])
+}
+
+export const findAllUsers = async () => {
+    return db.user.findMany()
+}
+
+export const updateUserByUserId = async (data) => {
+    return db.user.update({
+        where: { userId: data.userId },
+        data: {
+            name: data.name,
+            password: data.password,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
+        },
+    })
+}
+
+export const updateDeactivationDateToNull = async (data) => {
+    return db.user.update({
+        where: {
+            userId: data.userId
+        },
+        data: {
+            deactivationDate: null
         }
     })
 }

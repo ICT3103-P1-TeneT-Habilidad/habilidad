@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { CourseCard } from './index'
+// import { CourseCard } from './index'
 // import icons
 import { IoIosArrowForward } from 'react-icons/io'
 
@@ -16,7 +16,7 @@ const PopularCourse = () => {
                     </div>
                 </Link>
             </div>
-            <CourseCard />
+            {/* <CourseCard /> */}
         </div>
     )
 }
