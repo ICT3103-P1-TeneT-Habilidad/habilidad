@@ -232,8 +232,7 @@ export const resetPassword = async (req, res, next) => {
 
 export const sendEmailResetLink = async (req, res, next) => {
     try {
-        const email = req.body.user_email
-
+        const email = req.body.email
         const user = await findUserByEmail(email)
 
         if (user.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
@@ -246,7 +245,7 @@ export const sendEmailResetLink = async (req, res, next) => {
         const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
 
         if (!token) {
-            token = generateEmailToken({ userId: user[0].userId, expiredAt: expiredDate, createdAt: currentDate })
+            token = generateEmailToken(user[0].userId)
             const result = await saveEmailToken({
                 userId: user[0].userId,
                 token: token,
@@ -287,7 +286,7 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
     try {
         const email = req.body.email
 
-        if (!email) throw new Response('email is empty')
+        if (!email) throw new Response('Email field is empty', 'res_badRequest')
 
         const user = await findUserByEmail(email)
 

@@ -20,9 +20,12 @@ import {
     // GET_ALL_COURSES_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
-    // CREATE_COURSE_ERROR,
+    CREATE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    RESET_PASSWORD_LINK_BEGIN,
+    RESET_PASSWORD_LINK_SUCCESS,
+    RESET_PASSWORD_LINK_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -53,15 +56,14 @@ const reducer = (state, action) => {
         case SET_USER_SUCCESS:
             return {
                 ...state,
-                user: action.payload.result,
-                token: action.payload.token,
-                redirect: false,
+                user: action.payload.user,
             }
         case SET_USER_ERROR:
             return {
                 ...state,
                 loginFail: true,
                 alert_msg: action.payload.msg,
+                alert_type: 'danger',
             }
         case LOGOUT:
             return {
@@ -104,6 +106,24 @@ const reducer = (state, action) => {
                 ...state,
                 topics: action.payload.result,
             }
+        case RESET_PASSWORD_LINK_BEGIN:
+            return {
+                ...state,
+            }
+        case RESET_PASSWORD_LINK_SUCCESS:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: 'Email sent!',
+                alert_type: 'success',
+            }
+        case RESET_PASSWORD_LINK_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: action.payload.msg,
+                alert_type: 'danger',
+            }
         case CREATE_COURSE_BEGIN:
             return {
                 ...state,
@@ -113,6 +133,13 @@ const reducer = (state, action) => {
                 ...state,
                 showAlert: true,
                 alert_type: 'success',
+            }
+        case CREATE_COURSE_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: action.payload.msg,
+                alert_type: 'danger',
             }
         default:
             throw new Error(`no such action: ${action.type}`)
