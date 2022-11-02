@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 // Usually I keep the token between 5 minutes - 15 minutes
-const generateAccessToken = (userId) => {
+export const generateAccessToken = (userId) => {
     return jwt.sign({ userId: userId }, process.env.JWT_ACCESS_SECRET, {
         expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
     })

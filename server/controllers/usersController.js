@@ -1,6 +1,4 @@
-import crypto from 'crypto'
 // import services
-import { addRefreshTokenToWhitelist } from '../services/refreshTokens.js'
 import {
     findUserbyUserId,
     findUserByEmail,
@@ -17,33 +15,15 @@ import { email_template, email_template_deactivate } from '../constants.js'
 import jwt from 'jsonwebtoken'
 
 // import middleware
-import { generateSalt, hashText, verifyPassword } from '../utils/auth.js'
+import { generateSalt, hashText, verifyPassword, generateTokenProcedure } from '../utils/auth.js'
 import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../middleware/email.js'
-import { generateTokens } from '../utils/jwt.js'
 // import validations
 import { validateEmail, validatePasswords } from '../validations/input.js'
 // import Responses
 import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
 import { getErrorResponse } from '../utils/error.js'
-
-const generateTokenProcedure = async (user) => {
-    // Generate uuid
-    const jti = crypto.randomUUID()
-
-    const userId = user.userId
-
-    // Generate Token
-    const { accessToken, refreshToken } = generateTokens(userId, jti)
-
-    // Whitelist refresh token (store in db)
-    await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
-
-    return {
-        accessToken,
-        refreshToken,
-    }
-}
+import { addRefreshTokenToWhitelist, deleteRefreshTokenByUserId } from '../services/refreshTokens.js'
 
 export const getAllUsers = async (req, res, next) => {
     try {
@@ -105,7 +85,11 @@ export const userLogin = async (req, res, next) => {
         }
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure(user)
+        const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
+        const { userId } = user
+        // Whitelist refresh token (store in db)
+        await deleteRefreshTokenByUserId(userId)
+        await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -143,7 +127,10 @@ export const userRegister = async (req, res, next) => {
         const user = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
 
         // Process of generating tokens
-        const { accessToken, refreshToken } = await generateTokenProcedure(user)
+        const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
+        const { userId } = user
+        // Whitelist refresh token (store in db)
+        await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
 
         res.status(responseCode.res_ok).json({
             result: {
