@@ -11,12 +11,12 @@ import {
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
-import { email_template, email_template_deactivate } from '../constants.js'
+import { email_template, email_template_deactivate, otp_template } from '../constants.js'
 import jwt from 'jsonwebtoken'
 
 // import middleware
 import { generateSalt, hashText, verifyPassword, generateTokenProcedure } from '../utils/auth.js'
-import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../middleware/email.js'
+import { sendEmailLink, generateEmailToken, decodeEmailToken, generateEmailOtp } from '../middleware/email.js'
 // import validations
 import { validateEmail, validatePasswords } from '../validations/input.js'
 // import Responses
@@ -93,8 +93,11 @@ export const userLogin = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                accessToken,
-                refreshToken,
+                status: responseCode.res_ok,
+                data: {
+                    accessToken,
+                    refreshToken,
+                }
             },
         })
     } catch (err) {
@@ -323,6 +326,31 @@ export const reactivateUser = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const sendEmailOtp = async (req, res, next) => {
+    try {
+        const { username } = req.body
+        const user = await findUserByUsername(username)
+
+        if (!user) throw new Response('Invalid OTP', 'res_unauthorised')
+
+        const token = generateEmailOtp()
+
+        const emailMsg = otp_template(token)
+
+        await sendEmailLink(email, 'Habilidad: One-Time Password', emailMsg)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'OTP was sent to your email account',
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to send reset link')
         next(error)
     }
 }

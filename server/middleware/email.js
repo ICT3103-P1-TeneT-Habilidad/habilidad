@@ -46,3 +46,5 @@ export const decodeEmailToken = (token) => {
         console.log(err)
     }
 }
+
+export const generateEmailOtp = () => Math.random().toString(36).substring(3, 9);
