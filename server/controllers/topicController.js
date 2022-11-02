@@ -4,6 +4,8 @@ import { createNewTopic, findAllTopics } from '../services/topic.js'
 // responses
 import { Response } from '../responses/response.js'
 import { responseCode } from '../responses/responseCode.js'
+import { getErrorResponse } from '../utils/error.js'
+
 import fs from 'fs'
 
 import cloudinary from '../utils/cloudinary.js'
@@ -18,11 +20,13 @@ export const getAllTopics = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                topics,
+                status: responseCode.res_ok,
+                data: topics,
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -38,10 +42,12 @@ export const createTopic = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                topic,
+                status: responseCode.res_ok,
+                message: 'success',
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }

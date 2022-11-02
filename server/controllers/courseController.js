@@ -1,5 +1,6 @@
 import { responseCode } from '../responses/responseCode.js'
 import cloudinary from '../utils/cloudinary.js'
+import { Prisma } from '@prisma/client'
 import fs from 'fs'
 // import services
 import {
@@ -18,6 +19,7 @@ import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
 import { findTopicByName } from '../services/topic.js'
+import { getErrorResponse } from '../utils/error.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -37,7 +39,8 @@ export const getOneCourse = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                course,
+                status: responseCode.res_ok,
+                data: course,
             },
         })
     } catch (err) {
@@ -45,7 +48,8 @@ export const getOneCourse = async (req, res, next) => {
         // let logMsg = new LogMessage(err.statusCode, req).msg
         // logger.error(logMsg)
 
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -58,11 +62,13 @@ export const getAllCourses = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses
+                status: responseCode.res_ok,
+                data: courses
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -77,11 +83,13 @@ export const getCoursesCreatedByInstructor = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses,
+                status: responseCode.res_ok,
+                data: courses,
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -96,11 +104,13 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                courses,
+                status: responseCode.res_ok,
+                data: courses,
             },
         })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -158,7 +168,13 @@ export const instructorCreateCourse = async (req, res, next) => {
             }
         })
     } catch (err) {
-        next(err)
+        let error
+        if (err instanceof Prisma.PrismaClientKnownRequestError) {
+            error = new Response('Internal Server Error', 'res_internalServer')
+        } else {
+            error = new Response('Internal Server Error', 'res_internalServer')
+        }
+        next(error)
     }
 }
 
@@ -168,11 +184,17 @@ export const approveCourse = async (req, res, next) => {
         const { moderatorId } = req.payload
         const { approvalStatus } = req.sanitizedBody
 
-        const result = await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
+        await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -183,9 +205,15 @@ export const deleteCourse = async (req, res, next) => {
 
         const result = await deleteOneCourse({ courseId, moderatorId })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
 
@@ -209,7 +237,7 @@ export const editCourse = async (req, res, next) => {
             fs.unlinkSync(courseImage.path)
         }
 
-        const result = await updateOneCourse({
+        await updateOneCourse({
             courseId,
             courseName,
             duration: parseInt(duration),
@@ -221,8 +249,14 @@ export const editCourse = async (req, res, next) => {
             imagePublicId: uploadResult ? uploadResult.imagePublicId : null
         })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
     } catch (err) {
-        next(err)
+        const error = getErrorResponse(err)
+        next(error)
     }
 }
