@@ -13,6 +13,8 @@ import {
     approveCourse,
     deleteCourse,
     editCourse,
+    setCoursePopular,
+    setCourseNotPopular,
 } from '../controllers/courseController.js'
 // import middleware
 import { courseUpload, imageUpload } from '../middleware/multer.js'
@@ -23,9 +25,6 @@ const router = express.Router()
 
 // Get all courses (unauth)
 router.route('/').get(getAllCourses)
-
-// Get course details
-router.route('/:courseId').get(isAuthenticate, getOneCourse)
 
 // Get all purchases courses by student
 router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
@@ -42,8 +41,17 @@ router.route('/popularCourses').get(getPopularCourses)
 // Create new course (instructor)
 router.route('/create').post(isAuthenticate, isRoleInstructor, courseUpload, instructorCreateCourse)
 
+// Set Course to Popular
+router.route('/courseSetPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCoursePopular) //sanitize
+
+// Set Course to Not Popular
+router.route('/courseSetNotPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCourseNotPopular) //sanitize
+
 // Approve/reject course
 router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse) //sanitize
+
+// Get course details
+router.route('/:courseId').get(isAuthenticate, getOneCourse)
 
 // Delete course
 router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)

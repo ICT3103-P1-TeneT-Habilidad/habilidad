@@ -9,7 +9,9 @@ export const findOneCourse = async (courseId) => {
         },
         include: {
             courseMaterial: true,
-            topicCourse: true,
+            topicCourse: {
+                include: { topics: true }
+            },
         },
     })
 }
@@ -138,6 +140,68 @@ export const findPublicAndAssetId = async (courseId) => {
             imageAssetId: true,
             imagePublicId: true,
             imageUrl: true
+        }
+
+    })
+}
+
+export const findPopularCourse = async () => {
+    return db.course.findMany({
+        where: {
+            isPopular: true
+        },
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}
+
+export const findPopularCourseByTopic = async (topic) => {
+    return db.course.findMany({
+        where: {
+            topicCourse: {
+                some: {
+                    topics: {
+                        topicName: topic
+                    }
+                }
+            }
+        },
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}
+
+export const updateCourseToPopular = async (courseId) => {
+    return db.course.update({
+        where: {
+            courseId: courseId
+        },
+        data: {
+            isPopular: true
+        }
+
+    })
+}
+
+export const updateCourseToNotPopular = async (courseId) => {
+    return db.course.update({
+        where: {
+            courseId: courseId
+        },
+        data: {
+            isPopular: false
         }
 
     })

@@ -1,9 +1,11 @@
 import React from 'react'
-// import { useAppContext } from '../context/appContext'
+import { useAppContext } from '../context/appContext'
 import { useForm } from 'react-hook-form'
+import { Alert } from '../components'
+import { Link } from 'react-router-dom'
 
 const Login = () => {
-    // const { user_type } = useAppContext()
+    const { showAlert, login } = useAppContext()
 
     const {
         register,
@@ -13,6 +15,7 @@ const Login = () => {
 
     const onSubmit = (data) => {
         console.log(data)
+        login(data)
     }
 
     return (
@@ -25,6 +28,7 @@ const Login = () => {
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                         {/* {user_type === 'Instructor' ? <InstructorLogin /> : <StudentLogin />} */}
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                            {showAlert && <Alert />}
                             <div>
                                 <label>Username</label>
                                 <div className="mt-1">
@@ -62,6 +66,13 @@ const Login = () => {
                                         <span className="text-sm text-red-500">{errors.password.message}</span>
                                     ) : null}
                                 </div>
+                            </div>
+                            <div className="pb-2">
+                                <Link to="/forgetpwd">
+                                    <span className="text-xs underline text-blue-500 italic float-right">
+                                        Forget Password
+                                    </span>
+                                </Link>
                             </div>
                             <div>
                                 <button
