@@ -1,4 +1,5 @@
 import { React } from 'react'
+import EditCourse from './EditCourse'
 
 const ViewCourse = () => {
     const courseData = {
@@ -64,7 +65,16 @@ const ViewCourse = () => {
 
     return (
         <div className="min-h-screen bg-background py-12 sm:px-6 lg:px-8 w-full">
-            <div className="bg-white rounded-lg px-6 py-10 mx-auto">
+            <div className="bg-white rounded-lg px-6 py-10 mx-auto relative">
+                <div className="flex justify-end">
+                    <button
+                        className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                        type="button"
+                        href=""
+                    >
+                        Edit Course
+                    </button>
+                </div>
                 <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">
                     <img
                         className="object-scale-down w-full lg:mx-6 lg:w-1/2 rounded-xl h-72 lg:h-96"
@@ -79,7 +89,6 @@ const ViewCourse = () => {
                             {courseData.language}&ensp;SGD${courseData.price}
                         </p>
                         <p className="mt-3 text-xl text-gray-500 md:text-xl">{courseData.description}</p>
-
                         <div className="flex items-center mt-6">
                             <p className="text-sm text-grey-500 tracking-wide">
                                 Related Topics: &ensp;
@@ -97,7 +106,7 @@ const ViewCourse = () => {
                         <div class="flex flex-wrap">
                             {sortCourseMaterials(courseData.courseMaterial).map((material) => (
                                 <div class="lg:w-1/3 sm:w-1/2 p-4">
-                                    <h2 class="tracking-wide font-medium text-grey-500 mb-1">
+                                    <h2 class="tracking-wide text-xl text-grey-500 mb-1">
                                         Lesson {material.order}: {material.title}
                                     </h2>
                                     <div class="flex">

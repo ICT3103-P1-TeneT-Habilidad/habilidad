@@ -9,7 +9,7 @@ import {
     Login,
     Register,
     Profile,
-    CreateCourse, ViewCourse,
+    CreateCourse, ViewCourse, EditCourse
 } from './pages/index'
 import { Footer, Navbar } from './components/index'
 
@@ -28,6 +28,7 @@ function App() {
                 <Route path="/courses" element={<AllCourses />} />
                 <Route path="/createcourse" element={<CreateCourse />} />
                 <Route path="/viewcourse" element={<ViewCourse />} />
+                <Route path="/editcourse" element={<EditCourse />} />
             </Routes>
             <Footer />
         </BrowserRouter>
