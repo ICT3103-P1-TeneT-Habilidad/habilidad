@@ -2,9 +2,9 @@ import React from 'react'
 import { useAppContext } from '../context/appContext'
 import { useForm } from 'react-hook-form'
 import { Alert } from '../components'
+import { Link } from 'react-router-dom'
 
 const Login = () => {
-    const { user } = useAppContext()
     const { showAlert, setUser } = useAppContext()
 
     const {
@@ -66,6 +66,13 @@ const Login = () => {
                                         <span className="text-sm text-red-500">{errors.password.message}</span>
                                     ) : null}
                                 </div>
+                            </div>
+                            <div className="pb-2">
+                                <Link to="/forgetpwd">
+                                    <span className="text-xs underline text-blue-500 italic float-right">
+                                        Forget Password
+                                    </span>
+                                </Link>
                             </div>
                             <div>
                                 <button
