@@ -31,6 +31,7 @@ import {
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
+    CREATE_COURSE_ERROR,
 } from './action'
 
 const token = localStorage.getItem('accessToken')
@@ -84,12 +85,10 @@ const AppProvider = ({ children }) => {
 
     const addTokenToLocalStorage = ({ accessToken, refreshToken }) => {
         localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
     }
 
     const removeTokenFromLocalStorage = () => {
         localStorage.removeItem('accessToken')
-        localStorage.removeItem('refreshToken')
     }
 
     const showModal = () => {
@@ -114,18 +113,18 @@ const AppProvider = ({ children }) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
             const { data } = await axios.post(`/api/users/login`, user_data)
-            const { accessToken, refreshToken } = data.result
+            const { accessToken } = data.result
             console.log('data')
             console.log(data)
             dispatch({
                 type: SET_USER_SUCCESS,
-                payload: { accessToken, refreshToken },
+                payload: { accessToken },
             })
-            addTokenToLocalStorage({ accessToken, refreshToken })
+            addTokenToLocalStorage({ accessToken })
         } catch (err) {
             dispatch({
                 type: SET_USER_ERROR,
-                payload: { msg: err.response.data.error.message },
+                payload: { msg: err.response.data.result.message },
             })
         }
     }
@@ -145,7 +144,7 @@ const AppProvider = ({ children }) => {
             console.log(err)
             dispatch({
                 type: CREATE_USER_ERROR,
-                payload: { msg: err.response.data.error.message },
+                payload: { msg: err.response.data.result.message },
             })
         }
     }
@@ -205,14 +204,17 @@ const AppProvider = ({ children }) => {
     const createNewCourse = async (course_data) => {
         dispatch({ type: CREATE_COURSE_BEGIN })
         try {
-            const { data } = await authFetch.post(`/api/course/create`, course_data)
-            const { result } = data
+            await authFetch.post(`/api/course/create`, course_data)
             dispatch({
                 type: CREATE_COURSE_SUCCESS,
             })
             dispatch({ type: CLEAR_VALUES })
-        } catch (error) {
-            console.log(error.response)
+        } catch (err) {
+            console.log(err.response)
+            dispatch({
+                type: CREATE_COURSE_ERROR,
+                payload: {msg: err.response.data.result.message}
+            })
         }
     }
 

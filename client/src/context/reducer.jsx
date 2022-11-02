@@ -57,13 +57,13 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 accessToken: action.payload.accessToken,
-                refreshToken: action.payload.refreshToken,
             }
         case SET_USER_ERROR:
             return {
                 ...state,
                 loginFail: true,
                 alert_msg: action.payload.msg,
+                alert_type: "danger"
             }
         case LOGOUT:
             return {
