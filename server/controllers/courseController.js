@@ -17,6 +17,7 @@ import {
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
+import { findTopicByName } from '../services/topic.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -112,32 +113,50 @@ export const getPopularCourses = async (req, res, next) => { }
  */
 export const instructorCreateCourse = async (req, res, next) => {
     try {
-        const courseImage = req.file
+        const { image, materialFiles } = req.files
 
-        const { courseName, duration, price, courseDescription, language, status, approvalStatus, topicCourse } =
+        const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.body
 
-        const uploadResult = await cloudinary.uploader.upload(courseImage.path)
-        fs.unlinkSync(courseImage.path)
+        const topics = await findTopicByName(JSON.parse(topicCourse))
+
+        const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
+        fs.unlinkSync(image[0].path)
+
+        const materialUpload = materialFiles.map((ele) => cloudinary.uploader.upload(ele.path, { resource_type: 'video' }))
+        const uploadResult = await Promise.all(materialUpload)
+        for (const file in materialFiles) {
+            fs.unlinkSync(materialFiles[file].path)
+        }
+        const courseMaterials = JSON.parse(materials)
+        for (const material in courseMaterials) {
+            courseMaterials[material].url = uploadResult[material].secure_url
+            courseMaterials[material].publicId = uploadResult[material].public_id
+            courseMaterials[material].assetId = uploadResult[material].asset_id
+        }
 
         const { instructorId } = req.payload
 
-        const result = await createNewCourse({
+        await createNewCourse({
             courseName,
             duration: parseInt(duration),
             price: parseFloat(price),
             courseDescription,
             language,
-            status,
-            approvalStatus,
-            instructorId: instructorId,
-            topicCourse: JSON.parse(topicCourse),
-            imageUrl: uploadResult.secure_url,
-            imageAssetId: uploadResult.asset_id,
-            imagePublicId: uploadResult.public_id
+            instructorId,
+            topicCourse: topics,
+            imageUrl: imageUploadResult.secure_url,
+            imageAssetId: imageUploadResult.asset_id,
+            imagePublicId: imageUploadResult.public_id,
+            courseMaterials
         })
 
-        res.status(responseCode.res_ok).json({ result })
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: "success"
+            }
+        })
     } catch (err) {
         next(err)
     }
