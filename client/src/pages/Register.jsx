@@ -11,13 +11,13 @@ const Register = () => {
         handleSubmit,
         formState: { errors },
         watch,
+        reset,
     } = useForm()
 
     const password = useRef({})
     password.current = watch('password', '')
 
     const formatData = (data) => {
-        data.role = 'Student'
         delete data.re_pwd
     }
 
@@ -25,6 +25,7 @@ const Register = () => {
         console.log(data)
         formatData(data)
         createUser(data)
+        reset()
     }
 
     return (
@@ -36,8 +37,37 @@ const Register = () => {
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         {showAlert && <Alert />}
+                        <div className="mt-4 space-y-4">
+                            <label>Select role:</label>
+                            <div className="flex items-center">
+                                <input
+                                    id="student"
+                                    name="student"
+                                    type="radio"
+                                    value="Student"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    {...register('role')}
+                                />
+                                <label htmlFor="student" className="ml-3 block text-sm font-medium text-gray-700">
+                                    Student
+                                </label>
+                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    id="instructor"
+                                    name="instructor"
+                                    type="radio"
+                                    value="Instructor"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    {...register('role')}
+                                />
+                                <label htmlFor="instructor" className="ml-3 block text-sm font-medium text-gray-700">
+                                    Instructor
+                                </label>
+                            </div>
+                        </div>
                         <div>
-                            <label>Username</label>
+                            <label>Username:</label>
                             <div className="mt-1">
                                 <input
                                     id="username"
@@ -54,7 +84,7 @@ const Register = () => {
                         </div>
                         <div>
                             <label>Name</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="name"
                                     name="name"
@@ -70,7 +100,7 @@ const Register = () => {
                         </div>
                         <div>
                             <label>Email</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="email"
                                     name="email"
@@ -92,7 +122,7 @@ const Register = () => {
                         </div>
                         <div>
                             <label>Phone Number</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="phoneNumber"
                                     name="phoneNumber"
@@ -115,7 +145,7 @@ const Register = () => {
                         </div>
                         <div>
                             <label>Password</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="password"
                                     name="password"
@@ -137,7 +167,7 @@ const Register = () => {
                         </div>
                         <div>
                             <label>Re-enter Password</label>
-                            <div classname="mt-1">
+                            <div className="mt-1">
                                 <input
                                     id="re_pwd"
                                     name="re_pwd"
@@ -146,6 +176,7 @@ const Register = () => {
                                     className="w-full border border-slate-300 rounded-md p-2"
                                     {...register('re_pwd', {
                                         validate: (value) => value === password.current || 'The passwords do not match',
+                                        required: 'Please enter the password again',
                                     })}
                                 />
                                 {errors.re_pwd ? (
