@@ -2,7 +2,7 @@ import React from 'react'
 import NoImage from '../assets/noimage.jpg'
 
 const CourseCard = (props) => {
-    const courses = props.data.courses
+    const courses = props.data
 
     console.log(courses)
 
