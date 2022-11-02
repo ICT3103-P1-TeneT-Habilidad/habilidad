@@ -127,7 +127,7 @@ const CreateCourse = () => {
 
         const formData = new FormData()
         for (const key in data) {
-            if (key == 'materials') {
+            if (key === 'materials') {
                 const material = []
                 for (const i in data[key]) {
                     formData.append('materialFiles', data[key][i].file)
@@ -137,7 +137,7 @@ const CreateCourse = () => {
                     })
                 }
                 formData.append(key, JSON.stringify(material))
-            } else if (key == 'topicCourse') {
+            } else if (key === 'topicCourse') {
                 formData.append(key, JSON.stringify(data[key]))
             } else {
                 formData.append(key, data[key])
