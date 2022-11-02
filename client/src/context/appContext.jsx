@@ -179,7 +179,7 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_ALL_COURSES_BEGIN })
         try {
             const { data } = await axios.get(`/api/course/`)
-            const { result } = data
+            const result = data.result.data
             dispatch({
                 type: GET_ALL_COURSES_SUCCESS,
                 payload: {
