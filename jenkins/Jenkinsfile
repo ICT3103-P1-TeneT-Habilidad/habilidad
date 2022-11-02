@@ -19,12 +19,9 @@ pipeline {
             }
         }
         stage('Test') {
-            lock("unit_test_lock") {
-                steps {
-                    sh './jenkins/scripts/test.sh'
-                }
-            } // resource is unlocked.
-            
+            steps {
+                sh './jenkins/scripts/test.sh'
+            }
         }
         // stage('Deliver') {
         //     steps {
