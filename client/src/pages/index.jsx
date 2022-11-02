@@ -7,5 +7,6 @@ import Login from './Login'
 import Register from './Register'
 import Profile from './Profile'
 import CreateCourse from './CreateCourse'
+import ViewCourse from './ViewCourse'
 
-export { AllCourses, Dashboard, Error404, Error500, ForgetResetPwd, Login, Register, Profile, CreateCourse }
+export { AllCourses, Dashboard, Error404, Error500, ForgetResetPwd, Login, Register, Profile, CreateCourse, ViewCourse }
