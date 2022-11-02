@@ -95,21 +95,8 @@ const AppProvider = ({ children }) => {
                     }
                 }
             }
-            // console.log(err)
-            // if (err.response.status !== 401) {
-            //     logout()
-            // }
-            // return Promise.reject(err)
         }
     )
-
-    // const addTokenToLocalStorage = ({ accessToken, refreshToken }) => {
-    //     localStorage.setItem('accessToken', accessToken)
-    // }
-
-    // const removeTokenFromLocalStorage = () => {
-    //     localStorage.removeItem('accessToken')
-    // }
 
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
@@ -152,11 +139,8 @@ const AppProvider = ({ children }) => {
     const login = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            console.log("hit");
             const { data } = await axios.post(`/api/users/login`, user_data)
-            console.log("hit2")
             const result = data.result
-            console.log('data')
             console.log(data)
             dispatch({
                 type: SET_USER_SUCCESS,
