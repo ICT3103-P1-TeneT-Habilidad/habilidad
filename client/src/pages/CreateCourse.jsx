@@ -5,8 +5,9 @@ import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../utils/Constants'
 import { v4 as uuid } from 'uuid'
 import imagePlaceholder from '../assets/no-image.jpg'
-
+import { useAppContext } from '../context/appContext'
 const CreateCourse = () => {
+    const { createNewCourse } = useAppContext()
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
 
@@ -123,7 +124,27 @@ const CreateCourse = () => {
 
     const onSubmit = (data) => {
         data = dataCleanUp(data)
-        console.log(data)
+
+        const formData = new FormData()
+        for (const key in data) {
+            if (key == 'materials') {
+                const material = []
+                for (const i in data[key]) {
+                    formData.append('materialFiles', data[key][i].file)
+                    material.push({
+                        title: data[key][i].title,
+                        order: data[key][i].order,
+                    })
+                }
+                formData.append(key, JSON.stringify(material))
+            } else if (key == 'topicCourse') {
+                formData.append(key, JSON.stringify(data[key]))
+            } else {
+                formData.append(key, data[key])
+            }
+        }
+
+        createNewCourse(formData)
     }
 
     const addComponent = () => {
@@ -357,7 +378,11 @@ const CreateCourse = () => {
                                             ) : null}
                                         </div>
                                         <div className="flex flex-col w-1/3 h-1/3">
-                                            <img src={coverImagePreview} alt="cover for course" className="w-auto h-auto" />
+                                            <img
+                                                src={coverImagePreview}
+                                                alt="cover for course"
+                                                className="w-auto h-auto"
+                                            />
                                         </div>
                                     </div>
                                 </div>
