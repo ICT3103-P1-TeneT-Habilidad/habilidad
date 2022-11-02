@@ -20,6 +20,9 @@ import {
     // GET_ALL_COURSES_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    RESET_PASSWORD_LINK_BEGIN,
+    RESET_PASSWORD_LINK_SUCCESS,
+    RESET_PASSWORD_LINK_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -100,6 +103,24 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 topics: action.payload.result,
+            }
+        case RESET_PASSWORD_LINK_BEGIN:
+            return {
+                ...state,
+            }
+        case RESET_PASSWORD_LINK_SUCCESS:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: 'Email sent!',
+                alert_type: 'success',
+            }
+        case RESET_PASSWORD_LINK_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: action.payload.msg,
+                alert_type: 'danger',
             }
         default:
             throw new Error(`no such action: ${action.type}`)

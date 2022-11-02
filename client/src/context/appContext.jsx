@@ -25,6 +25,9 @@ import {
     // GET_ALL_COURSES_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    RESET_PASSWORD_LINK_BEGIN,
+    RESET_PASSWORD_LINK_SUCCESS,
+    RESET_PASSWORD_LINK_ERROR,
 } from './action'
 
 const token = localStorage.getItem('token')
@@ -46,7 +49,7 @@ export const initialState = {
     alert_msg: '',
     alert_type: '',
     courses: null,
-    topics: null
+    topics: null,
 }
 
 const AppContext = React.createContext()
@@ -180,6 +183,25 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const sendPasswordResetLink = async (email) => {
+        dispatch({ type: RESET_PASSWORD_LINK_BEGIN })
+        try {
+            await axios.post(`api/users/resetPassword`, email)
+            dispatch({
+                type: RESET_PASSWORD_LINK_SUCCESS,
+            })
+        } catch (err) {
+            if (err.response.status !== 401) {
+                dispatch({
+                    type: RESET_PASSWORD_LINK_ERROR,
+                    payload: {
+                        msg: err.response.data.message,
+                    },
+                })
+            }
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -191,7 +213,8 @@ const AppProvider = ({ children }) => {
                 logout,
                 createUser,
                 getAllCourses,
-                getAllTopics
+                getAllTopics,
+                sendPasswordResetLink,
             }}
         >
             {children}
