@@ -9,7 +9,9 @@ export const findOneCourse = async (courseId) => {
         },
         include: {
             courseMaterial: true,
-            topicCourse: true,
+            topicCourse: {
+                include: { topics: true }
+            },
         },
     })
 }
