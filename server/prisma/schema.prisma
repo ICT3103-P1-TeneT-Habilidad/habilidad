@@ -82,6 +82,8 @@ model CourseMaterial {
   url String
   assetId String
   publicId String
+  order Int
+  title String
   course Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
   courseId String
 }
@@ -98,7 +100,7 @@ model Transaction {
 
 model Topics {
   topicId String @id @default(uuid())
-  topicName String
+  topicName String @unique
   description String
   url String
   topicCourse TopicCourse[]
