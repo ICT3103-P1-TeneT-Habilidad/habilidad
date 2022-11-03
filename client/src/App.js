@@ -9,10 +9,10 @@ import {
     ForgetResetPwd,
     Login,
     LoginOtp,
-    LoginRoute,
-    Register,
+    OtpRoute,
     Profile,
     ProtectedRoutes,
+    Register,
     ViewCourse,
 } from './pages/index'
 import { Footer, Navbar } from './components/index'
@@ -25,18 +25,18 @@ function App() {
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="createcourse" element={<CreateCourse />} />
-                    <Route path="/viewcourse" element={<ViewCourse />} />
+                    <Route path="viewcourse" element={<ViewCourse />} />
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />
                 <Route path="/500" element={<Error500 />} />
                 <Route path="/forgetpwd" element={<ForgetResetPwd />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
                 <Route path="/courses" element={<AllCourses />} />
-                <Route path="/" element={<LoginRoute />}>
+                <Route path="/" element={<OtpRoute />}>
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>
+                <Route path="login" element={<Login />} />
             </Routes>
             <Footer />
         </BrowserRouter>

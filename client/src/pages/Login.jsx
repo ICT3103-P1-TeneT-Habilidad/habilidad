@@ -1,12 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAppContext } from '../context/appContext'
 import { useForm } from 'react-hook-form'
-import { Alert } from '../components'
+import { Alert, LoadingMsg } from '../components'
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 
 const Login = () => {
-    const { showAlert, sendLoginOtp, loginOtp } = useAppContext()
+    const { showAlert, sendLoginOtp, loginOtp, isLoading } = useAppContext()
 
     const navigate = useNavigate()
 
@@ -20,9 +19,20 @@ const Login = () => {
         console.log(data)
         sendLoginOtp(data)
     }
+
     useEffect(() => {
         if (loginOtp) navigate('/otp')
     }, [loginOtp, navigate])
+
+    useEffect(() => {
+        showLoadingMsg()
+    }, [isLoading])
+
+    const showLoadingMsg = () => {
+        return (
+            <LoadingMsg/>
+        )
+    }
 
     return (
         <>
@@ -37,7 +47,7 @@ const Login = () => {
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                         {/* {user_type === 'Instructor' ? <InstructorLogin /> : <StudentLogin />} */}
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-                            {showAlert && <Alert />}
+                            {showAlert ? <Alert/> : isLoading && showLoadingMsg()}
                             <div>
                                 <label>Username</label>
                                 <div className="mt-1">

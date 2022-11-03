@@ -164,8 +164,10 @@ const AppProvider = ({ children }) => {
         dispatch({ type: SETUP_USER_BEGIN })
         try {
             const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
-            const result = data.result
+            const result = data.result.data
+            console.log(result)
             dispatch({ type: SETUP_USER_SUCCESS, payload: { user: result, msg: 'Success' } })
+            setUser(result)
         } catch (err) {
             dispatch({
                 type: SETUP_USER_ERROR,
@@ -174,6 +176,7 @@ const AppProvider = ({ children }) => {
                 },
             })
         }
+        clearAlert()
     }
 
     const logout = () => {
@@ -241,6 +244,7 @@ const AppProvider = ({ children }) => {
                 type: RESET_PASSWORD_LINK_SUCCESS,
             })
         } catch (err) {
+            console.log(err)
             if (err.response.status !== 401) {
                 dispatch({
                     type: RESET_PASSWORD_LINK_ERROR,

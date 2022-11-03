@@ -6,10 +6,10 @@ import Error500 from './Error500'
 import ForgetResetPwd from './ForgetResetPwd'
 import Login from './Login'
 import LoginOtp from './LoginOtp'
-import LoginRoute from './LoginRoute'
-import Register from './Register'
+import OtpRoute from './OtpRoute'
 import Profile from './Profile'
 import ProtectedRoutes from './ProtectedRoute'
+import Register from './Register'
 import ViewCourse from './ViewCourse'
 
 export {
@@ -21,9 +21,9 @@ export {
     ForgetResetPwd,
     Login,
     LoginOtp,
-    LoginRoute,
-    Register,
+    OtpRoute,
     Profile,
     ProtectedRoutes,
-    ViewCourse
+    Register,
+    ViewCourse,
 }

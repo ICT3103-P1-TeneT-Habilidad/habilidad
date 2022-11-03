@@ -56,6 +56,7 @@ const reducer = (state, action) => {
         case LOGIN_OTP_BEGIN:
             return {
                 ...state,
+                isLoading: true
             }
         case LOGIN_OTP_SUCCESS:
             return {
@@ -63,7 +64,8 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_type: 'success',
                 alert_msg: action.payload.msg,
-                loginOtp: true
+                loginOtp: true,
+                isLoading: false,
             }
         case LOGIN_OTP_ERROR:
             return {
@@ -71,10 +73,12 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_type: 'danger',
                 alert_msg: action.payload.msg,
+                isLoading: false
             }
         case SETUP_USER_BEGIN:
             return {
                 ...state,
+                isLoading: false
             }
         case SETUP_USER_SUCCESS:
             return {
@@ -83,6 +87,7 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_type: 'success',
                 alert_msg: action.payload.msg,
+                loginOtp: false,
             }
         case SETUP_USER_ERROR:
             return {

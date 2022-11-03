@@ -1,27 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 
-const LoginOtp =() => {
+const LoginOtp = () => {
+    const { login, user } = useAppContext()
+
+    const navigate = useNavigate()
+
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm()
 
-    const {login } = useAppContext()
-
     const onSubmit = (data) => {
         console.log(data)
         login(data)
     }
+    
+    useEffect(() => {
+        if (user) navigate('/')
+    }, [user, navigate])
 
     return (
         <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
                 <h2 className="mt-6 text-3xl font-extrabold text-gray-900 mb-4">OTP</h2>
                 <span className="text-center text-gray-500 text-sm">
-                Enter the OTP code sent to your email registered with your account
+                    Enter the OTP code sent to your email registered with your account
                 </span>
             </div>
 
@@ -43,7 +50,7 @@ const LoginOtp =() => {
                                         required: 'Please enter your OTP',
                                         maxLength: {
                                             value: 6,
-                                            message: 'Please enter only 6 characters'
+                                            message: 'Please enter only 6 characters',
                                         },
                                     })}
                                 />
