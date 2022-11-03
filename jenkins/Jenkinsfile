@@ -20,6 +20,7 @@ pipeline {
         }
         stage('OWASP Dependency Check'){
             steps{
+                sh 'pwd'
                 dependencyCheck additionalArguments: '--format HTML --log ./log.log', odcInstallation: 'DependencyCheck', stopBuild: true
             }
         }
