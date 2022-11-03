@@ -25,7 +25,7 @@ import { Response } from '../responses/response.js'
 import { getErrorResponse } from '../utils/error.js'
 import { addRefreshTokenToWhitelist, deleteRefreshTokenByUserId } from '../services/refreshTokens.js'
 import {
-    createNewOTP, deleteOtpById, findOtpTokenByUsername
+    createNewOTP, deleteOtpByEmail, deleteOtpById, findOtpTokenByUsername
 } from '../services/otpToken.js'
 
 export const getAllUsers = async (req, res, next) => {
@@ -348,6 +348,9 @@ export const sendEmailOtp = async (req, res, next) => {
         const emailMsg = otp_template(token)
 
         const { email, userId } = user
+
+        // Check if there is already otp
+        await deleteOtpByEmail(email)
 
         await createNewOTP({ token, expiredAt, userId })
 
