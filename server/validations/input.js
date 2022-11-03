@@ -108,3 +108,27 @@ export const sanitizeBody = async (req, res, next) => {
 
     next()
 }
+
+export const sanitizeUrlParam = async (req, res, next) => {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '/': '&#x2F;',
+        '`': '&#x60;',
+        '=': '&#x3D;',
+    }
+    const reg = /[&<>"'`=\/]/g
+
+    const sanitizedParams = {}
+
+    for (let x in req.params) {
+        sanitizedParams[x] = req.params[x].replace(reg, (match) => map[match])
+    }
+
+    req.sanitizedParams = sanitizedParams
+
+    next()
+}
