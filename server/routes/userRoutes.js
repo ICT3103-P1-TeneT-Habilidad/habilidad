@@ -15,6 +15,7 @@ import {
     deactivateUser,
     sendEmailOtp,
     verifyEmailOtp,
+    validateEmailAndPassword
 } from '../controllers/usersController.js'
 import { isRoleModerator } from '../middleware/checkRole.js'
 
@@ -39,7 +40,7 @@ router.route('/verifyOTP').post(verifyEmailOtp)
 router.route('/logout').post(userLogout)
 
 // register
-router.route('/register').post(userRegister)
+router.route('/register').post(validateEmailAndPassword, userRegister)
 
 // verify access token
 

@@ -119,9 +119,13 @@ export const userLogout = async (req, res, next) => {
 
 export const userRegister = async (req, res, next) => {
     try {
-        const { email, password, username, phoneNumber, name, role } = req.body
-        if (!email || !password) {
-            throw new Response('Missing email or password.', 'res_badRequest')
+        const { status, message } = req.validate
+
+        if (!status) throw new Response(`Does not meet requirement: ${message}`, 'res_badRequest')
+
+        const { email, password, username, phoneNumber, name, role, confirmedPassword } = req.body
+        if (password !== confirmedPassword) {
+            throw new Response('Passwords do not match.', 'res_badRequest')
         }
 
         // check if this username can be used
@@ -303,19 +307,30 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
     }
 }
 export const validateEmailAndPassword = async (req, res, next) => {
-    await Promise.all([validateEmail(req), validatePasswords(req)])
-        .then((value) => {
-            req.validate = {
-                status: true,
-            }
-        })
-        .catch((reject) => {
-            req.validate = {
-                status: false,
-                message: reject,
-            }
-        })
-    next()
+    try {
+        const { email, password, username, phoneNumber, name, role, confirmedPassword } = req.body
+        if (!email || !password || !username || !phoneNumber || !name || !role || !confirmedPassword) {
+            throw new Response('Form incomplete.', 'res_badRequest')
+        }
+
+        await Promise.all([validateEmail(req), validatePasswords(req)])
+            .then((value) => {
+                req.validate = {
+                    status: true,
+                }
+            })
+            .catch((reject) => {
+                req.validate = {
+                    status: false,
+                    message: reject,
+                }
+            })
+        next()
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+
+    }
 }
 
 export const reactivateUser = async (req, res, next) => {
@@ -381,7 +396,10 @@ export const verifyEmailOtp = async (req, res, next) => {
         if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
 
         // verify if token
-        if (otp[0].expiredAt < new Date()) throw new Response('Token Expired', 'res_unauthorised')
+        const currentdata = new Date()
+        console.log(otp[0].expiredAt)
+        console.log(currentdata)
+        if (otp[0].expiredAt < currentdata) throw new Response('Token Expired', 'res_unauthorised')
 
         await deleteOtpById(otp[0].oTokenId)
 

@@ -24,6 +24,7 @@ import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
 import { findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
+import { addOneCoursePurchased } from '../services/transaction.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -257,6 +258,7 @@ export const editCourse = async (req, res, next) => {
         const { courseId } = req.params
         const { courseName, duration, price, courseDescription, language, topicCourse } =
             req.body
+        const topics = await findTopicByName(JSON.parse(topicCourse))
 
         const course = await findPublicAndAssetId(courseId)
 
@@ -266,9 +268,11 @@ export const editCourse = async (req, res, next) => {
 
         let uploadResult
         if (courseImage) {
-            uploadResult = await cloudinary.uploader.upload(courseImage.path, { asset_id: imageAssetId, public_id: imagePublicId })
+            uploadResult = await cloudinary.uploader.upload(courseImage.path, { resource_type: 'video', asset_id: imageAssetId, public_id: imagePublicId })
             fs.unlinkSync(courseImage.path)
         }
+
+        if (!uploadResult) throw new Response('Internal Server Error', 'res_internalServer')
 
         await updateOneCourse({
             courseId,
@@ -277,9 +281,9 @@ export const editCourse = async (req, res, next) => {
             price: parseFloat(price),
             courseDescription,
             language,
-            topicCourse: topicCourse ? JSON.parse(topicCourse) : null,
-            imageAssetId: uploadResult ? uploadResult.imageAssetId : null,
-            imagePublicId: uploadResult ? uploadResult.imagePublicId : null
+            topicCourse: topics,
+            imageAssetId: uploadResult.asset_id,
+            imagePublicId: uploadResult.public_id
         })
 
         res.status(responseCode.res_ok).json({
@@ -318,6 +322,7 @@ export const setCourseNotPopular = async (req, res, next) => {
     try {
 
         const { courseId } = req.sanitizedBody
+        if (!courseId) throw new Response('Bad Request', 'res_badRequest')
 
         const result = await updateCourseToNotPopular(courseId)
 
@@ -333,4 +338,29 @@ export const setCourseNotPopular = async (req, res, next) => {
         const error = getErrorResponse(err)
         next(error)
     }
+}
+
+export const purchaseOneCourse = async (req, res, next) => {
+    try {
+
+        const { courseId, amountPaid } = req.body
+
+        if (!courseId || !amountPaid) throw new Response('Bad Request', 'res_badRequest')
+
+        const { studentId } = req.payload
+
+        await addOneCoursePurchased({ studentId, courseId, amountPaid })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+
+    }
+
 }
