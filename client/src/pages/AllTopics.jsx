@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { TopicCard } from '../components'
 import { useEffect } from 'react'
 import { useAppContext } from '../context/appContext'
-import { compare, sort } from '../utils/Helper'
+import { compare } from '../utils/Helper'
 
 const AllTopics = () => {
     const { topics, getAllTopics } = useAppContext()
@@ -13,11 +13,12 @@ const AllTopics = () => {
     }, [])
 
     const sortTopicsByName = (topics) => {
+        var newTopics = null
         console.log(topics)
-        topics.sort(function (a, b) {
+        newTopics = topics.sort(function (a, b) {
             return compare(a.topicName, b.topicName)
         })
-        console.log(topics)
+        console.log(newTopics)
     }
 
     return (
