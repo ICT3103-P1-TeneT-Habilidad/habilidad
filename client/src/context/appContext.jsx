@@ -43,6 +43,7 @@ export const initialState = {
     // loginFail: false,
     showAlert: false,
     isLoading: false,
+    loginOtp: false,
 
     user_data: {},
     alert_msg: '',

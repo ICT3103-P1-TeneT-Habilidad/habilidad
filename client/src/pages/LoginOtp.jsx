@@ -1,7 +1,6 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useAppContext } from '../context/appContext'
-import { Alert } from '../components'
 
 const LoginOtp =() => {
     const {
@@ -10,7 +9,7 @@ const LoginOtp =() => {
         formState: { errors },
     } = useForm()
 
-    const { showAlert, login } = useAppContext()
+    const {login } = useAppContext()
 
     const onSubmit = (data) => {
         console.log(data)
@@ -28,7 +27,6 @@ const LoginOtp =() => {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <div className="mb-5 text-sm">{showAlert && <Alert />}</div>
                     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">

@@ -2,10 +2,13 @@ import React from 'react'
 import { useAppContext } from '../context/appContext'
 import { useForm } from 'react-hook-form'
 import { Alert } from '../components'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const Login = () => {
-    const { showAlert, sendLoginOtp } = useAppContext()
+    const { showAlert, sendLoginOtp, loginOtp } = useAppContext()
+
+    const navigate = useNavigate()
 
     const {
         register,
@@ -17,6 +20,9 @@ const Login = () => {
         console.log(data)
         sendLoginOtp(data)
     }
+    useEffect(() => {
+        if (loginOtp) navigate('/otp')
+    }, [loginOtp, navigate])
 
     return (
         <>
