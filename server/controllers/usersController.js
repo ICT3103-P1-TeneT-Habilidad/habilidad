@@ -396,7 +396,10 @@ export const verifyEmailOtp = async (req, res, next) => {
         if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
 
         // verify if token
-        if (otp[0].expiredAt < new Date()) throw new Response('Token Expired', 'res_unauthorised')
+        const currentdata = new Date()
+        console.log(otp[0].expiredAt)
+        console.log(currentdata)
+        if (otp[0].expiredAt < currentdata) throw new Response('Token Expired', 'res_unauthorised')
 
         await deleteOtpById(otp[0].oTokenId)
 
