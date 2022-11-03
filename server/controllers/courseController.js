@@ -251,28 +251,59 @@ export const deleteCourse = async (req, res, next) => {
     }
 }
 
+
+const getPublibAndAssetId = (course, courseMaterialId) => {
+
+    const { courseMaterial } = course
+
+    for (const index in courseMaterial) {
+        if (courseMaterialId === courseMaterial[index].courseMaterialId) {
+            const assetId = courseMaterial[index].assetId
+            const publicId = courseMaterial[index].publicId
+            return { assetId, publicId }
+        }
+    }
+
+}
+
 export const editCourse = async (req, res, next) => {
     try {
-        const courseImage = req.file
 
         const { courseId } = req.params
-        const { courseName, duration, price, courseDescription, language, topicCourse } =
+        const course = await findOneCourse(courseId)
+        if (!course) throw new Response('Bad Request', 'res_badRequest')
+
+        const { image, materialFiles } = req.files
+
+        const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.body
-        const topics = await findTopicByName(JSON.parse(topicCourse))
 
-        const course = await findPublicAndAssetId(courseId)
+        const topics = topicCourse ? await findTopicByName(JSON.parse(topicCourse)) : []
 
-        if (!course) throw new Response('Internal Server Error', 'res_internalServer')
-
-        const { imageAssetId, imagePublicId } = course
-
-        let uploadResult
-        if (courseImage) {
-            uploadResult = await cloudinary.uploader.upload(courseImage.path, { resource_type: 'video', asset_id: imageAssetId, public_id: imagePublicId })
-            fs.unlinkSync(courseImage.path)
+        let imageUploadResult
+        if (image.length > 1) throw new Response('Bad Request', 'res_badRequest')
+        else if (image.length == 1) {
+            imageUploadResult = await cloudinary.uploader.upload(image[0].path, { resource_type: 'video', asset_id: course.imageAssetId, public_id: course.imagePublicId })
+            fs.unlinkSync(image[0].path)
         }
 
-        if (!uploadResult) throw new Response('Internal Server Error', 'res_internalServer')
+        let uploadResult
+        if (image.length > 0) {
+
+            let materialUpload = []
+            for (const file in materialFiles) {
+                const { assetId, publicId } = getPublibAndAssetId(course, materialFiles[file].courseMaterialId)
+                materialUpload.push(
+                    cloudinary.uploader.upload(ele.path, { resource_type: 'video', asset_id: assetId, public_id: publicId })
+                )
+            }
+            uploadResult = await Promise.all(materialUpload)
+            for (const file in materialFiles) {
+                fs.unlinkSync(materialFiles[file].path)
+            }
+        }
+
+        const courseMaterials = JSON.parse(materials)
 
         await updateOneCourse({
             courseId,
@@ -283,7 +314,8 @@ export const editCourse = async (req, res, next) => {
             language,
             topicCourse: topics,
             imageAssetId: uploadResult.asset_id,
-            imagePublicId: uploadResult.public_id
+            imagePublicId: uploadResult.public_id,
+            courseMaterials: courseMaterials.length > 0 ? courseMaterials : null
         })
 
         res.status(responseCode.res_ok).json({

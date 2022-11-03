@@ -61,5 +61,5 @@ router.route('/:courseId').get(isAuthenticate, getOneCourse)
 router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)
 
 // Edit course
-router.route('/:courseId').put(isAuthenticate, isRoleInstructor, imageUpload, editCourse) //sanitize
+router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, editCourse) //sanitize
 export default router
