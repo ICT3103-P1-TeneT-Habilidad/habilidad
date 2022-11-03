@@ -17,6 +17,7 @@ pipeline {
                 sh 'npm install'
                 sh 'chmod +x -R ./jenkins/scripts'
             }
+            dependencyCheck additionalArguments: '--format HTML --format XML --suppression suppression.xml', odcInstallation: 'Dependency Check'
         }
         stage('Test') {
             steps {
