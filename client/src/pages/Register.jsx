@@ -44,7 +44,7 @@ const Register = () => {
                                     id="student"
                                     name="student"
                                     type="radio"
-                                    value="Student"
+                                    value="STUDENT"
                                     className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                                     {...register('role')}
                                 />
@@ -57,7 +57,7 @@ const Register = () => {
                                     id="instructor"
                                     name="instructor"
                                     type="radio"
-                                    value="Instructor"
+                                    value="INSTRUCTOR"
                                     className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
                                     {...register('role')}
                                 />
