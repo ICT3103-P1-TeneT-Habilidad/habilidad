@@ -276,7 +276,8 @@ export const sendEmailResetLink = async (req, res, next) => {
             }
         })
     } catch (err) {
-        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to send reset link')
+        console.log(err)
+        const error = getErrorResponse(err, 'res_internalServer', 'Failed to send reset link')
         console.log(error)
         next(error)
     }
@@ -380,7 +381,7 @@ export const sendEmailOtp = async (req, res, next) => {
         })
     } catch (err) {
         console.log(err)
-        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to send OTP')
+        const error = getErrorResponse(err, 'res_internalServer', 'Failed to send OTP')
         next(error)
     }
 }
@@ -422,7 +423,7 @@ export const verifyEmailOtp = async (req, res, next) => {
 
     } catch (err) {
         console.log(err)
-        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to verify')
+        const error = getErrorResponse(err, 'res_internalServer', 'Failed to verify')
         next(error)
 
     }
