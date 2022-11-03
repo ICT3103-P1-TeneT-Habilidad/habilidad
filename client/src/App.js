@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import {
     AllCourses,
+    AllTopics,
     CreateCourse,
     Dashboard,
     Error404,
@@ -32,7 +33,8 @@ function App() {
                 <Route path="/500" element={<Error500 />} />
                 <Route path="/forgetpwd" element={<ForgetResetPwd />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/courses" element={<AllCourses />} />
+                <Route path="/allcourses" element={<AllCourses />} />
+                <Route path="/alltopics" element={<AllTopics />} />
                 <Route path="/" element={<OtpRoute />}>
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>

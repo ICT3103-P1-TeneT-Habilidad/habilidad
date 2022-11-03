@@ -223,7 +223,8 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_ALL_TOPICS_BEGIN })
         try {
             const { data } = await axios.get(`/api/topics/`)
-            const { result } = data
+            const result  = data.result.data
+            console.log(result)
             dispatch({
                 type: GET_ALL_TOPICS_SUCCESS,
                 payload: {

@@ -1,4 +1,5 @@
 import AllCourses from './AllCourses'
+import AllTopics from './AllTopics'
 import CreateCourse from './CreateCourse'
 import Dashboard from './Dashboard'
 import Error404 from './Error404'
@@ -14,6 +15,7 @@ import ViewCourse from './ViewCourse'
 
 export {
     AllCourses,
+    AllTopics,
     CreateCourse,
     Dashboard,
     Error404,
