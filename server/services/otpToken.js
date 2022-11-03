@@ -30,3 +30,15 @@ export const deleteOtpById = async (id) => {
         }
     })
 }
+
+export const deleteOtpByEmail = async (email) => {
+    return db.otpToken.deleteMany({
+        where: {
+            user: {
+                email: {
+                    equals: email
+                }
+            }
+        }
+    })
+}

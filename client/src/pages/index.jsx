@@ -10,6 +10,7 @@ import LoginRoute from './LoginRoute'
 import Register from './Register'
 import Profile from './Profile'
 import ProtectedRoutes from './ProtectedRoute'
+import ViewCourse from './ViewCourse'
 
 export {
     AllCourses,
@@ -24,4 +25,5 @@ export {
     Register,
     Profile,
     ProtectedRoutes,
+    ViewCourse
 }
