@@ -1,6 +1,6 @@
 import {
     SHOW_MODAL,
-    CLEAR_VALUES,
+    // CLEAR_VALUES,
     CLEAR_ALERT,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
@@ -26,8 +26,6 @@ import {
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
-    SEND_OTP_BEGIN,
-    SEND_OTP_SUCCESS,
 } from './action'
 
 import { initialState } from './appContext'
@@ -39,13 +37,12 @@ const reducer = (state, action) => {
                 ...state,
                 openModal: !state.openModal,
             }
-        case CLEAR_VALUES: {
-            const initialState = {
-                user_type: '',
-                alert_msg: '',
-            }
-            return { ...state, ...initialState }
-        }
+        // case CLEAR_VALUES: {
+        //     const initialState = {
+        //         user_type: '',
+        //     }
+        //     return { ...state, ...initialState }
+        // }
         case CLEAR_ALERT:
             return {
                 ...state,
@@ -60,7 +57,6 @@ const reducer = (state, action) => {
         case SET_USER_SUCCESS:
             return {
                 ...state,
-                user: action.payload.user,
                 showAlert: true,
                 alert_type: 'success',
                 alert_msg: action.payload.msg,
@@ -149,14 +145,6 @@ const reducer = (state, action) => {
                 alert_msg: action.payload.msg,
                 alert_type: 'danger',
             }
-        case SEND_OTP_BEGIN:
-            return{
-                
-            }
-            case SEND_OTP_SUCCESS:
-                return{
-
-                }
         default:
             throw new Error(`no such action: ${action.type}`)
     }

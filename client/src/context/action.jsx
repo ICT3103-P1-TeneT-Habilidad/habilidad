@@ -28,8 +28,9 @@ export const RESET_PASSWORD_LINK_BEGIN = 'RESET_PASSWORD_LINK_BEGIN'
 export const RESET_PASSWORD_LINK_SUCCESS = 'RESET_PASSWORD_LINK_SUCCESS'
 export const RESET_PASSWORD_LINK_ERROR = 'RESET_PASSWORD_LINK_ERROR'
 
-export const SEND_OTP_BEGIN = 'SEND_OTP_BEGIN'
-export const SEND_OTP_SUCCESS = 'SEND_OTP_SUCCESS'
+export const LOGIN_OTP_BEGIN = 'LOGIN_OTP_BEGIN'
+export const LOGIN_OTP_SUCCESS = 'LOGIN_OTP_SUCCESS'
+export const LOGIN_OTP_ERROR = 'LOGIN_OTP_ERROR'
 
 /*------------------------------------------------------------------------------------
 COURSES RELATED

@@ -3,7 +3,6 @@ import reducer from './reducer'
 import axios from '../utils/axios'
 import {
     SHOW_MODAL,
-    CLEAR_VALUES,
     CLEAR_ALERT,
     SET_USER_BEGIN,
     SET_USER_SUCCESS,
@@ -41,6 +40,7 @@ export const initialState = {
     // loginFail: false,
     showAlert: false,
     isLoading: false,
+    loginCheck: false,
 
     user_data: {},
     alert_msg: '',
@@ -74,12 +74,12 @@ const AppProvider = ({ children }) => {
             return res
         },
         async (err) => {
+            console.log(err)
             const originalConfig = err.config
             if (err.response) {
                 // If access token is expired
                 if (err.response.data.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true
-
                     try {
                         const rs = await getRefreshToken()
                         const { accessToken } = rs.data
@@ -139,20 +139,14 @@ const AppProvider = ({ children }) => {
         })
     }
 
-    const clearValues = () => {
-        dispatch({ type: CLEAR_VALUES })
-    }
-
     const login = async (user_data) => {
         dispatch({ type: SET_USER_BEGIN })
         try {
-            const { data } = await axios.post(`/api/users/login`, user_data)
-            const result = data.result
+            await axios.post(`/api/users/login`, user_data)
             dispatch({
                 type: SET_USER_SUCCESS,
-                payload: { user: result, msg: 'Successfully Login' },
+                payload: {  msg: 'Successfully Login' },
             })
-            setUser(result)
         } catch (err) {
             console.log(err)
             dispatch({
@@ -162,6 +156,7 @@ const AppProvider = ({ children }) => {
         }
         clearAlert()
     }
+
 
     const logout = () => {
         dispatch({ type: LOGOUT })
@@ -174,9 +169,8 @@ const AppProvider = ({ children }) => {
             await axios.post(`/api/users/register`, user_data)
             dispatch({
                 type: CREATE_USER_SUCCESS,
-                payload: { msg: 'Successfully Created' },
+                payload: {  msg: 'Account Successfully Created' },
             })
-            dispatch({ type: CLEAR_VALUES })
         } catch (err) {
             console.log(err)
             dispatch({
@@ -247,7 +241,6 @@ const AppProvider = ({ children }) => {
             dispatch({
                 type: CREATE_COURSE_SUCCESS,
             })
-            dispatch({ type: CLEAR_VALUES })
         } catch (err) {
             console.log(err.response)
             dispatch({
@@ -276,7 +269,6 @@ const AppProvider = ({ children }) => {
                 setUser,
                 removeUser,
                 showModal,
-                clearValues,
                 clearAlert,
                 login,
                 logout,
