@@ -4,7 +4,6 @@ import NoImage from '../assets/noimage.jpg'
 const TopicCard = ({data}) => {
 
     const topics = data;
-    console.log(topics)
 
     return (
         topics && (

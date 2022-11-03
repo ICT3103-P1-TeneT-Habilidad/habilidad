@@ -2,6 +2,7 @@ import React from 'react'
 import { TopicCard } from '../components'
 import { useEffect } from 'react'
 import { useAppContext } from '../context/appContext'
+import { compare, sort } from '../utils/Helper'
 
 const AllTopics = () => {
     const { topics, getAllTopics } = useAppContext()
@@ -11,11 +12,27 @@ const AllTopics = () => {
         // eslint-disable-next-line
     }, [])
 
+    const sortTopicsByName = (topics) => {
+        console.log(topics)
+        topics.sort(function (a, b) {
+            return compare(a.topicName, b.topicName)
+        })
+        console.log(topics)
+    }
+
     return (
         topics && (
             <div className="min-h-screen bg-background">
                 <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
-                    <TopicCard data={topics} />
+                    {sortTopicsByName(topics)}
+                    {topics.map((topic) => (
+                        <div key={topic.topicName} className="tw-flex tw-flex-col tw-p-2">
+                            <div className="tw-border tw-border-divider tw-bg-divider tw-text-grey-base tw-p-4 tw-w-24 tw-h-12 tw-text-center tw-font-medium">
+                                {topic.topicName}
+                            </div>
+                            <TopicCard data={topics} />
+                        </div>
+                    ))}
                 </div>
             </div>
         )
