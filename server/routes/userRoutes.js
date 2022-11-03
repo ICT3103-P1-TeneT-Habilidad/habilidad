@@ -13,6 +13,8 @@ import {
     reactivateUser,
     sendEmailDeactivateAcc,
     deactivateUser,
+    sendEmailOtp,
+    verifyEmailOtp,
 } from '../controllers/usersController.js'
 import { isRoleModerator } from '../middleware/checkRole.js'
 
@@ -28,7 +30,10 @@ router.route('/').get(isAuthenticate, getOneUser)
 router.route('/').patch(isAuthenticate, updateUser)
 
 // login
-router.route('/login').post(userLogin)
+router.route('/login').post(userLogin, sendEmailOtp)
+
+// Verify email otp
+router.route('/verifyOTP').post(verifyEmailOtp)
 
 // logout
 router.route('/logout').post(userLogout)

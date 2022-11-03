@@ -7,16 +7,16 @@ import {
     updateUserByUserId,
     storeNewUser,
     findAllUsers,
-    updateDeactivationDateToNull,
+    updateDeactivationDateToNull
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
-import { email_template, email_template_deactivate } from '../constants.js'
+import { email_template, email_template_deactivate, otp_template } from '../constants.js'
 import jwt from 'jsonwebtoken'
 
 // import middleware
 import { generateSalt, hashText, verifyPassword, generateTokenProcedure } from '../utils/auth.js'
-import { sendEmailLink, generateEmailToken, decodeEmailToken } from '../middleware/email.js'
+import { sendEmailLink, generateEmailToken, decodeEmailToken, generateEmailOtp } from '../middleware/email.js'
 // import validations
 import { validateEmail, validatePasswords } from '../validations/input.js'
 // import Responses
@@ -24,6 +24,9 @@ import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
 import { getErrorResponse } from '../utils/error.js'
 import { addRefreshTokenToWhitelist, deleteRefreshTokenByUserId } from '../services/refreshTokens.js'
+import {
+    createNewOTP, deleteOtpById, findOtpTokenByUsername
+} from '../services/otpToken.js'
 
 export const getAllUsers = async (req, res, next) => {
     try {
@@ -84,19 +87,25 @@ export const userLogin = async (req, res, next) => {
             throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
-        // Process of generating tokens
-        const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
-        const { userId } = user
-        // Whitelist refresh token (store in db)
-        await deleteRefreshTokenByUserId(userId)
-        await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
+        // Go to send email OTP
+        next()
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                accessToken,
-                refreshToken,
-            },
-        })
+        // // Process of generating tokens
+        // const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
+        // const { userId } = user
+        // // Whitelist refresh token (store in db)
+        // await deleteRefreshTokenByUserId(userId)
+        // await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
+
+        // res.status(responseCode.res_ok).json({
+        //     result: {
+        //         status: responseCode.res_ok,
+        //         data: {
+        //             accessToken,
+        //             refreshToken,
+        //         }
+        //     },
+        // })
     } catch (err) {
         const error = getErrorResponse(err)
         next(error)
@@ -134,8 +143,8 @@ export const userRegister = async (req, res, next) => {
 
         res.status(responseCode.res_ok).json({
             result: {
-                accessToken,
-                refreshToken,
+                status: responseCode.res_ok,
+                message: 'success'
             },
         })
     } catch (err) {
@@ -325,4 +334,76 @@ export const reactivateUser = async (req, res, next) => {
         const error = getErrorResponse(err)
         next(error)
     }
+}
+
+export const sendEmailOtp = async (req, res, next) => {
+    try {
+        const { username } = req.body
+        const user = await findUserByUsername(username)
+
+        if (!user) throw new Response('Invalid OTP', 'res_unauthorised')
+
+        const { token, expiredAt } = generateEmailOtp()
+
+        const emailMsg = otp_template(token)
+
+        const { email, userId } = user
+
+        await createNewOTP({ token, expiredAt, userId })
+
+        await sendEmailLink(email, 'Habilidad: One-Time Password', emailMsg)
+
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'OTP was sent to your email account',
+            }
+        })
+    } catch (err) {
+        console.log(err)
+        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to send OTP')
+        next(error)
+    }
+}
+
+export const verifyEmailOtp = async (req, res, next) => {
+
+    try {
+
+        const { username, token } = req.body
+        const otp = await findOtpTokenByUsername({ username, token })
+
+
+        if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
+
+        // verify if token
+        if (otp[0].expiredAt < new Date()) throw new Response('Token Expired', 'res_unauthorised')
+
+        await deleteOtpById(otp[0].oTokenId)
+
+        // Process of generating tokens
+        const { userId } = otp[0]
+        const { accessToken, refreshToken, jti } = await generateTokenProcedure({ userId })
+        // Whitelist refresh token (store in db)
+        await deleteRefreshTokenByUserId(userId)
+        await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: {
+                    accessToken,
+                    refreshToken,
+                }
+            },
+        })
+
+    } catch (err) {
+        console.log(err)
+        const error = getErrorResponse(err, responseCode.res_internalServer, 'Failed to verify')
+        next(error)
+
+    }
+
 }
