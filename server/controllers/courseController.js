@@ -24,6 +24,7 @@ import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
 import { findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
+import { addOneCoursePurchased } from '../services/transaction.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -318,6 +319,7 @@ export const setCourseNotPopular = async (req, res, next) => {
     try {
 
         const { courseId } = req.sanitizedBody
+        if (!courseId) throw new Response('Bad Request', 'res_badRequest')
 
         const result = await updateCourseToNotPopular(courseId)
 
@@ -333,4 +335,29 @@ export const setCourseNotPopular = async (req, res, next) => {
         const error = getErrorResponse(err)
         next(error)
     }
+}
+
+export const purchaseOneCourse = async (req, res, next) => {
+    try {
+
+        const { courseId, amountPaid } = req.body
+
+        if (!courseId || !amountPaid) throw new Response('Bad Request', 'res_badRequest')
+
+        const { studentId } = req.payload
+
+        await addOneCoursePurchased({ studentId, courseId, amountPaid })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+
+    }
+
 }
