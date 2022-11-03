@@ -97,12 +97,6 @@ const EditCourse = () => {
             language: languageOptions[languageOptions.findIndex((obj) => obj.value === courseData.language)],
         }
 
-        // const sorted = sortCourseMaterials(courseData.courseMaterial)
-        // setKeysList(sorted.map((material) => material.courseMaterialId))
-        // sorted.forEach((material) => {
-        //     defaults[material.courseMaterialId] = material.title
-        //     console.log(defaults)
-        // })
         return defaults
     }
 

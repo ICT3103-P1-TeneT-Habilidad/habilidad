@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import {
     AllCourses,
+    CourseContent,
     CreateCourse,
     Dashboard,
+    EditCourse,
     Error404,
     Error500,
     ForgetResetPwd,
@@ -12,9 +14,9 @@ import {
     OtpRoute,
     Profile,
     ProtectedRoutes,
+    StudentViewCourse,
     Register,
-    Profile,
-    CreateCourse, ViewCourse, EditCourse
+    ViewCourse,
 } from './pages/index'
 import { Footer, Navbar } from './components/index'
 
@@ -39,6 +41,8 @@ function App() {
                 </Route>
                 <Route path="login" element={<Login />} />
                 <Route path="/editcourse" element={<EditCourse />} />
+                <Route path="/studentviewcourse" element={<StudentViewCourse />} />
+                <Route path="/content" element={<CourseContent />} />
             </Routes>
             <Footer />
         </BrowserRouter>

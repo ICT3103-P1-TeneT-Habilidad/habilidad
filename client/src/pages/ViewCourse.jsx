@@ -12,20 +12,28 @@ const ViewCourse = () => {
         description: 'test_course_1_des',
         language: 'ENGLISH',
         courseMaterial: [
-            { title: 'Basics of React', url: 'https://www.youtube.com/embed/LRVVvmYg9Ls', order: 2 },
             {
+                courseMaterialId: '7477c8cb-d51e-4a25-872b-89b058656710',
+                title: 'Basics of React',
+                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
+                order: 2,
+            },
+            {
+                courseMaterialId: 'e5e7fdff-517a-4533-b024-ccda2b819601',
                 title: 'Death 1 to React',
-                url: 'https://www.youtube.com/embed/HE74FKFZrtI',
+                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
                 order: 1,
             },
             {
+                courseMaterialId: 'f921ad6d-d4cd-4b9b-9ff0-103c65e9998e',
                 title: 'Death 2 to React',
                 url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
                 order: 4,
             },
             {
+                courseMaterialId: '8841a240-8893-491f-86fb-49a03a4d32c6',
                 title: 'Death 3 to React',
-                url: 'https://www.youtube.com/embed/sSsMsSrXWl4',
+                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
                 order: 3,
             },
         ],
@@ -81,21 +89,21 @@ const ViewCourse = () => {
                 <div className="lg:-mx-6 lg:flex lg:items-center">
                     <div className="m-6 lg:w-full lg:mt-0 lg:mx-6">
                         <p className="mt-3 p-4 text-2xl text-gray-800 md:text-2xl">Course Materials</p>
-                        <div class="flex flex-wrap">
+                        <div className="flex flex-wrap">
                             {sortCourseMaterials(courseData.courseMaterial).map((material) => (
-                                <div class="lg:w-1/3 sm:w-1/2 p-4">
-                                    <h2 class="tracking-wide text-xl text-grey-500 mb-1">
+                                <div className="lg:w-1/3 sm:w-1/2 p-4">
+                                    <h2 className="tracking-wide text-xl text-grey-500 mb-1">
                                         Lesson {material.order}: {material.title}
                                     </h2>
-                                    <div class="flex">
+                                    <div className="flex">
                                         <iframe
                                             width="560"
                                             height="315"
                                             src={material.url}
                                             title={material.title}
-                                            frameborder="0"
+                                            frameBorder="0"
                                             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowfullscreen="true"
+                                            allowFullScreen={true}
                                         ></iframe>
                                     </div>
                                 </div>

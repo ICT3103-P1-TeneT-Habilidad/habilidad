@@ -305,7 +305,6 @@ const AppProvider = ({ children }) => {
                 getAllTopics,
                 sendPasswordResetLink,
                 createNewCourse,
-                setEditCourseDetails,
             }}
         >
             {children}
