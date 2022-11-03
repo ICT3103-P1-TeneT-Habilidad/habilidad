@@ -5,5 +5,8 @@ export const findStudentIdByUserId = async (userId) => {
         where: {
             userId: userId,
         },
+        include: {
+            user: true
+        }
     })
 }
