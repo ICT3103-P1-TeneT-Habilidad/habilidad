@@ -28,38 +28,56 @@ const router = express.Router()
 router.route('/').get(getAllCourses)
 
 // Get all purchases courses by student
+// Auth: Token, Role based
 router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
 
 // Get all courses instructor (owner) created
+// Auth: Token, Role based
 router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesCreatedByInstructor)
 
 // Get all courses that are top categories
-router.route('/topCategories').get(getCoursesInTopCategories)
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/topCategories').get(sanitizeBody, getCoursesInTopCategories)
 
 // Get all courses popular among new signups
 router.route('/popularCourses').get(getPopularCourses)
 
 // Create new course (instructor)
-router.route('/create').post(isAuthenticate, isRoleInstructor, courseUpload, instructorCreateCourse)
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/create').post(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, instructorCreateCourse)
 
 // Set Course to Popular
-router.route('/courseSetPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCoursePopular) //sanitize
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/courseSetPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCoursePopular)
 
 // Set Course to Not Popular
-router.route('/courseSetNotPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCourseNotPopular) //sanitize
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/courseSetNotPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCourseNotPopular)
 
 // Student purchase course
-router.route('/purchase').post(isAuthenticate, isRoleStudent, purchaseOneCourse)
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/purchase').post(isAuthenticate, isRoleStudent, sanitizeBody, purchaseOneCourse)
 
 // Approve/reject course
-router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse) //sanitize
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse)
 
 // Get course details
+// Auth: Token, Role based
 router.route('/:courseId').get(isAuthenticate, getOneCourse)
 
 // Delete course
+// Auth: Token, Role based
 router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)
 
 // Edit course
-router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, editCourse) //sanitize
+// Auth: Token, Role based
+// Sanitized: Req.Body
+router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, editCourse)
 export default router

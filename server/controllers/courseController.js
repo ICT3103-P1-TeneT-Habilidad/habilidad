@@ -121,7 +121,7 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
 
 export const getCoursesInTopCategories = async (req, res, next) => {
     try {
-        const { topicName } = req.body
+        const { topicName } = req.sanitizedBody
         if (!topicName) throw new Response('Bad Request', 'res_badRequest')
         const courses = await findPopularCourseByTopic(topicName)
         res.status(responseCode.res_ok).json({
@@ -160,7 +160,7 @@ export const instructorCreateCourse = async (req, res, next) => {
         const { image, materialFiles } = req.files
 
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
-            req.body
+            req.sanitizedBody
 
         const topics = await findTopicByName(JSON.parse(topicCourse))
 
@@ -276,7 +276,7 @@ export const editCourse = async (req, res, next) => {
         const { image, materialFiles } = req.files
 
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
-            req.body
+            req.sanitizedBody
 
         const topics = topicCourse ? await findTopicByName(JSON.parse(topicCourse)) : []
 
@@ -375,7 +375,7 @@ export const setCourseNotPopular = async (req, res, next) => {
 export const purchaseOneCourse = async (req, res, next) => {
     try {
 
-        const { courseId, amountPaid } = req.body
+        const { courseId, amountPaid } = req.sanitizedBody
 
         if (!courseId || !amountPaid) throw new Response('Bad Request', 'res_badRequest')
 
