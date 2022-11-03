@@ -27,7 +27,7 @@ pipeline {
             steps{
                 sh 'pwd'
                 sh 'ls -la /var/jenkins_home/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/DependencyCheck/bin'
-                dependencyCheck additionalArguments: '--format HTML --log .\/log.log', odcInstallation: 'DependencyCheck', stopBuild: true
+                dependencyCheck additionalArguments: '--format HTML --log /var/jenkins_home/log.log', odcInstallation: 'DependencyCheck', stopBuild: true
             }
         }
         stage('Test') {
