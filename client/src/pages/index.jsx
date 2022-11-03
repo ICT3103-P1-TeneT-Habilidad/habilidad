@@ -5,6 +5,8 @@ import Error404 from './Error404'
 import Error500 from './Error500'
 import ForgetResetPwd from './ForgetResetPwd'
 import Login from './Login'
+import LoginOtp from './LoginOtp'
+import LoginRoute from './LoginRoute'
 import Register from './Register'
 import Profile from './Profile'
 import ProtectedRoutes from './ProtectedRoute'
@@ -17,6 +19,8 @@ export {
     Error500,
     ForgetResetPwd,
     Login,
+    LoginOtp,
+    LoginRoute,
     Register,
     Profile,
     ProtectedRoutes,

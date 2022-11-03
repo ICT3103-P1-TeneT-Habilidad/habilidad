@@ -8,6 +8,8 @@ import {
     Error500,
     ForgetResetPwd,
     Login,
+    LoginOtp,
+    LoginRoute,
     Register,
     Profile,
     ProtectedRoutes,
@@ -30,6 +32,9 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/courses" element={<AllCourses />} />
+                <Route path="/" element={<LoginRoute />}>
+                    <Route path="otp" element={<LoginOtp />} />
+                </Route>
             </Routes>
             <Footer />
         </BrowserRouter>

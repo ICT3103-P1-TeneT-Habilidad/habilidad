@@ -5,7 +5,7 @@ import { Alert } from '../components'
 import { Link } from 'react-router-dom'
 
 const Login = () => {
-    const { showAlert, login } = useAppContext()
+    const { showAlert, sendLoginOtp } = useAppContext()
 
     const {
         register,
@@ -15,12 +15,15 @@ const Login = () => {
 
     const onSubmit = (data) => {
         console.log(data)
-        login(data)
+        sendLoginOtp(data)
     }
 
     return (
         <>
-            <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div
+                className={`min-h-screen bg-background
+                } flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
+            >
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login to HABILIDAD</h2>
                 </div>

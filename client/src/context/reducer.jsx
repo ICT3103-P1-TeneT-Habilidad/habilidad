@@ -2,9 +2,12 @@ import {
     SHOW_MODAL,
     // CLEAR_VALUES,
     CLEAR_ALERT,
-    SET_USER_BEGIN,
-    SET_USER_SUCCESS,
-    SET_USER_ERROR,
+    LOGIN_OTP_BEGIN,
+    LOGIN_OTP_SUCCESS,
+    LOGIN_OTP_ERROR,
+    SETUP_USER_BEGIN,
+    SETUP_USER_SUCCESS,
+    SETUP_USER_ERROR,
     LOGOUT,
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
@@ -50,18 +53,38 @@ const reducer = (state, action) => {
                 alert_msg: '',
                 alert_type: '',
             }
-        case SET_USER_BEGIN:
+        case LOGIN_OTP_BEGIN:
             return {
                 ...state,
             }
-        case SET_USER_SUCCESS:
+        case LOGIN_OTP_SUCCESS:
             return {
                 ...state,
                 showAlert: true,
                 alert_type: 'success',
                 alert_msg: action.payload.msg,
+                loginOtp: true
             }
-        case SET_USER_ERROR:
+        case LOGIN_OTP_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_type: 'danger',
+                alert_msg: action.payload.msg,
+            }
+        case SETUP_USER_BEGIN:
+            return {
+                ...state,
+            }
+        case SETUP_USER_SUCCESS:
+            return {
+                ...state,
+                user: action.payload.user,
+                showAlert: true,
+                alert_type: 'success',
+                alert_msg: action.payload.msg,
+            }
+        case SETUP_USER_ERROR:
             return {
                 ...state,
                 showAlert: true,

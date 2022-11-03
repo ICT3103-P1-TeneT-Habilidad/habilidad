@@ -4,9 +4,12 @@ import axios from '../utils/axios'
 import {
     SHOW_MODAL,
     CLEAR_ALERT,
-    SET_USER_BEGIN,
-    SET_USER_SUCCESS,
-    SET_USER_ERROR,
+    LOGIN_OTP_BEGIN,
+    LOGIN_OTP_SUCCESS,
+    LOGIN_OTP_ERROR,
+    SETUP_USER_BEGIN,
+    SETUP_USER_SUCCESS,
+    SETUP_USER_ERROR,
     LOGOUT,
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
@@ -40,7 +43,6 @@ export const initialState = {
     // loginFail: false,
     showAlert: false,
     isLoading: false,
-    loginCheck: false,
 
     user_data: {},
     alert_msg: '',
@@ -139,24 +141,39 @@ const AppProvider = ({ children }) => {
         })
     }
 
-    const login = async (user_data) => {
-        dispatch({ type: SET_USER_BEGIN })
+    const sendLoginOtp = async (user_data) => {
+        dispatch({ type: LOGIN_OTP_BEGIN })
         try {
             await axios.post(`/api/users/login`, user_data)
             dispatch({
-                type: SET_USER_SUCCESS,
-                payload: {  msg: 'Successfully Login' },
+                type: LOGIN_OTP_SUCCESS,
+                payload: { msg: 'Successfully Login' },
             })
         } catch (err) {
             console.log(err)
             dispatch({
-                type: SET_USER_ERROR,
+                type: LOGIN_OTP_ERROR,
                 payload: { msg: err.response.data.result.message },
             })
         }
         clearAlert()
     }
 
+    const login = async (user_data) => {
+        dispatch({ type: SETUP_USER_BEGIN })
+        try {
+            const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
+            const result = data.result
+            dispatch({ type: SETUP_USER_SUCCESS, payload: { user: result, msg: 'Success' } })
+        } catch (err) {
+            dispatch({
+                type: SETUP_USER_ERROR,
+                payload: {
+                    msg: err.response.data.result.message,
+                },
+            })
+        }
+    }
 
     const logout = () => {
         dispatch({ type: LOGOUT })
@@ -169,7 +186,7 @@ const AppProvider = ({ children }) => {
             await axios.post(`/api/users/register`, user_data)
             dispatch({
                 type: CREATE_USER_SUCCESS,
-                payload: {  msg: 'Account Successfully Created' },
+                payload: { msg: 'Account Successfully Created' },
             })
         } catch (err) {
             console.log(err)
@@ -267,10 +284,11 @@ const AppProvider = ({ children }) => {
                 updateAccessToken,
                 getUser,
                 setUser,
+                login,
                 removeUser,
                 showModal,
                 clearAlert,
-                login,
+                sendLoginOtp,
                 logout,
                 createUser,
                 getAllCourses,

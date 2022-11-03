@@ -8,9 +8,13 @@ export const LOGOUT = 'LOGOUT'
 /*------------------------------------------------------------------------------------
 USER RELATED
 ------------------------------------------------------------------------------------*/
-export const SET_USER_BEGIN = 'SET_USER_BEGIN'
-export const SET_USER_SUCCESS = 'SET_USER_SUCCESS'
-export const SET_USER_ERROR = 'SET_USER_ERROR'
+export const SETUP_USER_BEGIN = 'SETUP_USER_BEGIN'
+export const SETUP_USER_SUCCESS = 'SETUP_USER_SUCCESS'
+export const SETUP_USER_ERROR = 'SETUP_USER_ERROR'
+
+export const LOGIN_OTP_BEGIN = 'LOGIN_OTP_BEGIN'
+export const LOGIN_OTP_SUCCESS = 'LOGIN_OTP_SUCCESS'
+export const LOGIN_OTP_ERROR = 'LOGIN_OTP_ERROR'
 
 export const CREATE_USER_BEGIN = 'CREATE_USER_BEGIN'
 export const CREATE_USER_SUCCESS = 'RESET_PASSWORD_LINK_ERRORCREATE_USER_SUCCESS'
@@ -27,10 +31,6 @@ export const DELETE_USER_ERROR = 'DELETE_USER_ERROR'
 export const RESET_PASSWORD_LINK_BEGIN = 'RESET_PASSWORD_LINK_BEGIN'
 export const RESET_PASSWORD_LINK_SUCCESS = 'RESET_PASSWORD_LINK_SUCCESS'
 export const RESET_PASSWORD_LINK_ERROR = 'RESET_PASSWORD_LINK_ERROR'
-
-export const LOGIN_OTP_BEGIN = 'LOGIN_OTP_BEGIN'
-export const LOGIN_OTP_SUCCESS = 'LOGIN_OTP_SUCCESS'
-export const LOGIN_OTP_ERROR = 'LOGIN_OTP_ERROR'
 
 /*------------------------------------------------------------------------------------
 COURSES RELATED
