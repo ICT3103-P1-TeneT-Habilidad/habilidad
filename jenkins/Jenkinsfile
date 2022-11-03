@@ -18,10 +18,23 @@ pipeline {
                 sh 'chmod +x -R ./jenkins/scripts'
             }
         }
+<<<<<<< HEAD
         
         stage('OWASP Dependency Check'){
             steps{
                 dependencyCheck additionalArguments: '''-s ./habilidad-client -o ./ --format HTML --format XML --suppression suppression.xml''', odcInstallation: 'DependencyCheck'
+=======
+        // stage('Checkout SCM'){
+        //     steps{
+        //         git '/home/JenkinsDependencyCheckTest'
+        //     }
+        // }
+        stage('OWASP Dependency Check'){
+            steps{
+                sh 'pwd'
+                sh 'ls -la /var/jenkins_home/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/DependencyCheck/bin'
+                dependencyCheck additionalArguments: '--format HTML --log /var/jenkins_home/log.log', odcInstallation: 'DependencyCheck', stopBuild: true
+>>>>>>> 26706af311654f4c2ac2a6e3579c886eaaf36412
             }
         }
         stage('Test') {
