@@ -20,7 +20,7 @@ pipeline {
         }
         stage('OWASP Dependency Check'){
             steps{
-                dependencyCheck additionalArguments: '-s ./habilidad-dev -o ./ --format HTML --format XML --suppression suppression.xml', odcInstallation: 'Dependency Check'
+                dependencyCheck additionalArguments: '--format HTML --log ./log.log', odcInstallation: 'DependencyCheck', stopBuild: true
             }
         }
         stage('Test') {
