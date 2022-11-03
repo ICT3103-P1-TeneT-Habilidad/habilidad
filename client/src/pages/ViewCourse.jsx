@@ -1,9 +1,9 @@
-import { React, useEffect } from 'react'
+import { React } from 'react'
 import { Link } from 'react-router-dom'
-import { useAppContext } from '../context/appContext'
+// import { useAppContext } from '../context/appContext'
 
 const ViewCourse = () => {
-    const { setEditCourseDetails } = useAppContext()
+    // const { setEditCourseDetails } = useAppContext()
     const courseData = {
         courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
         courseName: 'dumb',

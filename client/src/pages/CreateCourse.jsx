@@ -4,11 +4,12 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../utils/Constants'
 import { v4 as uuid } from 'uuid'
-import imagePlaceholder from '../assets/no-image.jpg'
+import imagePlaceholder from '../assets/noimage.jpg'
 import { useAppContext } from '../context/appContext'
 
 const CreateCourse = () => {
     const { createNewCourse } = useAppContext()
+    
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
 

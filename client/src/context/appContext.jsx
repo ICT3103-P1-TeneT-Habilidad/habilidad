@@ -210,7 +210,7 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             console.log(err.response)
-            logout()
+            // logout()
         }
     }
 
@@ -232,6 +232,7 @@ const AppProvider = ({ children }) => {
             }
         }
     }
+
     const createNewCourse = async (course_data) => {
         dispatch({ type: CREATE_COURSE_BEGIN })
         try {
