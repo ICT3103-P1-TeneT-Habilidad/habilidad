@@ -1,9 +1,8 @@
 import React from 'react'
 import NoImage from '../assets/noimage.jpg'
 
-const TopicCard = ({data}) => {
-
-    const topics = data;
+const TopicCard = ({ data }) => {
+    const topics = data
 
     return (
         topics && (
@@ -25,7 +24,7 @@ const TopicCard = ({data}) => {
                         </div>
                         {/* description */}
                         <div className="space-y-2 p-4">
-                            <p>
+                            <p className="text-center">
                                 <span className="text-sm font-medium text-gray-900">{topic.topicName}</span>
                             </p>
                         </div>

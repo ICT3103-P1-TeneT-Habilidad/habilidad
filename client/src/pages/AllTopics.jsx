@@ -6,49 +6,70 @@ import { compare } from '../utils/Helper'
 
 const AllTopics = () => {
     const { topics, getAllTopics } = useAppContext()
+    const [sorted, setSorted] = useState([])
 
     useEffect(() => {
         getAllTopics()
         // eslint-disable-next-line
     }, [])
 
+    useEffect(() => {
+        if (topics) {
+            sortTopicsByName(topics)
+            groupedTopics(topics)
+        }
+    }, [topics])
+
     const sortTopicsByName = (topics) => {
-        var newTopics = null
         console.log(topics)
-        newTopics = topics.sort(function (a, b) {
+        topics = topics.sort(function (a, b) {
             return compare(a.topicName, b.topicName)
         })
-        console.log(newTopics)
     }
 
-    let groupedData = topics.reduce((a, b) => {
-        let group = b.topicName[0]
+    const groupedTopics = (topics) => {
+        let groupedData = topics.reduce((a, b) => {
+            let group = b.topicName[0]
 
-        if(!a[group]) a[group] = {group, data: [b]}
-        else a[group].data.push(b)
-        return a
-    }, {})
+            if (!a[group]) a[group] = { group, data: [b] }
+            else a[group].data.push(b)
+            return a
+        }, {})
 
-    let result = Object.values(groupedData)
+        let result = Object.values(groupedData)
 
-    console.log(result)
+        setSorted(result)
+    }
 
-    return (
-        topics && (
-            <div className="min-h-screen bg-background">
-                <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
-                    {sortTopicsByName(topics)}
-                    {result.map((one) => (
-                        <div key={one.group} className="tw-flex tw-flex-col tw-p-2">
-                            <div className="tw-border tw-border-divider tw-bg-divider tw-text-grey-base tw-p-4 tw-w-24 tw-h-12 tw-text-center tw-font-medium">
-                                {one.group}
+    console.log(topics)
+
+    function renderGroup() {
+        return (
+            <div>
+                {sorted.map((alphabet) => {
+                    console.log(alphabet)
+                    return (
+                        <div key={alphabet.group} className="flex flex-col p-2">
+                            <div className="border border-slate-400 bg-slate-300 text-grey-base p-3 w-24 h-12 text-center font-medium">
+                                {alphabet.group}
                             </div>
-                            <TopicCard data={one.data} />
+                            <TopicCard data={alphabet.data} />
                         </div>
-                    ))}
-                </div>
+                    )
+                })}
             </div>
         )
+    }
+
+    return topics ? (
+        <div className="min-h-screen bg-background">
+            <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
+                <h3 className="font-semibold text-2xl p-4">All Courses</h3>
+                <div> {renderGroup()}</div>
+            </div>
+        </div>
+    ) : (
+        <div />
     )
 }
 
