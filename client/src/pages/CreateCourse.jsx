@@ -8,29 +8,29 @@ import imagePlaceholder from '../assets/no-image.jpg'
 import { useAppContext } from '../context/appContext'
 
 const CreateCourse = () => {
-    const { createNewCourse } = useAppContext()
+    // retrieve from app context
+    const { createNewCourse, getAllTopics, topics } = useAppContext()
+
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
 
     const [coverImagePreview, setCoverImagePreview] = useState(imagePlaceholder)
-
+    // cover images
     const [coverImageFile, setCoverImageFile] = useState()
     const currentCoverImage = useRef({})
     currentCoverImage.current = coverImageFile
-
+    // material info
     const [materialInfo, setMaterialInfo] = useState({})
     const currentMaterialInfo = useRef({})
     currentMaterialInfo.current = materialInfo
-
+    // key list
     const [keysList, setKeysList] = useState([])
     const currentKeyList = useRef({})
     currentKeyList.current = keysList
-
+    // material components
     const [materialComponents, setMaterialComponents] = useState({})
     const currentMaterialComponents = useRef({})
     currentMaterialComponents.current = materialComponents
-
-    const topicOptions = languageOptions // get list from get all topics API
 
     const {
         register,
@@ -45,6 +45,18 @@ const CreateCourse = () => {
     useEffect(() => {
         checkEmptyUpload()
     })
+
+    useEffect(() => {
+        getAllTopics()
+    }, [])
+
+    var topicOptions = null
+    if (topics != null) {
+        topicOptions = topics.map((x) => ({
+            value: x.topicId,
+            label: x.topicName,
+        }))
+    }
 
     const NewCourseMaterial = ({ keyId }) => {
         return (
@@ -124,6 +136,7 @@ const CreateCourse = () => {
     }
 
     const onSubmit = (data) => {
+        console.log(data)
         data = dataCleanUp(data)
 
         const formData = new FormData()
@@ -144,7 +157,7 @@ const CreateCourse = () => {
                 formData.append(key, data[key])
             }
         }
-
+        console.log(formData)
         createNewCourse(formData)
     }
 
@@ -347,6 +360,7 @@ const CreateCourse = () => {
                                         className="w-full border border-slate-300 rounded-md p-2"
                                         id="price"
                                         type="number"
+                                        step="any"
                                         {...register('price', {
                                             required: 'Please enter how long it will take to complete the course',
                                         })}
