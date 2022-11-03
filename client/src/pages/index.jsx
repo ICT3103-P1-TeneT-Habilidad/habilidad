@@ -7,7 +7,7 @@ import ForgetResetPwd from './ForgetResetPwd'
 import Login from './Login'
 import Register from './Register'
 import Profile from './Profile'
-import ProtectedRoute from './ProtectedRoute'
+import ProtectedRoutes from './ProtectedRoute'
 
 export {
     AllCourses,
@@ -19,5 +19,5 @@ export {
     Login,
     Register,
     Profile,
-    ProtectedRoute,
+    ProtectedRoutes,
 }

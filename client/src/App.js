@@ -10,7 +10,7 @@ import {
     Login,
     Register,
     Profile,
-    ProtectedRoute,
+    ProtectedRoutes,
 } from './pages/index'
 import { Footer, Navbar } from './components/index'
 
@@ -19,9 +19,9 @@ function App() {
         <BrowserRouter>
             <Navbar />
             <Routes>
-                <Route path="/" element={<ProtectedRoute />}>
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/createcourse" element={<CreateCourse />} />
+                <Route path="/" element={<ProtectedRoutes />}>
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="createcourse" element={<CreateCourse />} />
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />

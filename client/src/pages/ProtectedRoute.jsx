@@ -1,13 +1,10 @@
-import { Navigate } from 'react-router-dom';
-import { useAppContext } from '../context/appContext';
+import { Outlet, Navigate } from 'react-router-dom'
+import { useAppContext } from '../context/appContext'
 
-const ProtectedRoute = ({ children }) => {
-  const { user } = useAppContext();
+const ProtectedRoutes = () => {
+    const { user } = useAppContext()
 
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-  return children;
-};
+    return user?.accessToken ? <Outlet /> : <Navigate to="/login" />
+}
 
-export default ProtectedRoute;
+export default ProtectedRoutes
