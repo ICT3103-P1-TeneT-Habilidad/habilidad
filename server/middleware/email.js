@@ -47,4 +47,8 @@ export const decodeEmailToken = (token) => {
     }
 }
 
-export const generateEmailOtp = () => Math.random().toString(36).substring(3, 9);
+export const generateEmailOtp = () => {
+    const token = Math.random().toString(36).substring(3, 9);
+    const expiredAt = new Date(Date.now() + 61 * 1000)
+    return { token, expiredAt }
+}
