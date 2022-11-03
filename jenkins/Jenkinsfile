@@ -26,7 +26,7 @@ pipeline {
         stage('OWASP Dependency Check'){
             steps{
                 sh 'pwd'
-                sh 'ls -la \/var\/jenkins_home\/tools\/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation\/DependencyCheck\/bin'
+                sh 'ls -la /var/jenkins_home/tools/org.jenkinsci.plugins.DependencyCheck.tools.DependencyCheckInstallation/DependencyCheck/bin'
                 dependencyCheck additionalArguments: '--format HTML --log .\/log.log', odcInstallation: 'DependencyCheck', stopBuild: true
             }
         }
