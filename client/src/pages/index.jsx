@@ -11,6 +11,7 @@ import Profile from './Profile'
 import ProtectedRoutes from './ProtectedRoute'
 import Register from './Register'
 import ViewCourse from './ViewCourse'
+import EditCourse from './EditCourse'
 
 export {
     AllCourses,

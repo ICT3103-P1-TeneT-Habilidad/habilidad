@@ -13,7 +13,8 @@ import {
     Profile,
     ProtectedRoutes,
     Register,
-    ViewCourse,
+    Profile,
+    CreateCourse, ViewCourse, EditCourse
 } from './pages/index'
 import { Footer, Navbar } from './components/index'
 
@@ -37,6 +38,7 @@ function App() {
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>
                 <Route path="login" element={<Login />} />
+                <Route path="/editcourse" element={<EditCourse />} />
             </Routes>
             <Footer />
         </BrowserRouter>

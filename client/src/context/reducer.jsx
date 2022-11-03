@@ -24,6 +24,9 @@ import {
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
+    EDIT_COURSE_BEGIN,
+    EDIT_COURSE_SUCCESS,
+    EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     RESET_PASSWORD_LINK_BEGIN,
@@ -167,6 +170,24 @@ const reducer = (state, action) => {
                 alert_type: 'success',
             }
         case CREATE_COURSE_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: action.payload.msg,
+                alert_type: 'danger',
+            }
+        case EDIT_COURSE_BEGIN:
+            return {
+                ...state,
+                edit_course: action.payload
+            }
+        case EDIT_COURSE_SUCCESS:
+            return {
+                ...state,
+                showAlert: true,
+                alert_type: 'success',
+            }
+        case EDIT_COURSE_ERROR:
             return {
                 ...state,
                 showAlert: true,
