@@ -1,7 +1,6 @@
 import { React, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import AnonProfile from '../assets/anon-profile.svg'    
-// import { useAppContext } from '../context/appContext'
+import AnonProfile from '../assets/anon-profile.svg'
 
 const Profile = () => {
 

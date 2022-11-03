@@ -55,7 +55,7 @@ export const validatePasswords = async (req) => {
     }
 
     // Check against dictionary words
-    const words = await (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
+    const words = (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
     if (words.includes(password)) {
         return Promise.reject(false)
     }
@@ -105,6 +105,30 @@ export const sanitizeBody = async (req, res, next) => {
     }
 
     req.sanitizedBody = sanitizedBody
+
+    next()
+}
+
+export const sanitizeUrlParam = async (req, res, next) => {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '/': '&#x2F;',
+        '`': '&#x60;',
+        '=': '&#x3D;',
+    }
+    const reg = /[&<>"'`=\/]/g
+
+    const sanitizedParams = {}
+
+    for (let x in req.params) {
+        sanitizedParams[x] = req.params[x].replace(reg, (match) => map[match])
+    }
+
+    req.sanitizedParams = sanitizedParams
 
     next()
 }

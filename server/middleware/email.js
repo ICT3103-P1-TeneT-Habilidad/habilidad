@@ -31,7 +31,7 @@ export const sendEmailLink = async (receiverEmail, subject, text) => {
 
 export const generateEmailToken = (user) => {
     try {
-        return jwt.sign(user, process.env.SECRET_KEY, {
+        return jwt.sign({ userId: user }, process.env.SECRET_KEY, {
             expiresIn: process.env.JWT_EMAIL_EXPIRES_IN,
         })
     } catch (err) {
@@ -45,4 +45,10 @@ export const decodeEmailToken = (token) => {
     } catch (err) {
         console.log(err)
     }
+}
+
+export const generateEmailOtp = () => {
+    const token = Math.random().toString(36).substring(3, 9);
+    const expiredAt = new Date(new Date().getTime() + 61 * 1000)
+    return { token, expiredAt }
 }

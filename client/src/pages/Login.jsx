@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAppContext } from '../context/appContext'
 import { useForm } from 'react-hook-form'
-import { Alert } from '../components'
-import { Link } from 'react-router-dom'
+import { Alert, LoadingMsg } from '../components'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {
-    const { showAlert, login } = useAppContext()
+    const { showAlert, sendLoginOtp, loginOtp, isLoading } = useAppContext()
+
+    const navigate = useNavigate()
 
     const {
         register,
@@ -15,12 +17,29 @@ const Login = () => {
 
     const onSubmit = (data) => {
         console.log(data)
-        login(data)
+        sendLoginOtp(data)
+    }
+
+    useEffect(() => {
+        if (loginOtp) navigate('/otp')
+    }, [loginOtp, navigate])
+
+    useEffect(() => {
+        showLoadingMsg()
+    }, [isLoading])
+
+    const showLoadingMsg = () => {
+        return (
+            <LoadingMsg/>
+        )
     }
 
     return (
         <>
-            <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div
+                className={`min-h-screen bg-background
+                } flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
+            >
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login to HABILIDAD</h2>
                 </div>
@@ -28,7 +47,7 @@ const Login = () => {
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                         {/* {user_type === 'Instructor' ? <InstructorLogin /> : <StudentLogin />} */}
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-                            {showAlert && <Alert />}
+                            {showAlert ? <Alert/> : isLoading && showLoadingMsg()}
                             <div>
                                 <label>Username</label>
                                 <div className="mt-1">
