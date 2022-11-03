@@ -34,7 +34,7 @@ import { addOneCoursePurchased } from '../services/transaction.js'
  */
 export const getOneCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
 
         const course = await findOneCourse(courseId)
 
@@ -214,7 +214,7 @@ export const instructorCreateCourse = async (req, res, next) => {
 
 export const approveCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
         const { moderatorId } = req.payload
         const { approvalStatus } = req.sanitizedBody
 
@@ -234,7 +234,7 @@ export const approveCourse = async (req, res, next) => {
 
 export const deleteCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
         const { moderatorId } = req.payload
 
         const result = await deleteOneCourse({ courseId, moderatorId })
@@ -269,7 +269,7 @@ const getPublibAndAssetId = (course, courseMaterialId) => {
 export const editCourse = async (req, res, next) => {
     try {
 
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
         const course = await findOneCourse(courseId)
         if (!course) throw new Response('Bad Request', 'res_badRequest')
 

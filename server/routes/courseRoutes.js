@@ -18,9 +18,9 @@ import {
     purchaseOneCourse,
 } from '../controllers/courseController.js'
 // import middleware
-import { courseUpload, imageUpload } from '../middleware/multer.js'
+import { courseUpload } from '../middleware/multer.js'
 import { isRoleInstructor, isRoleModerator, isRoleStudent } from '../middleware/checkRole.js'
-import { sanitizeBody } from '../validations/input.js'
+import { sanitizeBody, sanitizeUrlParam } from '../validations/input.js'
 
 const router = express.Router()
 
@@ -66,18 +66,21 @@ router.route('/purchase').post(isAuthenticate, isRoleStudent, sanitizeBody, purc
 // Approve/reject course
 // Auth: Token, Role based
 // Sanitized: Req.Body
-router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse)
+// Sanitized: Req.Params
+router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, sanitizeUrlParam, approveCourse)
 
 // Get course details
 // Auth: Token, Role based
-router.route('/:courseId').get(isAuthenticate, getOneCourse)
+// Sanitized: Req.Params
+router.route('/:courseId').get(isAuthenticate, sanitizeUrlParam, getOneCourse)
 
 // Delete course
 // Auth: Token, Role based
-router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, deleteCourse)
+// Sanitized: Req.Params
+router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, sanitizeUrlParam, deleteCourse)
 
 // Edit course
 // Auth: Token, Role based
-// Sanitized: Req.Body
-router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, editCourse)
+// Sanitized: Req.Body, Req.Params
+router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, sanitizeUrlParam, editCourse)
 export default router
