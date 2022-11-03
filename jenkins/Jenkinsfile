@@ -18,11 +18,11 @@ pipeline {
                 sh 'chmod +x -R ./jenkins/scripts'
             }
         }
-        stage('Checkout SCM'){
-            steps{
-                git '/home/JenkinsDependencyCheckTest'
-            }
-        }
+        // stage('Checkout SCM'){
+        //     steps{
+        //         git '/home/JenkinsDependencyCheckTest'
+        //     }
+        // }
         stage('OWASP Dependency Check'){
             steps{
                 sh 'pwd'
