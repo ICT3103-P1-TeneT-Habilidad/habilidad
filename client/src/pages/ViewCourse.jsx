@@ -1,9 +1,8 @@
 import { React } from 'react'
 import { Link } from 'react-router-dom'
-// import { useAppContext } from '../context/appContext'
+import { sortCourseMaterials } from '../utils/Helpers'
 
 const ViewCourse = () => {
-    // const { setEditCourseDetails } = useAppContext()
     const courseData = {
         courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
         courseName: 'dumb',
@@ -41,29 +40,6 @@ const ViewCourse = () => {
                 },
             },
         ],
-    }
-
-    const sortCourseMaterials = (materials) => {
-        const sortedMaterials = []
-        console.log(materials)
-        materials.forEach((element) => {
-            if (sortedMaterials.length === 0) {
-                sortedMaterials.push(element)
-            } else {
-                for (var i = 0; i < sortedMaterials.length; i++) {
-                    if (element.order < sortedMaterials[i].order) {
-                        sortedMaterials.splice(i, 0, element)
-                        break
-                    }
-                }
-                if (!sortedMaterials.includes(element)) {
-                    sortedMaterials.push(element)
-                }
-            }
-        })
-        console.log(sortedMaterials)
-        courseData.courseMaterial = sortedMaterials
-        return sortedMaterials
     }
 
     return (
