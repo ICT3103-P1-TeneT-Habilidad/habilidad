@@ -55,7 +55,7 @@ export const validatePasswords = async (req) => {
     }
 
     // Check against dictionary words
-    const words = await (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
+    const words = (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
     if (words.includes(password)) {
         return Promise.reject(false)
     }

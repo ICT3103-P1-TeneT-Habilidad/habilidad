@@ -15,6 +15,7 @@ import {
     editCourse,
     setCoursePopular,
     setCourseNotPopular,
+    purchaseOneCourse,
 } from '../controllers/courseController.js'
 // import middleware
 import { courseUpload, imageUpload } from '../middleware/multer.js'
@@ -46,6 +47,9 @@ router.route('/courseSetPopular').post(isAuthenticate, isRoleModerator, sanitize
 
 // Set Course to Not Popular
 router.route('/courseSetNotPopular').post(isAuthenticate, isRoleModerator, sanitizeBody, setCourseNotPopular) //sanitize
+
+// Student purchase course
+router.route('/purchase').post(isAuthenticate, isRoleStudent, purchaseOneCourse)
 
 // Approve/reject course
 router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, approveCourse) //sanitize
