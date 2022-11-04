@@ -234,7 +234,7 @@ const EditCourse = () => {
             topicCourse: getOriginalTopics(),
             language: {
                 value: courseDetail?.language,
-                label: courseDetail?.language.charAt(0) + courseDetail?.language.slice(0).toLowerCase(),
+                label: courseDetail?.language.charAt(0) + courseDetail?.language.slice(1).toLowerCase(),
             },
         })
     }, [courseDetail])
