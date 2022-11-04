@@ -1,19 +1,13 @@
-import { React, useState, useRef } from 'react'
+import { React, useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAppContext } from '../../context/appContext'
 
 const Profile = () => {
 
+    const {getUserDetails, user_details} = useAppContext()
+
     const [isDisabled, setIsDisabled] = useState(true)
     const [hasChanged, setHasChanged] = useState(false)
-
-    const defaults = {
-        username: '',
-        name: 'john',
-        phoneNo: 98765432,
-        email: 'john@gaaa.com',
-        password: '',
-        re_password: '',
-    }
 
     const {
         register,
@@ -22,8 +16,18 @@ const Profile = () => {
         watch,
         reset,
     } = useForm({
-        defaultValues: defaults,
+        defaultValues: {
+            role: user_details?.role,
+            email: user_details?.email,
+            phoneNumber: user_details?.phoneNumber,
+            name: user_details?.name,
+            username: user_details?.username
+        }
     })
+
+    useEffect(() => {
+        getUserDetails()
+    }, [])
 
     const password = useRef({})
     password.current = watch('password', '')
@@ -130,7 +134,7 @@ const Profile = () => {
                                 <div className="w-full md:w-1/2 p-3 mb-6 md:mb-0">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="name"
+                                        htmlFor="name"
                                     >
                                         Name
                                     </label>
@@ -148,25 +152,25 @@ const Profile = () => {
                                 <div className="w-full md:w-1/2 p-3 mb-6 md:mb-0">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="phoneNo"
+                                        htmlFor="phoneNumber"
                                     >
                                         Phone Number
                                     </label>
                                     <input
                                         disabled={isDisabled}
                                         className="w-full border border-slate-300 rounded-md p-2"
-                                        id="phoneNo"
+                                        id="phoneNumber"
                                         type="tel"
-                                        {...register('phoneNo', { required: 'Please enter your phone number' })}
+                                        {...register('phoneNumber', { required: 'Please enter your phone number' })}
                                     />
-                                    {errors.phoneNo ? (
-                                        <span className="text-sm text-red-500">{errors.phoneNo.message}</span>
+                                    {errors.phoneNumber ? (
+                                        <span className="text-sm text-red-500">{errors.phoneNumber.message}</span>
                                     ) : null}
                                 </div>
                                 <div className="w-full p-3 mb-6 md:mb-0">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="email"
+                                        htmlFor="email"
                                     >
                                         Email Address
                                     </label>
@@ -184,7 +188,7 @@ const Profile = () => {
                                 <div className="w-full p-3 mb-6 md:mb-0">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="password"
+                                        htmlFor="password"
                                     >
                                         Password
                                     </label>

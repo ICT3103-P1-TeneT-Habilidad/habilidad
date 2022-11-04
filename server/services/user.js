@@ -28,6 +28,13 @@ export const findUserbyUserId = async (userId) => {
         where: {
             userId: userId,
         },
+        select:{
+            email: true,
+            name: true,
+            phoneNumber: true,
+            role: true,
+            username: true
+        }
     })
 }
 

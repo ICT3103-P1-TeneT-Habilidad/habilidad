@@ -320,7 +320,7 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_USER_BEGIN })
         try {
             const { data } = await axios.get(`/api/users/`)
-            const result = data.result.data
+            const result = data.result
             dispatch({
                 type: GET_USER_SUCCESS,
                 payload: {
