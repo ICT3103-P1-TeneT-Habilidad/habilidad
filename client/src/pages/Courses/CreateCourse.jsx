@@ -1,32 +1,32 @@
-import { React, useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { v4 as uuid } from 'uuid'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { languageOptions } from '../../utils/Constants'
-import { v4 as uuid } from 'uuid'
 import imagePlaceholder from '../../assets/noimage.jpg'
 import { useAppContext } from '../../context/appContext'
 
 const CreateCourse = () => {
-    const { createNewCourse, getAllTopics, topics } = useAppContext()
-    
+    const { createNewCourse, getAllTopics, topics, isLoggedIn } = useAppContext()
+
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
 
     const [coverImagePreview, setCoverImagePreview] = useState(imagePlaceholder)
-    // cover images
+
     const [coverImageFile, setCoverImageFile] = useState()
     const currentCoverImage = useRef({})
     currentCoverImage.current = coverImageFile
-    // material info
+
     const [materialInfo, setMaterialInfo] = useState({})
     const currentMaterialInfo = useRef({})
     currentMaterialInfo.current = materialInfo
-    // key list
+
     const [keysList, setKeysList] = useState([])
     const currentKeyList = useRef({})
     currentKeyList.current = keysList
-    // material components
+
     const [materialComponents, setMaterialComponents] = useState({})
     const currentMaterialComponents = useRef({})
     currentMaterialComponents.current = materialComponents
@@ -61,18 +61,6 @@ const CreateCourse = () => {
         console.log(materialInfo)
     })
 
-    useEffect(() => {
-        getAllTopics()
-    }, [])
-
-    // var topicOptions = null
-    // if (topics != null) {
-    //     topicOptions = topics.map((x) => ({
-    //         value: x.topicId,
-    //         label: x.topicName,
-    //     }))
-    // }
-
     const NewCourseMaterial = ({ keyId }) => {
         return (
             <>
@@ -80,7 +68,7 @@ const CreateCourse = () => {
                     <div className="w-10/12 p-3">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-2"
-                            for={keyId}
+                            htmlFor={keyId}
                         >
                             Lesson {currentKeyList.current.length}
                         </label>
@@ -146,7 +134,7 @@ const CreateCourse = () => {
 
         // // remove keys
         currentKeyList.current.map((key) => delete data[key])
-        console.log(data)
+
         return data
     }
 
@@ -155,7 +143,6 @@ const CreateCourse = () => {
 
         const formData = new FormData()
         for (const key in data) {
-            console.log(formData)
             if (key === 'materials') {
                 const material = []
                 for (const i in data[key]) {
@@ -170,12 +157,9 @@ const CreateCourse = () => {
                 formData.append(key, JSON.stringify(data[key]))
             } else {
                 formData.append(key, data[key])
-                console.log(data[key])
             }
         }
-        for (var key of formData.entries()) {
-            console.log(key[0] + ', ' + key[1]);
-        }
+
         createNewCourse(formData)
     }
 
@@ -250,7 +234,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="courseName"
+                                        htmlFor="courseName"
                                     >
                                         Course Name
                                     </label>
@@ -269,7 +253,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="duration"
+                                        htmlFor="duration"
                                     >
                                         Course Duration (in hours)
                                     </label>
@@ -288,7 +272,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="topicCourse"
+                                        htmlFor="topicCourse"
                                     >
                                         Relevant Topics
                                     </label>
@@ -323,7 +307,7 @@ const CreateCourse = () => {
                                 <div className="flex flex-col p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="courseDescription"
+                                        htmlFor="courseDescription"
                                     >
                                         Description
                                     </label>
@@ -343,7 +327,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="language"
+                                        htmlFor="language"
                                     >
                                         Language
                                     </label>
@@ -373,7 +357,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="price"
+                                        htmlFor="price"
                                     >
                                         Course Price (in SGD)
                                     </label>
@@ -381,7 +365,6 @@ const CreateCourse = () => {
                                         className="w-full border border-slate-300 rounded-md p-2"
                                         id="price"
                                         type="number"
-                                        step="any"
                                         {...register('price', {
                                             required: 'Please enter how long it will take to complete the course',
                                         })}
@@ -393,7 +376,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="image"
+                                        htmlFor="image"
                                     >
                                         Cover Image
                                     </label>
