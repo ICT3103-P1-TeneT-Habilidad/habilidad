@@ -1,8 +1,7 @@
-import { React } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { sortCourseMaterials } from '../utils/Helpers'
 
-const ViewCourse = () => {
+const StudentViewCourse = () => {
     const courseData = {
         courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
         courseName: 'dumb',
@@ -56,9 +55,9 @@ const ViewCourse = () => {
                 <div className="flex justify-end">
                     <Link
                         className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                        to="/editcourse"
+                        to="/content"
                     >
-                        Edit Course
+                        Start Course
                     </Link>
                 </div>
                 <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">
@@ -85,35 +84,9 @@ const ViewCourse = () => {
                         </div>
                     </div>
                 </div>
-                <hr />
-                <div className="lg:-mx-6 lg:flex lg:items-center">
-                    <div className="m-6 lg:w-full lg:mt-0 lg:mx-6">
-                        <p className="mt-3 p-4 text-2xl text-gray-800 md:text-2xl">Course Materials</p>
-                        <div className="flex flex-wrap">
-                            {sortCourseMaterials(courseData.courseMaterial).map((material) => (
-                                <div className="lg:w-1/3 sm:w-1/2 p-4">
-                                    <h2 className="tracking-wide text-xl text-grey-500 mb-1">
-                                        Lesson {material.order}: {material.title}
-                                    </h2>
-                                    <div className="flex">
-                                        <iframe
-                                            width="560"
-                                            height="315"
-                                            src={material.url}
-                                            title={material.title}
-                                            frameBorder="0"
-                                            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen={true}
-                                        ></iframe>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     )
 }
 
-export default ViewCourse
+export default StudentViewCourse

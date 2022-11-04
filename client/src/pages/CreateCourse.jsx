@@ -45,6 +45,7 @@ const CreateCourse = () => {
 
     useEffect(() => {
         checkEmptyUpload()
+        console.log(materialInfo)
     })
 
     const NewCourseMaterial = ({ keyId }) => {
@@ -152,7 +153,7 @@ const CreateCourse = () => {
     const addComponent = () => {
         const keyId = uuid()
         setKeysList([...keysList, keyId])
-        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: currentKeyList.current.length } })
+        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: currentKeyList.current.length + 1 } })
         setMaterialComponents({
             ...materialComponents,
             [keyId]: <NewCourseMaterial keyId={keyId} />,
