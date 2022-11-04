@@ -1,13 +1,15 @@
 import React, { useReducer, useContext } from 'react'
 import reducer from './reducer'
 import axios from '../utils/axios'
-// import service
 import {
     SHOW_MODAL,
-    CLEAR_VALUES,
-    SET_USER_BEGIN,
-    SET_USER_SUCCESS,
-    SET_USER_ERROR,
+    CLEAR_ALERT,
+    LOGIN_OTP_BEGIN,
+    LOGIN_OTP_SUCCESS,
+    LOGIN_OTP_ERROR,
+    SETUP_USER_BEGIN,
+    SETUP_USER_SUCCESS,
+    SETUP_USER_ERROR,
     LOGOUT,
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
@@ -24,6 +26,9 @@ import {
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
+    EDIT_COURSE_BEGIN,
+    EDIT_COURSE_SUCCESS,
+    EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     RESET_PASSWORD_LINK_BEGIN,
@@ -38,16 +43,18 @@ export const initialState = {
 
     showNavbarModal: false,
     openModal: false,
-    loginFail: false,
+    // loginFail: false,
     showAlert: false,
     isLoading: false,
+    loginOtp: false,
 
     user_data: {},
-    user_type: '',
     alert_msg: '',
     alert_type: '',
     courses: null,
     topics: null,
+
+    edit_course: null,
 }
 
 const AppContext = React.createContext()
@@ -59,42 +66,51 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            // config.headers['Authorization'] = `Bearer ${state.token}`
-            const token = getAccessToken()
-            if (token) {
-                config.headers['x-access-token'] = token
+            if (user) {
+                const { accessToken } = JSON.parse(user)
+                console.log(accessToken)
+                config.headers['authorization'] = `Bearer ${accessToken}`
             }
-
             return config
         },
-        (err) => {
-            return Promise.reject(err)
+        (error) => {
+            return Promise.reject(error)
         }
     )
 
     authFetch.interceptors.response.use(
-        (response) => {
-            return response
+        (res) => {
+            return res
         },
         async (err) => {
-            const orgConfig = err.config
-            if (orgConfig.url !== '/api/users/login' && err.response) {
-                // access token expired
-                if (err.response.status === 401 && !orgConfig._retry) {
-                    orgConfig._retry = true
-
+            console.log(err)
+            const originalConfig = err.config
+            if (err.response) {
+                // If access token is expired
+                if (err.response.data.status === 401 && !originalConfig._retry) {
+                    originalConfig._retry = true
                     try {
-                        const result = await authFetch.post('/api/refreshToken', {
-                            refreshToken: getRefreshToken(),
-                        })
-                        const { accessToken } = result.data.result
+                        const rs = await getRefreshToken()
+                        const { accessToken } = rs.data
                         updateAccessToken(accessToken)
-                        return authFetch(orgConfig)
-                    } catch (_err) {
-                        return Promise.reject(_err)
+                        authFetch.headers.common['authorization'] = `Bearer ${accessToken}`
+
+                        return authFetch(originalConfig)
+                    } catch (_error) {
+                        if (_error.response && _error.response.data) {
+                            return Promise.reject(_error.response.data)
+                        }
+
+                        return Promise.reject(_error)
                     }
                 }
+
+                if (err.response.data.status === 403 && err.response.data) {
+                    return Promise.reject(err.response.data)
+                }
             }
+
+            return Promise.reject(err)
         }
     )
 
@@ -132,27 +148,41 @@ const AppProvider = ({ children }) => {
         })
     }
 
-    const clearValues = () => {
-        dispatch({ type: CLEAR_VALUES })
-    }
-
-    const login = async (user_data) => {
-        dispatch({ type: SET_USER_BEGIN })
+    const sendLoginOtp = async (user_data) => {
+        dispatch({ type: LOGIN_OTP_BEGIN })
         try {
-            const { data } = await axios.post(`/api/users/login`, user_data)
-            const result = data.result
-            console.log(data)
+            await axios.post(`/api/users/login`, user_data)
             dispatch({
-                type: SET_USER_SUCCESS,
-                payload: result,
+                type: LOGIN_OTP_SUCCESS,
+                payload: { msg: 'Successfully Login' },
             })
-            setUser(result)
         } catch (err) {
+            console.log(err)
             dispatch({
-                type: SET_USER_ERROR,
+                type: LOGIN_OTP_ERROR,
                 payload: { msg: err.response.data.result.message },
             })
         }
+        clearAlert()
+    }
+
+    const login = async (user_data) => {
+        dispatch({ type: SETUP_USER_BEGIN })
+        try {
+            const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
+            const result = data.result.data
+            console.log(result)
+            dispatch({ type: SETUP_USER_SUCCESS, payload: { user: result, msg: 'Success' } })
+            setUser(result)
+        } catch (err) {
+            dispatch({
+                type: SETUP_USER_ERROR,
+                payload: {
+                    msg: err.response.data.result.message,
+                },
+            })
+        }
+        clearAlert()
     }
 
     const logout = () => {
@@ -164,8 +194,10 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CREATE_USER_BEGIN })
         try {
             await axios.post(`/api/users/register`, user_data)
-            dispatch({ type: CREATE_USER_SUCCESS })
-            dispatch({ type: CLEAR_VALUES })
+            dispatch({
+                type: CREATE_USER_SUCCESS,
+                payload: { msg: 'Account Successfully Created' },
+            })
         } catch (err) {
             console.log(err)
             dispatch({
@@ -173,6 +205,7 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.result.message },
             })
         }
+        clearAlert()
     }
 
     const getAllCourses = async () => {
@@ -205,7 +238,7 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             console.log(err.response)
-            logout()
+            // logout()
         }
     }
 
@@ -217,6 +250,7 @@ const AppProvider = ({ children }) => {
                 type: RESET_PASSWORD_LINK_SUCCESS,
             })
         } catch (err) {
+            console.log(err)
             if (err.response.status !== 401) {
                 dispatch({
                     type: RESET_PASSWORD_LINK_ERROR,
@@ -227,6 +261,7 @@ const AppProvider = ({ children }) => {
             }
         }
     }
+
     const createNewCourse = async (course_data) => {
         dispatch({ type: CREATE_COURSE_BEGIN })
         try {
@@ -234,7 +269,6 @@ const AppProvider = ({ children }) => {
             dispatch({
                 type: CREATE_COURSE_SUCCESS,
             })
-            dispatch({ type: CLEAR_VALUES })
         } catch (err) {
             console.log(err.response)
             dispatch({
@@ -242,6 +276,14 @@ const AppProvider = ({ children }) => {
                 payload: { msg: err.response.data.result.message },
             })
         }
+    }
+
+    const clearAlert = () => {
+        setTimeout(() => {
+            dispatch({
+                type: CLEAR_ALERT,
+            })
+        }, 5000)
     }
 
     return (
@@ -253,10 +295,11 @@ const AppProvider = ({ children }) => {
                 updateAccessToken,
                 getUser,
                 setUser,
+                login,
                 removeUser,
                 showModal,
-                clearValues,
-                login,
+                clearAlert,
+                sendLoginOtp,
                 logout,
                 createUser,
                 getAllCourses,

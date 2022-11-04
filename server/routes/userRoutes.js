@@ -13,6 +13,9 @@ import {
     reactivateUser,
     sendEmailDeactivateAcc,
     deactivateUser,
+    sendEmailOtp,
+    verifyEmailOtp,
+    validateEmailAndPassword
 } from '../controllers/usersController.js'
 import { isRoleModerator } from '../middleware/checkRole.js'
 
@@ -28,13 +31,16 @@ router.route('/').get(isAuthenticate, getOneUser)
 router.route('/').patch(isAuthenticate, updateUser)
 
 // login
-router.route('/login').post(userLogin)
+router.route('/login').post(userLogin, sendEmailOtp)
+
+// Verify email otp
+router.route('/verifyOTP').post(verifyEmailOtp)
 
 // logout
 router.route('/logout').post(userLogout)
 
 // register
-router.route('/register').post(userRegister)
+router.route('/register').post(validateEmailAndPassword, userRegister)
 
 // verify access token
 
@@ -50,7 +56,7 @@ router.route('/reactivate').patch(isAuthenticate, isRoleModerator, reactivateUse
 // Deactivate user account
 router.route('/deactivate').patch(isAuthenticate, deactivateUser, sendEmailDeactivateAcc)
 
-// Referesh access token
+// Refresh access token
 router.route('/refreshAccessToken').post(isRefreshTokenValid, refreshAccessToken)
 
 export default router

@@ -55,7 +55,7 @@ export const validatePasswords = async (req) => {
     }
 
     // Check against dictionary words
-    const words = await (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
+    const words = (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
     if (words.includes(password)) {
         return Promise.reject(false)
     }
@@ -86,6 +86,36 @@ export const validateEmail = (req) => {
 
 // Prevent Code Injection, XSS
 export const sanitizeBody = async (req, res, next) => {
+
+    try {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;',
+        }
+        const reg = /[&<>"'`=\/]/g
+
+        const sanitizedBody = {}
+
+        for (let x in req.body) {
+            sanitizedBody[x] = req.body[x].replace(reg, (match) => map[match])
+        }
+
+        req.sanitizedBody = sanitizedBody
+
+        next()
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const sanitizeUrlParam = async (req, res, next) => {
     const map = {
         '&': '&amp;',
         '<': '&lt;',
@@ -98,13 +128,27 @@ export const sanitizeBody = async (req, res, next) => {
     }
     const reg = /[&<>"'`=\/]/g
 
-    const sanitizedBody = {}
+    const sanitizedParams = {}
 
-    for (let x in req.body) {
-        sanitizedBody[x] = req.body[x].replace(reg, (match) => map[match])
+    for (let x in req.params) {
+        sanitizedParams[x] = req.params[x].replace(reg, (match) => map[match])
     }
 
-    req.sanitizedBody = sanitizedBody
+    req.sanitizedParams = sanitizedParams
 
     next()
+}
+
+export const replaceSanitizedQuot = (string) => {
+    const map = {
+
+        '&quot;': '"',
+        '&#39;': "'",
+    }
+    const reg = /&quot;|&#39;/g
+
+    const newString = string.replace(reg, (match) => map[match])
+
+    return newString
+
 }

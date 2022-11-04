@@ -1,10 +1,13 @@
 import {
-    LOGIN_USER,
     SHOW_MODAL,
-    CLEAR_VALUES,
-    SET_USER_BEGIN,
-    SET_USER_SUCCESS,
-    SET_USER_ERROR,
+    // CLEAR_VALUES,
+    CLEAR_ALERT,
+    LOGIN_OTP_BEGIN,
+    LOGIN_OTP_SUCCESS,
+    LOGIN_OTP_ERROR,
+    SETUP_USER_BEGIN,
+    SETUP_USER_SUCCESS,
+    SETUP_USER_ERROR,
     LOGOUT,
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
@@ -21,6 +24,9 @@ import {
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
+    EDIT_COURSE_BEGIN,
+    EDIT_COURSE_SUCCESS,
+    EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     RESET_PASSWORD_LINK_BEGIN,
@@ -32,38 +38,66 @@ import { initialState } from './appContext'
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case LOGIN_USER:
-            return {
-                ...state,
-                user_type: action.payload.user_type,
-            }
         case SHOW_MODAL:
             return {
                 ...state,
                 openModal: !state.openModal,
             }
-        case CLEAR_VALUES: {
-            const initialState = {
-                user_type: '',
-                alert_msg: '',
-            }
-            return { ...state, ...initialState }
-        }
-        case SET_USER_BEGIN:
+        // case CLEAR_VALUES: {
+        //     const initialState = {
+        //         user_type: '',
+        //     }
+        //     return { ...state, ...initialState }
+        // }
+        case CLEAR_ALERT:
             return {
                 ...state,
+                showAlert: false,
+                alert_msg: '',
+                alert_type: '',
             }
-        case SET_USER_SUCCESS:
+        case LOGIN_OTP_BEGIN:
+            return {
+                ...state,
+                isLoading: true,
+            }
+        case LOGIN_OTP_SUCCESS:
+            return {
+                ...state,
+                showAlert: true,
+                alert_type: 'success',
+                alert_msg: action.payload.msg,
+                loginOtp: true,
+                isLoading: false,
+            }
+        case LOGIN_OTP_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_type: 'danger',
+                alert_msg: action.payload.msg,
+                isLoading: false,
+            }
+        case SETUP_USER_BEGIN:
+            return {
+                ...state,
+                isLoading: false,
+            }
+        case SETUP_USER_SUCCESS:
             return {
                 ...state,
                 user: action.payload.user,
+                showAlert: true,
+                alert_type: 'success',
+                alert_msg: action.payload.msg,
+                loginOtp: false,
             }
-        case SET_USER_ERROR:
+        case SETUP_USER_ERROR:
             return {
                 ...state,
-                loginFail: true,
-                alert_msg: action.payload.msg,
+                showAlert: true,
                 alert_type: 'danger',
+                alert_msg: action.payload.msg,
             }
         case LOGOUT:
             return {
@@ -80,13 +114,14 @@ const reducer = (state, action) => {
                 ...state,
                 showAlert: true,
                 alert_type: 'success',
+                alert_msg: action.payload.msg,
             }
         case CREATE_USER_ERROR:
             return {
                 ...state,
                 showAlert: true,
-                alert_msg: action.payload.msg,
                 alert_type: 'danger',
+                alert_msg: action.payload.msg,
             }
         case GET_ALL_COURSES_BEGIN:
             return {
@@ -104,7 +139,7 @@ const reducer = (state, action) => {
         case GET_ALL_TOPICS_SUCCESS:
             return {
                 ...state,
-                topics: action.payload.result,
+                topics: action.payload.result.data,
             }
         case RESET_PASSWORD_LINK_BEGIN:
             return {
@@ -135,6 +170,24 @@ const reducer = (state, action) => {
                 alert_type: 'success',
             }
         case CREATE_COURSE_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: action.payload.msg,
+                alert_type: 'danger',
+            }
+        case EDIT_COURSE_BEGIN:
+            return {
+                ...state,
+                edit_course: action.payload,
+            }
+        case EDIT_COURSE_SUCCESS:
+            return {
+                ...state,
+                showAlert: true,
+                alert_type: 'success',
+            }
+        case EDIT_COURSE_ERROR:
             return {
                 ...state,
                 showAlert: true,

@@ -11,11 +11,11 @@ export const filterOptions = [
 ]
 
 export const languageOptions = [
-    {value: "Chinese", label: "Chinese" },
-    {value: "English", label: "English" },
-    {value: "French", label: "French" },
-    {value: "Indian", label: "Indian" },
-    {value: "Japanese", label: "Japanese" },
-    {value: "Korean", label: "Korean" },
-    {value: "Malay", label: "Malay" },
+    {value: "CHINESE", label: "Chinese" },
+    {value: "ENGLISH", label: "English" },
+    {value: "FRENCH", label: "French" },
+    {value: "INDIAN", label: "Indian" },
+    {value: "JAPANESE", label: "Japanese" },
+    {value: "KOREAN", label: "Korean" },
+    {value: "MALAY", label: "Malay" },
 ]

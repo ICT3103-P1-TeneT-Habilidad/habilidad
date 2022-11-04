@@ -2,14 +2,19 @@
 export const LOGIN_USER = 'LOGIN_USER'
 export const SHOW_MODAL = 'SHOW_MODAL'
 export const CLEAR_VALUES = 'CLEAR_VALUES'
+export const CLEAR_ALERT = 'CLEAR_ALERT'
 export const LOGOUT = 'LOGOUT'
 
 /*------------------------------------------------------------------------------------
 USER RELATED
 ------------------------------------------------------------------------------------*/
-export const SET_USER_BEGIN = 'SET_USER_BEGIN'
-export const SET_USER_SUCCESS = 'SET_USER_SUCCESS'
-export const SET_USER_ERROR = 'SET_USER_ERROR'
+export const SETUP_USER_BEGIN = 'SETUP_USER_BEGIN'
+export const SETUP_USER_SUCCESS = 'SETUP_USER_SUCCESS'
+export const SETUP_USER_ERROR = 'SETUP_USER_ERROR'
+
+export const LOGIN_OTP_BEGIN = 'LOGIN_OTP_BEGIN'
+export const LOGIN_OTP_SUCCESS = 'LOGIN_OTP_SUCCESS'
+export const LOGIN_OTP_ERROR = 'LOGIN_OTP_ERROR'
 
 export const CREATE_USER_BEGIN = 'CREATE_USER_BEGIN'
 export const CREATE_USER_SUCCESS = 'RESET_PASSWORD_LINK_ERRORCREATE_USER_SUCCESS'
@@ -54,6 +59,10 @@ export const GET_ALL_TOP_COURSES_ERROR = 'GET_ALL_TOP_COURSES_ERROR'
 export const CREATE_COURSE_BEGIN = 'CREATE_COURSE_BEGIN'
 export const CREATE_COURSE_SUCCESS = 'CREATE_COURSE_SUCCESS'
 export const CREATE_COURSE_ERROR = 'CREATE_COURSE_ERROR'
+
+export const EDIT_COURSE_BEGIN = 'EDIT_COURSE_BEGIN'
+export const EDIT_COURSE_SUCCESS = 'EDIT_COURSE_SUCCESS'
+export const EDIT_COURSE_ERROR = 'EDIT_COURSE_ERROR'
 
 export const GET_ALL_TOPICS_BEGIN = 'GET_ALL_TOPICS_BEGIN'
 export const GET_ALL_TOPICS_SUCCESS = 'GET_ALL_TOPICS_SUCCESS'

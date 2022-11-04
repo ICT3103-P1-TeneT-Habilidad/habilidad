@@ -121,7 +121,6 @@ export const deleteOneCourse = async (data) => {
 }
 
 export const updateOneCourse = async (data) => {
-    console.log(data)
     return db.course.update({
         where: {
             courseId: data.courseId,
@@ -132,9 +131,6 @@ export const updateOneCourse = async (data) => {
             price: data.price,
             description: data.courseDescription,
             language: data.language,
-            topicCourse: {
-                create: data.topicCourse != null ? data.topicCourse : undefined
-            },
             imageAssetId: data.uploadResult != null ? data.imageAssetId : undefined,
             imagePublicId: data.uploadResult != null ? data.imagePublicId : undefined
         },
@@ -175,7 +171,29 @@ export const findPopularCourse = async () => {
     })
 }
 
-export const findPopularCourseByTopic = async (topic) => {
+export const findCourseByTopic = async (topic) => {
+    return db.course.findMany({
+        where: {
+            topicCourse: {
+                some: {
+                    topics: {
+                        topicName: topic
+                    }
+                }
+            }
+        },
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            description: true,
+            price: true,
+            duration: true
+        }
+    })
+}
+
+export const findCourseByPopularTopic = async (topic) => {
     return db.course.findMany({
         where: {
             topicCourse: {

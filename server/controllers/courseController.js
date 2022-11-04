@@ -1,3 +1,4 @@
+import { Response } from '../responses/response.js'
 import { responseCode } from '../responses/responseCode.js'
 import cloudinary from '../utils/cloudinary.js'
 import { Prisma } from '@prisma/client'
@@ -14,9 +15,10 @@ import {
     updateOneCourse,
     findPublicAndAssetId,
     findPopularCourse,
-    findPopularCourseByTopic,
+    findCourseByTopic,
     updateCourseToNotPopular,
-    updateCourseToPopular
+    updateCourseToPopular,
+    findCourseByPopularTopic
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
@@ -24,6 +26,8 @@ import { findStudentIdByUserId } from '../services/student.js'
 import { findModeratorIdByUserId } from '../services/moderator.js'
 import { findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
+import { addOneCoursePurchased } from '../services/transaction.js'
+import { replaceSanitizedQuot } from '../validations/input.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -33,7 +37,7 @@ import { getErrorResponse } from '../utils/error.js'
  */
 export const getOneCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
 
         const course = await findOneCourse(courseId)
 
@@ -118,11 +122,28 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => {
+export const getCoursesByCategory = async (req, res, next) => {
     try {
-        const { topicName } = req.body
+        const { topicName } = req.sanitizedBody
         if (!topicName) throw new Response('Bad Request', 'res_badRequest')
-        const courses = await findPopularCourseByTopic(topicName)
+        const courses = await findCourseByTopic(topicName)
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const getCoursesByTopCategories = async (req, res, next) => {
+    try {
+        const { topicName } = req.sanitizedBody
+        if (!topicName) throw new Response('Bad Request', 'res_badRequest')
+        const courses = await findCourseByPopularTopic(topicName)
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -159,9 +180,9 @@ export const instructorCreateCourse = async (req, res, next) => {
         const { image, materialFiles } = req.files
 
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
-            req.body
+            req.sanitizedBody
 
-        const topics = await findTopicByName(JSON.parse(topicCourse))
+        const topics = await findTopicByName(JSON.parse(replaceSanitizedQuot(topicCourse)))
 
         const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
         fs.unlinkSync(image[0].path)
@@ -171,7 +192,8 @@ export const instructorCreateCourse = async (req, res, next) => {
         for (const file in materialFiles) {
             fs.unlinkSync(materialFiles[file].path)
         }
-        const courseMaterials = JSON.parse(materials)
+
+        const courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
         for (const material in courseMaterials) {
             courseMaterials[material].url = uploadResult[material].secure_url
             courseMaterials[material].publicId = uploadResult[material].public_id
@@ -201,6 +223,7 @@ export const instructorCreateCourse = async (req, res, next) => {
             }
         })
     } catch (err) {
+        console.log(err)
         let error
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
             error = new Response('Internal Server Error', 'res_internalServer')
@@ -213,7 +236,7 @@ export const instructorCreateCourse = async (req, res, next) => {
 
 export const approveCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
         const { moderatorId } = req.payload
         const { approvalStatus } = req.sanitizedBody
 
@@ -233,7 +256,7 @@ export const approveCourse = async (req, res, next) => {
 
 export const deleteCourse = async (req, res, next) => {
     try {
-        const { courseId } = req.params
+        const { courseId } = req.sanitizedParams
         const { moderatorId } = req.payload
 
         const result = await deleteOneCourse({ courseId, moderatorId })
@@ -250,25 +273,59 @@ export const deleteCourse = async (req, res, next) => {
     }
 }
 
+
+const getPublibAndAssetId = (course, courseMaterialId) => {
+
+    const { courseMaterial } = course
+
+    for (const index in courseMaterial) {
+        if (courseMaterialId === courseMaterial[index].courseMaterialId) {
+            const assetId = courseMaterial[index].assetId
+            const publicId = courseMaterial[index].publicId
+            return { assetId, publicId }
+        }
+    }
+
+}
+
 export const editCourse = async (req, res, next) => {
     try {
-        const courseImage = req.file
 
-        const { courseId } = req.params
-        const { courseName, duration, price, courseDescription, language, topicCourse } =
-            req.body
+        const { courseId } = req.sanitizedParams
+        const course = await findOneCourse(courseId)
+        if (!course) throw new Response('Bad Request', 'res_badRequest')
 
-        const course = await findPublicAndAssetId(courseId)
+        const { image, materialFiles } = req.files
 
-        if (!course) throw new Response('Internal Server Error', 'res_internalServer')
+        const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
+            req.sanitizedBody
 
-        const { imageAssetId, imagePublicId } = course
+        const topics = topicCourse ? await findTopicByName(JSON.parse(topicCourse)) : []
+
+        let imageUploadResult
+        if (image.length > 1) throw new Response('Bad Request', 'res_badRequest')
+        else if (image.length == 1) {
+            imageUploadResult = await cloudinary.uploader.upload(image[0].path, { resource_type: 'video', asset_id: course.imageAssetId, public_id: course.imagePublicId })
+            fs.unlinkSync(image[0].path)
+        }
 
         let uploadResult
-        if (courseImage) {
-            uploadResult = await cloudinary.uploader.upload(courseImage.path, { asset_id: imageAssetId, public_id: imagePublicId })
-            fs.unlinkSync(courseImage.path)
+        if (image.length > 0) {
+
+            let materialUpload = []
+            for (const file in materialFiles) {
+                const { assetId, publicId } = getPublibAndAssetId(course, materialFiles[file].courseMaterialId)
+                materialUpload.push(
+                    cloudinary.uploader.upload(ele.path, { resource_type: 'video', asset_id: assetId, public_id: publicId })
+                )
+            }
+            uploadResult = await Promise.all(materialUpload)
+            for (const file in materialFiles) {
+                fs.unlinkSync(materialFiles[file].path)
+            }
         }
+
+        const courseMaterials = JSON.parse(materials)
 
         await updateOneCourse({
             courseId,
@@ -277,9 +334,10 @@ export const editCourse = async (req, res, next) => {
             price: parseFloat(price),
             courseDescription,
             language,
-            topicCourse: topicCourse ? JSON.parse(topicCourse) : null,
-            imageAssetId: uploadResult ? uploadResult.imageAssetId : null,
-            imagePublicId: uploadResult ? uploadResult.imagePublicId : null
+            topicCourse: topics,
+            imageAssetId: uploadResult.asset_id,
+            imagePublicId: uploadResult.public_id,
+            courseMaterials: courseMaterials.length > 0 ? courseMaterials : null
         })
 
         res.status(responseCode.res_ok).json({
@@ -318,6 +376,7 @@ export const setCourseNotPopular = async (req, res, next) => {
     try {
 
         const { courseId } = req.sanitizedBody
+        if (!courseId) throw new Response('Bad Request', 'res_badRequest')
 
         const result = await updateCourseToNotPopular(courseId)
 
@@ -333,4 +392,29 @@ export const setCourseNotPopular = async (req, res, next) => {
         const error = getErrorResponse(err)
         next(error)
     }
+}
+
+export const purchaseOneCourse = async (req, res, next) => {
+    try {
+
+        const { courseId, amountPaid } = req.sanitizedBody
+
+        if (!courseId || !amountPaid) throw new Response('Bad Request', 'res_badRequest')
+
+        const { studentId } = req.payload
+
+        await addOneCoursePurchased({ studentId, courseId, amountPaid })
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            }
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+
+    }
+
 }

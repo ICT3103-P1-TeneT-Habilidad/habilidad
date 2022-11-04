@@ -19,10 +19,10 @@ export default function ForgetResetPwd() {
 
     return (
         <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 mb-4">Forget Password</h2>
-                <span className="text-justify text-gray-600 text-md">
-                    You will receive an email password reset link if you have an account registered with Habilidad
+            <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+                <h2 className="mt-6 text-3xl font-extrabold text-gray-900 mb-4">Forget Password</h2>
+                <span className="text-center text-gray-500 text-sm">
+                Enter your email address to reset your password.
                 </span>
             </div>
 

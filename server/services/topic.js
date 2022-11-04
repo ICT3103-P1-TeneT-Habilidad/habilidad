@@ -18,7 +18,7 @@ export const findTopicByName = async (topicCourse) => {
     const transactions = topicCourse.map((ele) => {
         return db.topics.findUnique({
             where: {
-                topicName: ele.value,
+                topicName: ele.label,
             },
             select: {
                 topicId: true
