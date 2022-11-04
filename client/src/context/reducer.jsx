@@ -14,9 +14,9 @@ import {
     GET_USER_BEGIN,
     GET_USER_SUCCESS,
     GET_USER_ERROR,
-    // UPDATE_USER_BEGIN,
-    // UPDATE_USER_SUCCESS,
-    // UPDATE_USER_ERROR,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
@@ -137,18 +137,30 @@ const reducer = (state, action) => {
                 alert_msg: action.payload.msg,
             }
         case GET_USER_BEGIN:
-            return{
-                ...state
+            return {
+                ...state,
             }
         case GET_USER_SUCCESS:
-            return{
+            return {
                 ...state,
-                user_details: action.payload.result
-
+                user_details: action.payload.result,
             }
         case GET_USER_ERROR:
-            return{
-                ...state
+            return {
+                ...state,
+            }
+        case UPDATE_USER_BEGIN:
+            return {
+                ...state,
+            }
+        case UPDATE_USER_SUCCESS:
+            return {
+                ...state,
+                user_details: action.payload.result,
+            }
+        case UPDATE_USER_ERROR:
+            return {
+                ...state,
             }
         case GET_ALL_COURSES_BEGIN:
             return {

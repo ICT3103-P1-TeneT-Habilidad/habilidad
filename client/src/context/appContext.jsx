@@ -17,9 +17,9 @@ import {
     GET_USER_BEGIN,
     GET_USER_SUCCESS,
     GET_USER_ERROR,
-    // UPDATE_USER_BEGIN,
-    // UPDATE_USER_SUCCESS,
-    // UPDATE_USER_ERROR,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
@@ -332,6 +332,21 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const updateUserDetails = async (user_data) => {
+        console.log(user_data)
+        dispatch({ type: UPDATE_USER_BEGIN })
+        try {
+            const { data } = await axios.patch(`/api/users/`, user_data)
+            const result = data.result
+            dispatch({
+                type: UPDATE_USER_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({ type: UPDATE_USER_ERROR })
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -353,6 +368,7 @@ const AppProvider = ({ children }) => {
                 sendPasswordResetLink,
                 createNewCourse,
                 getUserDetails,
+                updateUserDetails
             }}
         >
             {children}
