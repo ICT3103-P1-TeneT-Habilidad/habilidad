@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useAppContext } from '../../context/appContext'
 
 const Profile = () => {
-    const { getUserDetails, user_details } = useAppContext()
+    const { getUserDetails, user_details, updateUserDetails } = useAppContext()
 
     const [isDisabled, setIsDisabled] = useState(true)
 
@@ -18,7 +18,6 @@ const Profile = () => {
             email: user_details?.email,
             phoneNumber: user_details?.phoneNumber,
             name: user_details?.name,
-            password: '12345678',
         },
     })
 
@@ -36,7 +35,9 @@ const Profile = () => {
     password.current = watch('password', '')
 
     const onSubmit = (data) => {
-        console.log(data)
+        delete data.role
+        delete data.username
+        updateUserDetails(data)
     }
 
     const onDeactivation = () => {
@@ -113,7 +114,6 @@ const Profile = () => {
                     <input
                         className="w-full border border-slate-300 rounded-md p-2"
                         id="password"
-                        name="password"
                         type="password"
                         {...register('password', {
                             required: 'Please enter your password',
@@ -128,7 +128,7 @@ const Profile = () => {
                 <div className="w-full p-3 mb-6 md:mb-0">
                     <label
                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="re_password"
+                        htmlFor="confirmedPassword"
                     >
                         Re-enter Password
                     </label>
