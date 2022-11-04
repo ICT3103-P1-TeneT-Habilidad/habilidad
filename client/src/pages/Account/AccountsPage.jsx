@@ -1,9 +1,9 @@
 import React from 'react'
-import { BigTable } from '../components'
+import { BigTable } from '../../components'
 // import icons
 import { MdModeEditOutline } from 'react-icons/md'
 
-const Accounts = () => {
+const AccountsPage = () => {
     const data = [
         {
             username: 'Test',
@@ -64,4 +64,4 @@ const Accounts = () => {
     )
 }
 
-export default Accounts
+export default AccountsPage
