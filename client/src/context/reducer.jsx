@@ -23,6 +23,9 @@ import {
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
+    GET_ALL_USERS_BEGIN,
+    GET_ALL_USERS_SUCCESS,
+    GET_ALL_USERS_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ONE_COURSE_BEGIN,
@@ -260,12 +263,25 @@ const reducer = (state, action) => {
                 ...state,
             }
         case GET_COURSE_BY_TOPIC_SUCCESS:
-            return{
+            return {
                 ...state,
-                courses_topics: action.payload
+                courses_topics: action.payload,
             }
         case GET_COURSE_BY_TOPIC_ERROR:
-            return{
+            return {
+                ...state,
+            }
+        case GET_ALL_USERS_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_USERS_SUCCESS:
+            return {
+                ...state,
+                user_data: action.payload,
+            }
+        case GET_ALL_USERS_ERROR:
+            return {
                 ...state,
             }
         default:

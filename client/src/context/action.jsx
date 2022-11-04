@@ -34,6 +34,10 @@ export const RESET_PASSWORD_LINK_BEGIN = 'RESET_PASSWORD_LINK_BEGIN'
 export const RESET_PASSWORD_LINK_SUCCESS = 'RESET_PASSWORD_LINK_SUCCESS'
 export const RESET_PASSWORD_LINK_ERROR = 'RESET_PASSWORD_LINK_ERROR'
 
+export const GET_ALL_USERS_BEGIN = 'GET_ALL_USERS_BEGIN'
+export const GET_ALL_USERS_SUCCESS = 'GET_ALL_USERS_SUCCESS'
+export const GET_ALL_USERS_ERROR = 'GET_ALL_USERS_ERROR'
+
 /*------------------------------------------------------------------------------------
 COURSES RELATED
 ------------------------------------------------------------------------------------*/

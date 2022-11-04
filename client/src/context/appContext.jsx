@@ -40,6 +40,9 @@ import {
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
+    GET_ALL_USERS_BEGIN,
+    GET_ALL_USERS_SUCCESS,
+    GET_ALL_USERS_ERROR,
     // GET_ONE_COURSE_BEGIN,
     // GET_ONE_COURSE_SUCCESS,
     // GET_ONE_COURSE_ERROR,
@@ -68,7 +71,7 @@ export const initialState = {
     isLoading: false,
     loginOtp: false,
 
-    user_data: {},
+    user_data: {}, // to store all users
     alert_msg: '',
     alert_type: '',
     courses: null,
@@ -407,6 +410,20 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const getAllUsers = async () => {
+        dispatch({ type: GET_ALL_USERS_BEGIN })
+        try {
+            const { data } = await authFetch.get(`/api/users/allUsers`)
+            const result = data.data
+            dispatch({
+                type: GET_ALL_USERS_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({ type: GET_ALL_USERS_ERROR })
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -431,6 +448,7 @@ const AppProvider = ({ children }) => {
                 updateUserDetails,
                 getCourseByTopic,
                 getCourseDetail,
+                getAllUsers
             }}
         >
             {children}
