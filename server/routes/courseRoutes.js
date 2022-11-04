@@ -7,7 +7,7 @@ import {
     getAllCourses,
     getCoursesCreatedByInstructor,
     getCoursesPurchasedByStudent,
-    getCoursesInTopCategories,
+    getCoursesByTopCategories,
     getPopularCourses,
     instructorCreateCourse,
     approveCourse,
@@ -16,6 +16,7 @@ import {
     setCoursePopular,
     setCourseNotPopular,
     purchaseOneCourse,
+    getCoursesByCategory
 } from '../controllers/courseController.js'
 // import middleware
 import { courseUpload } from '../middleware/multer.js'
@@ -35,10 +36,13 @@ router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedB
 // Auth: Token, Role based
 router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesCreatedByInstructor)
 
-// Get all courses that are top categories
-// Auth: Token, Role based
+// Get all courses that are by category
 // Sanitized: Req.Body
-router.route('/topCategories').get(sanitizeBody, getCoursesInTopCategories)
+router.route('/byCategory').get(sanitizeBody, getCoursesByCategory)
+
+// Get all courses that are by top category
+// Sanitized: Req.Body
+router.route('/topCategories').get(sanitizeBody, getCoursesByTopCategories)
 
 // Get all courses popular among new signups
 router.route('/popularCourses').get(getPopularCourses)

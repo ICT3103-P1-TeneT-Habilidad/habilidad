@@ -15,9 +15,10 @@ import {
     updateOneCourse,
     findPublicAndAssetId,
     findPopularCourse,
-    findPopularCourseByTopic,
+    findCourseByTopic,
     updateCourseToNotPopular,
-    updateCourseToPopular
+    updateCourseToPopular,
+    findCourseByPopularTopic
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
@@ -121,11 +122,28 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
     }
 }
 
-export const getCoursesInTopCategories = async (req, res, next) => {
+export const getCoursesByCategory = async (req, res, next) => {
     try {
         const { topicName } = req.sanitizedBody
         if (!topicName) throw new Response('Bad Request', 'res_badRequest')
-        const courses = await findPopularCourseByTopic(topicName)
+        const courses = await findCourseByTopic(topicName)
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses,
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
+}
+
+export const getCoursesByTopCategories = async (req, res, next) => {
+    try {
+        const { topicName } = req.sanitizedBody
+        if (!topicName) throw new Response('Bad Request', 'res_badRequest')
+        const courses = await findCourseByPopularTopic(topicName)
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -164,11 +182,6 @@ export const instructorCreateCourse = async (req, res, next) => {
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.sanitizedBody
 
-        const newString = replaceSanitizedQuot(topicCourse)
-        console.log(newString)
-
-        console.log(replaceSanitizedQuot(topicCourse))
-
         const topics = await findTopicByName(JSON.parse(replaceSanitizedQuot(topicCourse)))
 
         const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
@@ -179,7 +192,8 @@ export const instructorCreateCourse = async (req, res, next) => {
         for (const file in materialFiles) {
             fs.unlinkSync(materialFiles[file].path)
         }
-        const courseMaterials = JSON.parse(materials)
+
+        const courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
         for (const material in courseMaterials) {
             courseMaterials[material].url = uploadResult[material].secure_url
             courseMaterials[material].publicId = uploadResult[material].public_id
