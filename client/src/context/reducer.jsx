@@ -43,6 +43,9 @@ import {
     EDIT_COURSE_BEGIN,
     EDIT_COURSE_SUCCESS,
     EDIT_COURSE_ERROR,
+    GET_ONE_COURSE_BEGIN,
+    GET_ONE_COURSE_SUCCESS,
+    GET_ONE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
     GET_COURSE_BY_TOPIC_BEGIN,
@@ -173,6 +176,22 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 courses: action.payload.result,
+            }
+        case GET_ONE_COURSE_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ONE_COURSE_SUCCESS:
+            return {
+                ...state,
+                courseDetail: action.payload.result.data,
+            }
+        case GET_ONE_COURSE_ERROR:
+            return {
+                ...state,
+                showAlert: true,
+                alert_msg: action.payload.msg,
+                alert_type: 'danger',
             }
         case GET_ALL_TOPICS_BEGIN:
             return {

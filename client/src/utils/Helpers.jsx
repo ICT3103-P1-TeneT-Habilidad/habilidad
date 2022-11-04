@@ -27,7 +27,7 @@ export const formatTopicOption = (topics) => {
 
 export const sortCourseMaterials = (materials) => {
     const sortedMaterials = []
-    materials.forEach((element) => {
+    materials?.forEach((element) => {
         if (sortedMaterials.length === 0) {
             sortedMaterials.push(element)
         } else {
