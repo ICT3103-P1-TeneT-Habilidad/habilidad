@@ -1,5 +1,6 @@
 import AllCourses from './AllCourses'
 import AllTopics from './AllTopics'
+import CourseContent from './CourseContent'
 import CreateCourse from './CreateCourse'
 import Dashboard from './Dashboard'
 import Error404 from './Error404'
@@ -10,14 +11,18 @@ import LoginOtp from './LoginOtp'
 import OtpRoute from './OtpRoute'
 import Profile from './Profile'
 import ProtectedRoutes from './ProtectedRoute'
+import StudentViewCourse from './StudentViewCourse'
 import Register from './Register'
 import ViewCourse from './ViewCourse'
+import EditCourse from './EditCourse'
 
 export {
     AllCourses,
     AllTopics,
+    CourseContent,
     CreateCourse,
     Dashboard,
+    EditCourse,
     Error404,
     Error500,
     ForgetResetPwd,
@@ -26,6 +31,7 @@ export {
     OtpRoute,
     Profile,
     ProtectedRoutes,
+    StudentViewCourse,
     Register,
     ViewCourse,
 }

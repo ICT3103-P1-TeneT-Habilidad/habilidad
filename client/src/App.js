@@ -3,8 +3,10 @@ import './App.css'
 import {
     AllCourses,
     AllTopics,
+    CourseContent,
     CreateCourse,
     Dashboard,
+    EditCourse,
     Error404,
     Error500,
     ForgetResetPwd,
@@ -13,6 +15,7 @@ import {
     OtpRoute,
     Profile,
     ProtectedRoutes,
+    StudentViewCourse,
     Register,
     ViewCourse,
 } from './pages/index'
@@ -39,6 +42,9 @@ function App() {
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>
                 <Route path="login" element={<Login />} />
+                <Route path="/editcourse" element={<EditCourse />} />
+                <Route path="/studentviewcourse" element={<StudentViewCourse />} />
+                <Route path="/content" element={<CourseContent />} />
             </Routes>
             <Footer />
         </BrowserRouter>

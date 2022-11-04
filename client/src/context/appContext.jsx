@@ -40,6 +40,9 @@ import {
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
+    EDIT_COURSE_BEGIN,
+    EDIT_COURSE_SUCCESS,
+    EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
 } from './action'
@@ -61,6 +64,8 @@ export const initialState = {
     alert_type: '',
     courses: null,
     topics: null,
+
+    edit_course: null,
 }
 
 const AppContext = React.createContext()
@@ -255,7 +260,7 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             console.log(err.response)
-            logout()
+            // logout()
         }
     }
 
