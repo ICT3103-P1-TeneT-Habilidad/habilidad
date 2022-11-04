@@ -31,6 +31,21 @@ const CreateCourse = () => {
     const currentMaterialComponents = useRef({})
     currentMaterialComponents.current = materialComponents
 
+    const [topicOptions, setTopicOptions] = useState([])
+
+    useEffect(() => {
+        getAllTopics()
+    }, [])
+
+    useEffect(() => {
+        setTopicOptions(
+            topics?.map((topic) => ({
+                label: topic.topicName,
+                value: topic.topicId,
+            }))
+        )
+    }, [topics])
+
     const {
         register,
         unregister,
@@ -50,13 +65,13 @@ const CreateCourse = () => {
         getAllTopics()
     }, [])
 
-    var topicOptions = null
-    if (topics != null) {
-        topicOptions = topics.map((x) => ({
-            value: x.topicId,
-            label: x.topicName,
-        }))
-    }
+    // var topicOptions = null
+    // if (topics != null) {
+    //     topicOptions = topics.map((x) => ({
+    //         value: x.topicId,
+    //         label: x.topicName,
+    //     }))
+    // }
 
     const NewCourseMaterial = ({ keyId }) => {
         return (
@@ -167,7 +182,10 @@ const CreateCourse = () => {
     const addComponent = () => {
         const keyId = uuid()
         setKeysList([...keysList, keyId])
-        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: currentKeyList.current.length + 1 } })
+        setMaterialInfo({
+            ...materialInfo,
+            [keyId]: { title: null, file: null, order: currentKeyList.current.length + 1 },
+        })
         setMaterialComponents({
             ...materialComponents,
             [keyId]: <NewCourseMaterial keyId={keyId} />,

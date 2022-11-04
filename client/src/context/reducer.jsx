@@ -69,7 +69,7 @@ const reducer = (state, action) => {
         case LOGIN_OTP_BEGIN:
             return {
                 ...state,
-                isLoading: true
+                isLoading: true,
             }
         case LOGIN_OTP_SUCCESS:
             return {
@@ -86,12 +86,12 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_type: 'danger',
                 alert_msg: action.payload.msg,
-                isLoading: false
+                isLoading: false,
             }
         case SETUP_USER_BEGIN:
             return {
                 ...state,
-                isLoading: false
+                isLoading: false,
             }
         case SETUP_USER_SUCCESS:
             return {
@@ -149,7 +149,7 @@ const reducer = (state, action) => {
         case GET_ALL_TOPICS_SUCCESS:
             return {
                 ...state,
-                topics: action.payload.result,
+                topics: action.payload.result.data,
             }
         case RESET_PASSWORD_LINK_BEGIN:
             return {
@@ -189,7 +189,7 @@ const reducer = (state, action) => {
         case EDIT_COURSE_BEGIN:
             return {
                 ...state,
-                edit_course: action.payload
+                edit_course: action.payload,
             }
         case EDIT_COURSE_SUCCESS:
             return {
