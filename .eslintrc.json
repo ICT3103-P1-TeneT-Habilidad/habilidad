@@ -12,7 +12,7 @@
     "rules": {
         "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
         "react/prop-types": 0,
-        "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
+        "react-hooks/exhaustive-deps": 0
     },
     "settings": {
         "react": {

@@ -6,7 +6,6 @@ const Profile = () => {
     const { getUserDetails, user_details } = useAppContext()
 
     const [isDisabled, setIsDisabled] = useState(true)
-    const [hasChanged, setHasChanged] = useState(false)
 
     const {
         register,
@@ -25,10 +24,12 @@ const Profile = () => {
 
     useEffect(() => {
         getUserDetails()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
         reset(user_details)
+        // eslint-disable-next-line
     }, [user_details])
 
     const password = useRef({})
@@ -75,7 +76,6 @@ const Profile = () => {
                     type="button"
                     onClick={() => {
                         reset()
-                        setHasChanged(false)
                         setIsDisabled(true)
                     }}
                 >
@@ -86,7 +86,6 @@ const Profile = () => {
                     type="button"
                     onClick={() => {
                         reset()
-                        setHasChanged(false)
                     }}
                 >
                     Reset
@@ -117,15 +116,11 @@ const Profile = () => {
                         name="password"
                         type="password"
                         {...register('password', {
-                            onChange: (e) => {
-                                if (e.target.value === '') {
-                                    setHasChanged(false)
-                                } else {
-                                    setHasChanged(true)
-                                }
+                            required: 'Please enter your password',
+                            minLength: {
+                                value: 8,
+                                message: 'Password must have at least 8 characters',
                             },
-                            validate: (value) =>
-                                value.length >= 8 || value.length === 0 || 'Password should have minimum 8 characters',
                         })}
                     />
                     {errors.password ? <span className="text-sm text-red-500">{errors.password.message}</span> : null}
@@ -139,14 +134,15 @@ const Profile = () => {
                     </label>
                     <input
                         className="w-full border border-slate-300 rounded-md p-2"
-                        id="re_password"
+                        id="confirmedPassword"
                         type="password"
-                        {...register('re_password', {
+                        {...register('confirmedPassword', {
                             validate: (value) => value === password.current || 'The passwords do not match',
+                            required: 'Please enter the password again',
                         })}
                     />
-                    {errors.re_password ? (
-                        <span className="text-sm text-red-500">{errors.re_password.message}</span>
+                    {errors.confirmedPassword ? (
+                        <span className="text-sm text-red-500">{errors.confirmedPassword.message}</span>
                     ) : null}
                 </div>
             </>
