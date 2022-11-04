@@ -131,16 +131,16 @@ const CreateCourse = () => {
 
         // // remove keys
         currentKeyList.current.map((key) => delete data[key])
-
+        console.log(data)
         return data
     }
 
     const onSubmit = (data) => {
-        console.log(data)
         data = dataCleanUp(data)
 
         const formData = new FormData()
         for (const key in data) {
+            console.log(formData)
             if (key === 'materials') {
                 const material = []
                 for (const i in data[key]) {
@@ -155,9 +155,12 @@ const CreateCourse = () => {
                 formData.append(key, JSON.stringify(data[key]))
             } else {
                 formData.append(key, data[key])
+                console.log(data[key])
             }
         }
-        console.log(formData)
+        for (var key of formData.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
         createNewCourse(formData)
     }
 

@@ -4,13 +4,13 @@ import axios from '../utils/axios'
 import {
     SHOW_MODAL,
     CLEAR_ALERT,
-    LOGIN_OTP_BEGIN,
-    LOGIN_OTP_SUCCESS,
-    LOGIN_OTP_ERROR,
+    LOGOUT,
     SETUP_USER_BEGIN,
     SETUP_USER_SUCCESS,
     SETUP_USER_ERROR,
-    LOGOUT,
+    LOGIN_OTP_BEGIN,
+    LOGIN_OTP_SUCCESS,
+    LOGIN_OTP_ERROR,
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
     CREATE_USER_ERROR,
@@ -20,17 +20,28 @@ import {
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
+    RESET_PASSWORD_LINK_BEGIN,
+    RESET_PASSWORD_LINK_SUCCESS,
+    RESET_PASSWORD_LINK_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
-    // GET_ALL_COURSES_ERROR,
+    GET_ONE_COURSE_BEGIN,
+    GET_ONE_COURSE_SUCCESS,
+    GET_ONE_COURSE_ERROR,
+    GET_ALL_PURCHASED_COURSES_BEGIN,
+    GET_ALL_PURCHASED_COURSES_SUCCESS,
+    GET_ALL_PURCHASED_COURSES_ERROR,
+    GET_ALL_POPULAR_COURSES_BEGIN,
+    GET_ALL_POPULAR_COURSES_SUCCESS,
+    GET_ALL_POPULAR_COURSES_ERROR,
+    GET_ALL_TOP_COURSES_BEGIN,
+    GET_ALL_TOP_COURSES_SUCCESS,
+    GET_ALL_TOP_COURSES_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
-    RESET_PASSWORD_LINK_BEGIN,
-    RESET_PASSWORD_LINK_SUCCESS,
-    RESET_PASSWORD_LINK_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -63,7 +74,10 @@ const AppProvider = ({ children }) => {
         (config) => {
             const token = getAccessToken()
             if (token) {
-                config.headers.common['authorization'] = `Bearer ${token}`
+                config.headers = {
+                    ...config.headers,
+                    authorization: `Bearer ${token}`,
+                };
             }
             return config
         },
@@ -84,11 +98,15 @@ const AppProvider = ({ children }) => {
                 if (err.response.data.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true
                     try {
-                        const rs = await getRefreshToken()
+                        const rs = await refreshToken()
                         const { accessToken } = rs.data
                         updateAccessToken(accessToken)
-                        authFetch.headers.common['authorization'] = `Bearer ${accessToken}`
-
+                        // authFetch.headers['authorization'] = `Bearer ${accessToken}`
+                        authFetch.headers = {
+                            ...authFetch.headers,
+                            authorization: `Bearer ${accessToken}`,
+                        };
+                        
                         return authFetch(originalConfig)
                     } catch (_error) {
                         if (_error.response && _error.response.data) {
@@ -140,6 +158,10 @@ const AppProvider = ({ children }) => {
         dispatch({
             type: SHOW_MODAL,
         })
+    }
+
+    const refreshToken = () => {
+        return axios.post('/api/users/refreshAccessToken', {refreshToken: getRefreshToken})
     }
 
     const sendLoginOtp = async (user_data) => {
@@ -279,6 +301,15 @@ const AppProvider = ({ children }) => {
                 type: CLEAR_ALERT,
             })
         }, 5000)
+    }
+
+    const getAllPopularCourses = async () => {
+        dispatch({type: GET_ALL_POPULAR_COURSES_BEGIN})
+        try{
+            const {data} = await axios.get('/api/course/popularCourses')
+        }catch(err){
+            dispatch({type: GET_ALL_POPULAR_COURSES_ERROR, payload: {msg: err.response.data.result.message}})
+        }
     }
 
     return (

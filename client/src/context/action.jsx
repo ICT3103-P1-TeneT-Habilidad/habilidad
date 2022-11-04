@@ -1,7 +1,5 @@
 // export const FORGET_PASSWORD = 'FORGET_PASSWORD'
-export const LOGIN_USER = 'LOGIN_USER'
 export const SHOW_MODAL = 'SHOW_MODAL'
-export const CLEAR_VALUES = 'CLEAR_VALUES'
 export const CLEAR_ALERT = 'CLEAR_ALERT'
 export const LOGOUT = 'LOGOUT'
 
@@ -17,7 +15,7 @@ export const LOGIN_OTP_SUCCESS = 'LOGIN_OTP_SUCCESS'
 export const LOGIN_OTP_ERROR = 'LOGIN_OTP_ERROR'
 
 export const CREATE_USER_BEGIN = 'CREATE_USER_BEGIN'
-export const CREATE_USER_SUCCESS = 'RESET_PASSWORD_LINK_ERRORCREATE_USER_SUCCESS'
+export const CREATE_USER_SUCCESS = 'CREATE_USER_SUCCESS'
 export const CREATE_USER_ERROR = 'CREATE_USER_ERROR'
 
 export const UPDATE_USER_BEGIN = 'UPDATE_USER_BEGIN'
@@ -37,7 +35,6 @@ COURSES RELATED
 ------------------------------------------------------------------------------------*/
 export const GET_ALL_COURSES_BEGIN = 'GET_ALL_COURSES_BEGIN'
 export const GET_ALL_COURSES_SUCCESS = 'GET_ALL_COURSES_SUCCESS'
-// export const GET_ALL_COURSES_ERROR = 'GET_ALL_COURSES_ERROR'
 
 // get course content for a single course
 export const GET_ONE_COURSE_BEGIN = 'GET_COURSE_BEGIN'
