@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { useAppContext } from '../context/appContext'
-import { Alert } from '../components'
+import { useAppContext } from '../../context/appContext'
+import { Alert } from '../../components'
 
 export default function ForgetResetPwd() {
     const {

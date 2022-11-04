@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { TopicCard } from '../components'
+import { TopicCard } from '../../components'
 import { useEffect } from 'react'
-import { useAppContext } from '../context/appContext'
-import { compare } from '../utils/Helper'
+import { useAppContext } from '../../context/appContext'
+import { compare } from '../../utils/Helpers'
 
 const AllTopics = () => {
     const { topics, getAllTopics } = useAppContext()

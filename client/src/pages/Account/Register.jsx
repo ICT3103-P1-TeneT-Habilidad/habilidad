@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAppContext } from '../context/appContext'
-import { Alert } from '../components/index'
+import { useAppContext } from '../../context/appContext'
+import { Alert } from '../../components/index'
 
 const Register = () => {
     const { createUser, showAlert } = useAppContext()

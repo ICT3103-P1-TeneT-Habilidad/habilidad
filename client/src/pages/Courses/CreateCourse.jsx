@@ -2,135 +2,127 @@ import { React, useEffect, useState, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { languageOptions } from '../utils/Constants'
-import { useAppContext } from '../context/appContext'
-import { formatTopicOption, sortCourseMaterials } from '../utils/Helpers'
-import imagePlaceholder from '../assets/noimage.jpg'
+import { languageOptions } from '../../utils/Constants'
+import { v4 as uuid } from 'uuid'
+import imagePlaceholder from '../../assets/noimage.jpg'
+import { useAppContext } from '../../context/appContext'
 
-const EditCourse = () => {
-    const { getAllTopics, topics } = useAppContext()
+const CreateCourse = () => {
+    const { createNewCourse, getAllTopics, topics } = useAppContext()
+    
     const animatedComponents = makeAnimated()
+    const [emptyUpload, setEmptyUpload] = useState(true)
 
     const [coverImagePreview, setCoverImagePreview] = useState(imagePlaceholder)
-    const [materialVideoPreview, setMaterialVideoPreview] = useState({})
-    const currentMaterialVideoPreview = useRef({})
-    currentMaterialVideoPreview.current = materialVideoPreview
-
+    // cover images
     const [coverImageFile, setCoverImageFile] = useState()
     const currentCoverImage = useRef({})
     currentCoverImage.current = coverImageFile
-
+    // material info
     const [materialInfo, setMaterialInfo] = useState({})
     const currentMaterialInfo = useRef({})
     currentMaterialInfo.current = materialInfo
-
+    // key list
     const [keysList, setKeysList] = useState([])
     const currentKeyList = useRef({})
     currentKeyList.current = keysList
-
+    // material components
     const [materialComponents, setMaterialComponents] = useState({})
     const currentMaterialComponents = useRef({})
     currentMaterialComponents.current = materialComponents
 
-    const courseData = {
-        courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
-        courseName: 'dumb',
-        imageUrl: 'https://res.cloudinary.com/drznyznmo/image/upload/v1667308005/xhgr8cefstr8t0uu8nn0.jpg',
-        duration: 10000,
-        price: 10.99,
-        description: 'test_course_1_des',
-        language: 'ENGLISH',
-        courseMaterial: [
-            {
-                courseMaterialId: '7477c8cb-d51e-4a25-872b-89b058656710',
-                title: 'Basics of React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 2,
-            },
-            {
-                courseMaterialId: 'e5e7fdff-517a-4533-b024-ccda2b819601',
-                title: 'Death 1 to React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 1,
-            },
-            {
-                courseMaterialId: 'f921ad6d-d4cd-4b9b-9ff0-103c65e9998e',
-                title: 'Death 2 to React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 4,
-            },
-            {
-                courseMaterialId: '8841a240-8893-491f-86fb-49a03a4d32c6',
-                title: 'Death 3 to React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 3,
-            },
-        ],
-        topicCourse: [
-            {
-                topicCourseId: '017855b1-58f4-4efd-b1ab-ce74857745a8',
-                courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
-                topicId: '791ecc1c-4729-4838-b4bc-81cdf4ba10f3',
-                topic: {
-                    topicName: 'REEEEEEEEEEEE',
-                    //whatever other info
-                },
-            },
-        ],
-    }
-
-    const getOriginalTopics = () => {
-        return courseData.topicCourse.map((element) => ({
-            value: element.topicId,
-            label: element.topic.topicName,
-        }))
-    }
-
-    const setDefaults = () => {
-        const defaults = {
-            courseName: courseData.courseName,
-            duration: courseData.duration,
-            price: courseData.price,
-            courseDescription: courseData.description,
-            image: courseData.imageUrl,
-            topicCourse: getOriginalTopics(),
-            language: languageOptions[languageOptions.findIndex((obj) => obj.value === courseData.language)],
-        }
-
-        return defaults
-    }
-
-    const loadCourseMaterials = () => {
-        const sorted = sortCourseMaterials(courseData.courseMaterial)
-        setKeysList(sorted.map((material) => material.courseMaterialId))
-        sorted.forEach((material) => {
-            const tempMaterialInfo = currentMaterialInfo.current
-            tempMaterialInfo[material.courseMaterialId] = {
-                title: material.title,
-                file: material.url,
-                order: material.order,
-            }
-            setMaterialInfo(tempMaterialInfo)
-
-            const tempMaterialVideoPreview = currentMaterialVideoPreview.current
-            tempMaterialVideoPreview[material.courseMaterialId] = material.url
-            setMaterialVideoPreview(tempMaterialVideoPreview)
-
-            const tempMaterialComponent = currentMaterialComponents.current
-            tempMaterialComponent[material.courseMaterialId] = <NewCourseMaterial keyId={material.courseMaterialId} />
-            setMaterialComponents(tempMaterialComponent)
-        })
-    }
-
     const {
         register,
+        unregister,
         handleSubmit,
         formState: { errors },
         control,
     } = useForm({
         mode: 'onBlur',
-        defaultValues: setDefaults(),
     })
+
+    useEffect(() => {
+        checkEmptyUpload()
+        console.log(materialInfo)
+    })
+
+    useEffect(() => {
+        getAllTopics()
+    }, [])
+
+    var topicOptions = null
+    if (topics != null) {
+        topicOptions = topics.map((x) => ({
+            value: x.topicId,
+            label: x.topicName,
+        }))
+    }
+
+    const NewCourseMaterial = ({ keyId }) => {
+        return (
+            <>
+                <div className="flex flex-row w-full">
+                    <div className="w-10/12 p-3">
+                        <label
+                            className="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-2"
+                            for={keyId}
+                        >
+                            Lesson {currentKeyList.current.length}
+                        </label>
+                        <Controller
+                            name={keyId}
+                            control={control}
+                            rules={{
+                                required: 'Please enter the title of the Video',
+                            }}
+                            render={({ field }) => {
+                                return (
+                                    <input
+                                        {...field}
+                                        placeholder="Title of lesson, e.g. Lesson 1: Basics of React"
+                                        className="w-full border border-slate-300 rounded-md p-2"
+                                        id="materialTitle"
+                                        type="text"
+                                        onBlur={(e) => {
+                                            titleChangeHandler(e.target.value, keyId)
+                                        }}
+                                    />
+                                )
+                            }}
+                        />
+                        {errors[keyId] ? <span className="text-sm text-red-500">{errors[keyId].message}</span> : null}
+                    </div>
+                </div>
+                <div className="flex flex-row w-full">
+                    <div className="flex flex-col w-10/12 p-3">
+                        <label className="w-full border border-slate-300 rounded-md p-2 text-center">
+                            {currentMaterialInfo.current[keyId]['file']
+                                ? currentMaterialInfo.current[keyId]['file'].name
+                                : 'Choose a file to upload'}
+                            <input
+                                type="file"
+                                accept="video/*"
+                                onChange={(e) => {
+                                    fileHandler(e.target.files[0], keyId)
+                                }}
+                                hidden
+                            />
+                        </label>
+                    </div>
+                </div>
+                <hr />
+            </>
+        )
+    }
+
+    const checkEmptyUpload = () => {
+        setEmptyUpload(false)
+        Object.values(currentMaterialInfo.current).forEach((element) => {
+            if (element['file'] === null || element['title'] === null || element['title'] === '') {
+                setEmptyUpload(true)
+            }
+        })
+    }
 
     const dataCleanUp = (data) => {
         data.materials = currentMaterialInfo.current
@@ -139,26 +131,21 @@ const EditCourse = () => {
 
         // // remove keys
         currentKeyList.current.map((key) => delete data[key])
-
+        console.log(data)
         return data
     }
 
     const onSubmit = (data) => {
         data = dataCleanUp(data)
-        console.log(data)
 
         const formData = new FormData()
         for (const key in data) {
+            console.log(formData)
             if (key === 'materials') {
                 const material = []
                 for (const i in data[key]) {
-                    if (typeof data[key][i].file === 'object') {
-                        formData.append('materialFiles', data[key][i].file)
-                    } else {
-                        formData.append('materialFiles', null)
-                    }
+                    formData.append('materialFiles', data[key][i].file)
                     material.push({
-                        courseMaterialId: i,
                         title: data[key][i].title,
                         order: data[key][i].order,
                     })
@@ -168,16 +155,48 @@ const EditCourse = () => {
                 formData.append(key, JSON.stringify(data[key]))
             } else {
                 formData.append(key, data[key])
+                console.log(data[key])
             }
         }
+        for (var key of formData.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
+        createNewCourse(formData)
+    }
 
+    const addComponent = () => {
+        const keyId = uuid()
+        setKeysList([...keysList, keyId])
+        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: currentKeyList.current.length + 1 } })
+        setMaterialComponents({
+            ...materialComponents,
+            [keyId]: <NewCourseMaterial keyId={keyId} />,
+        })
+        setEmptyUpload(true)
+    }
+
+    const removeComponent = () => {
+        const keyId = currentKeyList.current.at(-1)
+        unregister(keyId)
+        setMaterialComponents((current) => {
+            const copy = { ...current }
+            delete copy[keyId]
+            return copy
+        })
+        setMaterialInfo((current) => {
+            const copy = { ...current }
+            delete copy[keyId]
+            return copy
+        })
+        setKeysList(keysList.filter((index) => index !== keyId))
+        checkEmptyUpload()
     }
 
     const fileHandler = (file, keyId) => {
         const changed = currentMaterialInfo.current[keyId]
         changed['file'] = file
         setMaterialInfo({ ...currentMaterialInfo.current, [keyId]: changed })
-
+        setEmptyUpload(false)
         setMaterialComponents({
             ...currentMaterialComponents.current,
             [keyId]: <NewCourseMaterial keyId={keyId} />,
@@ -198,79 +217,6 @@ const EditCourse = () => {
         changed['title'] = title
         setMaterialInfo({ ...currentMaterialInfo.current, [keyId]: changed })
     }
-
-    const NewCourseMaterial = ({ keyId }) => {
-        return (
-            <>
-                <div className="flex flex-row w-full p-3">
-                    <div className="flex flex-col w-1/2">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                            Current video
-                            <p>(New videos will not be reflected here)</p>
-                        </label>
-                        <video width="320" height="240" controls>
-                            <source src={materialInfo[keyId].file} />
-                        </video>
-                    </div>
-                    <div className="flex flex-col w-1/2">
-                        <div className="flex flex-row w-full px-3">
-                            <label
-                                className="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-2"
-                                for={keyId}
-                            >
-                                Lesson {materialInfo[keyId].order}
-                            </label>
-                        </div>
-                        <div className="flex flex-row w-full p-3">
-                            <Controller
-                                name={keyId}
-                                control={control}
-                                render={({ field }) => {
-                                    return (
-                                        <input
-                                            {...field}
-                                            placeholder={materialInfo[keyId].title}
-                                            className="w-full border border-slate-300 rounded-md p-2"
-                                            id="materialTitle"
-                                            type="text"
-                                            onChange={(e) => {
-                                                titleChangeHandler(e.target.value, keyId)
-                                            }}
-                                        />
-                                    )
-                                }}
-                            />
-                            {errors[keyId] ? (
-                                <span className="text-sm text-red-500">{errors[keyId].message}</span>
-                            ) : null}
-                        </div>
-                        <div className="flex flex-row w-full p-3">
-                            <label className="w-full border border-slate-300 rounded-md p-2 text-center">
-                                {materialInfo[keyId].file.name
-                                    ? materialInfo[keyId].file.name
-                                    : 'Choose a file to upload'}
-                                <input
-                                    type="file"
-                                    accept="video/*"
-                                    onChange={(e) => {
-                                        fileHandler(e.target.files[0], keyId)
-                                    }}
-                                    hidden
-                                />
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <hr />
-            </>
-        )
-    }
-
-    useEffect(() => {
-        getAllTopics()
-        setCoverImagePreview(courseData.imageUrl)
-        loadCourseMaterials()
-    }, [])
 
     return (
         <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 w-full">
@@ -342,7 +288,7 @@ const EditCourse = () => {
                                                     {...field}
                                                     isClearable={true}
                                                     isMulti
-                                                    options={formatTopicOption(topics)}
+                                                    options={topicOptions}
                                                     isSearchable={true}
                                                     closeMenuOnSelect={false}
                                                     components={animatedComponents}
@@ -356,7 +302,7 @@ const EditCourse = () => {
                                         <span className="text-sm text-red-500">{errors.topicCourse.message}</span>
                                     ) : null}
                                 </div>
-                                <div className="p-3">
+                                <div className="flex flex-col p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                                         for="courseDescription"
@@ -441,6 +387,7 @@ const EditCourse = () => {
                                                 className="w-full"
                                                 accept="image/png, image/jpg, image/jpeg"
                                                 {...register('image', {
+                                                    required: 'Please upload a cover image for the course',
                                                     onChange: (e) => coverImageFileHandler(e.target.files[0]),
                                                 })}
                                             />
@@ -465,9 +412,34 @@ const EditCourse = () => {
                             <div className="flex flex-row p-3">
                                 <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
                             </div>
-                            {keysList.map((keyId) => (
-                                <div id={keyId}>{materialComponents[keyId]}</div>
-                            ))}
+                            {keysList.length === 0
+                                ? addComponent()
+                                : keysList.map((keyId) => <div id={keyId}>{materialComponents[keyId]}</div>)}
+                            <div className="flex flex-row">
+                                {!emptyUpload ? (
+                                    <div className="flex flex-col p-3">
+                                        <button
+                                            className="shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() => addComponent()}
+                                        >
+                                            Add Material
+                                        </button>
+                                    </div>
+                                ) : null}
+
+                                {currentKeyList.current.length > 1 ? (
+                                    <div className="flex flex-col p-3">
+                                        <button
+                                            className="shadow focus:shadow-outline focus:outline-none bg-accent1 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() => removeComponent()}
+                                        >
+                                            Remove Last Material Added
+                                        </button>
+                                    </div>
+                                ) : null}
+                            </div>
                         </div>
                         {/* button row */}
                         <div className="flex flex-row pt-5">
@@ -487,4 +459,4 @@ const EditCourse = () => {
     )
 }
 
-export default EditCourse
+export default CreateCourse

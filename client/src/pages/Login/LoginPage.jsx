@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { useAppContext } from '../context/appContext'
+import { useAppContext } from '../../context/appContext'
 import { useForm } from 'react-hook-form'
-import { Alert, LoadingMsg } from '../components'
+import { Alert, LoadingMsg } from '../../components'
 import { Link, useNavigate } from 'react-router-dom'
 
 const Login = () => {

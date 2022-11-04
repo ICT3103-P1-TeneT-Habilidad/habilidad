@@ -1,6 +1,6 @@
 import { React } from 'react'
 import { Link } from 'react-router-dom'
-import { sortCourseMaterials } from '../utils/Helpers'
+import { sortCourseMaterials } from '../../utils/Helpers'
 
 const ViewCourse = () => {
     const courseData = {

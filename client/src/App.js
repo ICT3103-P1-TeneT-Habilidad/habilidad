@@ -10,7 +10,7 @@ import {
     Error404,
     Error500,
     ForgetResetPwd,
-    Login,
+    LoginPage,
     LoginOtp,
     OtpRoute,
     Profile,
@@ -30,6 +30,9 @@ function App() {
                     <Route path="profile" element={<Profile />} />
                     <Route path="createcourse" element={<CreateCourse />} />
                     <Route path="viewcourse" element={<ViewCourse />} />
+                    <Route path="editcourse" element={<EditCourse />} />
+                    <Route path="studentviewcourse" element={<StudentViewCourse />} />
+                    <Route path="content" element={<CourseContent />} />
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />
@@ -41,10 +44,7 @@ function App() {
                 <Route path="/" element={<OtpRoute />}>
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>
-                <Route path="login" element={<Login />} />
-                <Route path="/editcourse" element={<EditCourse />} />
-                <Route path="/studentviewcourse" element={<StudentViewCourse />} />
-                <Route path="/content" element={<CourseContent />} />
+                <Route path="login" element={<LoginPage />} />
             </Routes>
             <Footer />
         </BrowserRouter>

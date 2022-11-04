@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { CourseContentNav } from '../components'
-import { sortCourseMaterials } from '../utils/Helpers'
+import { CourseContentNav } from '../../components'
+import { sortCourseMaterials } from '../../utils/Helpers'
 
 const CourseContent = () => {
     const courseData = {
