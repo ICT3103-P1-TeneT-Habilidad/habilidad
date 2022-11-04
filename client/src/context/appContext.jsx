@@ -23,6 +23,9 @@ import {
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ALL_COURSES_ERROR,
+    GET_ONE_COURSE_BEGIN,
+    GET_ONE_COURSE_SUCCESS,
+    GET_ONE_COURSE_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
@@ -53,6 +56,7 @@ export const initialState = {
     alert_type: '',
     courses: null,
     topics: null,
+    courseDetail: null,
 
     edit_course: null,
 }
@@ -87,11 +91,24 @@ const AppProvider = ({ children }) => {
             const originalConfig = err.config
             if (err.response) {
                 // If access token is expired
-                if (err.response.data.status === 401 && !originalConfig._retry) {
+                if (err.response.data.result.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true
                     try {
-                        const rs = await getRefreshToken()
-                        const { accessToken } = rs.data
+                        const { refreshToken } = JSON.parse(user)
+
+                        // const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
+                        // const result = data.result.data
+                        // console.log(result)
+                        // dispatch({ type: SETUP_USER_SUCCESS, payload: { user: result, msg: 'Success' } })
+
+                        const { data } = await authFetch.post('/api/users/refreshAccessToken', {
+                            refreshToken,
+                        })
+                        const result = data.result.data
+                        initialState.user = result
+                        setUser(result)
+
+                        const { accessToken } = result
                         updateAccessToken(accessToken)
                         authFetch.headers.common['authorization'] = `Bearer ${accessToken}`
 
@@ -116,11 +133,14 @@ const AppProvider = ({ children }) => {
 
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
+        console.log(user)
         return user?.refreshToken
     }
 
     const getAccessToken = () => {
         const user = localStorage.getItem('user')
+        console.log(user)
+
         return user?.accessToken
     }
 
@@ -278,6 +298,26 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const getCourseDetail = async (courseId) => {
+        dispatch({
+            type: GET_ONE_COURSE_BEGIN,
+        })
+
+        try {
+            const { data } = await authFetch.get(`/api/course/${courseId}`)
+            const { result } = data
+            dispatch({
+                type: GET_ONE_COURSE_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({
+                type: GET_ONE_COURSE_ERROR,
+                payload: { msg: err.response.data.result.message },
+            })
+        }
+    }
+
     const clearAlert = () => {
         setTimeout(() => {
             dispatch({
@@ -306,6 +346,7 @@ const AppProvider = ({ children }) => {
                 getAllTopics,
                 sendPasswordResetLink,
                 createNewCourse,
+                getCourseDetail,
             }}
         >
             {children}

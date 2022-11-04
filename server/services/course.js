@@ -1,11 +1,9 @@
 import db from '../utils/db.js'
 
 export const findOneCourse = async (courseId) => {
-    return db.course.findMany({
+    return db.course.findUnique({
         where: {
-            courseId: {
-                equals: courseId,
-            },
+            courseId: courseId,
         },
         include: {
             courseMaterial: true,
