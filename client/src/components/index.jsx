@@ -1,4 +1,5 @@
 import Alert from './Alert'
+import BigTable from './BigTable'
 import CourseCard from './CourseCard'
 import CourseContentNav from './CourseContentNav'
 import Footer from './Footer'
@@ -11,6 +12,7 @@ import TopTopics from './TopTopics'
 
 export {
     Alert,
+    BigTable,
     CourseCard,
     CourseContentNav,
     Footer,
