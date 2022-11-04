@@ -17,7 +17,7 @@ export function sort(a, b) {
 
 export const formatTopicOption = (topics) => {
     if (topics !== null) {
-        return topics.data.map((d) => ({
+        return topics?.map((d) => ({
             value: d.topicId,
             label: d.topicName,
         }))

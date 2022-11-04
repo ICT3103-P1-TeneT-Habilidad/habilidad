@@ -31,7 +31,7 @@ function App() {
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="createcourse" element={<CreateCourse />} />
-                    <Route path="editcourse" element={<EditCourse />} />
+                    <Route path="editcourse/:courseId" element={<EditCourse />} />
                     <Route path="studentviewcourse" element={<StudentViewCourse />} />
                     <Route path="content" element={<CourseContent />} />
                     <Route path="/topics/:topicName" element={<CoursesByTopic />} />
