@@ -339,8 +339,8 @@ export const editCourse = async (req, res, next) => {
             courseDescription,
             language,
             topicCourse: topics,
-            imageAssetId: uploadResult.asset_id,
-            imagePublicId: uploadResult.public_id,
+            imageAssetId: uploadResult?.asset_id,
+            imagePublicId: uploadResult?.public_id,
             courseMaterials: courseMaterials.length > 0 ? courseMaterials : null
         })
 

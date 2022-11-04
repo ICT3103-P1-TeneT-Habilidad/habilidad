@@ -7,11 +7,20 @@ import { useAppContext } from '../../context/appContext'
 import { formatTopicOption, sortCourseMaterials } from '../../utils/Helpers'
 import imagePlaceholder from '../../assets/noimage.jpg'
 import { useParams } from 'react-router-dom'
+import { Alert, LoadingMsg } from '../../components'
 
 const EditCourse = () => {
-    const { getAllTopics, topics, getCourseDetail, courseDetail, editCourse } = useAppContext()
+    const { getAllTopics, topics, getCourseDetail, courseDetail, editCourse, isLoading, showAlert } = useAppContext()
     const animatedComponents = makeAnimated()
     const { courseId } = useParams()
+
+    useEffect(() => {
+        showLoadingMsg()
+    }, [isLoading])
+
+    const showLoadingMsg = () => {
+        return <LoadingMsg />
+    }
 
     useEffect(() => {
         getCourseDetail(courseId)
@@ -101,7 +110,6 @@ const EditCourse = () => {
 
     const onSubmit = (data) => {
         data = dataCleanUp(data)
-        console.log(data)
 
         const formData = new FormData()
         for (const key in data) {
@@ -444,6 +452,7 @@ const EditCourse = () => {
                                     Submit
                                 </button>
                             </div>
+                            {showAlert ? <Alert /> : isLoading && showLoadingMsg()}
                         </div>
                     </div>
                 </form>

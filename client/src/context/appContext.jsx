@@ -410,14 +410,10 @@ const AppProvider = ({ children }) => {
 
     const editCourse = async (courseId, course) => {
         dispatch({ type: EDIT_COURSE_BEGIN })
-        console.log(course)
-        console.log(courseId)
         try {
-            const { data } = await axios.put(`/api/course/${courseId}`, course)
-            const result = data.result
+            await axios.put(`/api/course/${courseId}`, course)
             dispatch({
                 type: EDIT_COURSE_SUCCESS,
-                payload: { result },
             })
         } catch (err) {
             dispatch({ type: EDIT_COURSE_ERROR })
