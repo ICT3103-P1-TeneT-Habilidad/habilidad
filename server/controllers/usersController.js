@@ -113,8 +113,22 @@ export const userLogin = async (req, res, next) => {
 }
 
 export const userLogout = async (req, res, next) => {
-    const err = new Response('userLogout not implemented', 'res_notImplemented')
-    next(err)
+    try {
+
+        const { userId } = req.payload
+        await deleteRefreshTokenByUserId(userId)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            },
+        })
+
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
 }
 
 export const userRegister = async (req, res, next) => {
