@@ -8,7 +8,7 @@ import imagePlaceholder from '../../assets/noimage.jpg'
 import { useAppContext } from '../../context/appContext'
 
 const CreateCourse = () => {
-    const { createNewCourse, getAllTopics, topics, isLoggedIn } = useAppContext()
+    const { createNewCourse, getAllTopics, topics } = useAppContext()
 
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
@@ -35,6 +35,7 @@ const CreateCourse = () => {
 
     useEffect(() => {
         getAllTopics()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {

@@ -25,18 +25,18 @@ import {
     RESET_PASSWORD_LINK_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
-    GET_ONE_COURSE_BEGIN,
-    GET_ONE_COURSE_SUCCESS,
-    GET_ONE_COURSE_ERROR,
-    GET_ALL_PURCHASED_COURSES_BEGIN,
-    GET_ALL_PURCHASED_COURSES_SUCCESS,
-    GET_ALL_PURCHASED_COURSES_ERROR,
-    GET_ALL_POPULAR_COURSES_BEGIN,
-    GET_ALL_POPULAR_COURSES_SUCCESS,
-    GET_ALL_POPULAR_COURSES_ERROR,
-    GET_ALL_TOP_COURSES_BEGIN,
-    GET_ALL_TOP_COURSES_SUCCESS,
-    GET_ALL_TOP_COURSES_ERROR,
+    // GET_ONE_COURSE_BEGIN,
+    // GET_ONE_COURSE_SUCCESS,
+    // GET_ONE_COURSE_ERROR,
+    // GET_ALL_PURCHASED_COURSES_BEGIN,
+    // GET_ALL_PURCHASED_COURSES_SUCCESS,
+    // GET_ALL_PURCHASED_COURSES_ERROR,
+    // GET_ALL_POPULAR_COURSES_BEGIN,
+    // GET_ALL_POPULAR_COURSES_SUCCESS,
+    // GET_ALL_POPULAR_COURSES_ERROR,
+    // GET_ALL_TOP_COURSES_BEGIN,
+    // GET_ALL_TOP_COURSES_SUCCESS,
+    // GET_ALL_TOP_COURSES_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
@@ -45,6 +45,9 @@ import {
     EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    GET_COURSE_BY_TOPIC_BEGIN,
+    GET_COURSE_BY_TOPIC_SUCCESS,
+    GET_COURSE_BY_TOPIC_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -232,6 +235,19 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_msg: action.payload.msg,
                 alert_type: 'danger',
+            }
+        case GET_COURSE_BY_TOPIC_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_COURSE_BY_TOPIC_SUCCESS:
+            return{
+                ...state,
+                courses_topics: action.payload
+            }
+        case GET_COURSE_BY_TOPIC_ERROR:
+            return{
+                ...state,
             }
         default:
             throw new Error(`no such action: ${action.type}`)

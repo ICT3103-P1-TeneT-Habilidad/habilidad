@@ -28,28 +28,30 @@ import {
     RESET_PASSWORD_LINK_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
-    GET_ONE_COURSE_BEGIN,
-    GET_ONE_COURSE_SUCCESS,
-    GET_ONE_COURSE_ERROR,
-    GET_ALL_PURCHASED_COURSES_BEGIN,
-    GET_ALL_PURCHASED_COURSES_SUCCESS,
-    GET_ALL_PURCHASED_COURSES_ERROR,
-    GET_ALL_POPULAR_COURSES_BEGIN,
-    GET_ALL_POPULAR_COURSES_SUCCESS,
-    GET_ALL_POPULAR_COURSES_ERROR,
-    GET_ALL_TOP_COURSES_BEGIN,
-    GET_ALL_TOP_COURSES_SUCCESS,
-    GET_ALL_TOP_COURSES_ERROR,
+    // GET_ONE_COURSE_BEGIN,
+    // GET_ONE_COURSE_SUCCESS,
+    // GET_ONE_COURSE_ERROR,
+    // GET_ALL_PURCHASED_COURSES_BEGIN,
+    // GET_ALL_PURCHASED_COURSES_SUCCESS,
+    // GET_ALL_PURCHASED_COURSES_ERROR,
+    // GET_ALL_POPULAR_COURSES_BEGIN,
+    // GET_ALL_POPULAR_COURSES_SUCCESS,
+    // GET_ALL_POPULAR_COURSES_ERROR,
+    // GET_ALL_TOP_COURSES_BEGIN,
+    // GET_ALL_TOP_COURSES_SUCCESS,
+    // GET_ALL_TOP_COURSES_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
-    EDIT_COURSE_BEGIN,
-    EDIT_COURSE_SUCCESS,
-    EDIT_COURSE_ERROR,
+    // EDIT_COURSE_BEGIN,
+    // EDIT_COURSE_SUCCESS,
+    // EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    GET_COURSE_BY_TOPIC_BEGIN,
+    GET_COURSE_BY_TOPIC_SUCCESS,
+    GET_COURSE_BY_TOPIC_ERROR,
 } from './action'
-import { Navigate } from 'react-router-dom'
 
 const user = localStorage.getItem('user')
 
@@ -68,6 +70,7 @@ export const initialState = {
     courses: null,
     topics: null,
     edit_course: null,
+    courses_topics: null,
 
     user_details: {},
 }
@@ -347,6 +350,21 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const getCourseByTopic = async (topicName) => {
+        dispatch({ type: GET_COURSE_BY_TOPIC_BEGIN })
+        console.log(topicName)
+        try {
+            const { data } = await axios.post(`/api/course/byCategory`, {topicName})
+            const result = data.result
+            dispatch({
+                type: GET_COURSE_BY_TOPIC_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({ type: GET_COURSE_BY_TOPIC_ERROR })
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -368,7 +386,8 @@ const AppProvider = ({ children }) => {
                 sendPasswordResetLink,
                 createNewCourse,
                 getUserDetails,
-                updateUserDetails
+                updateUserDetails,
+                getCourseByTopic
             }}
         >
             {children}
