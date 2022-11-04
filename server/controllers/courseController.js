@@ -26,6 +26,7 @@ import { findModeratorIdByUserId } from '../services/moderator.js'
 import { findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
 import { addOneCoursePurchased } from '../services/transaction.js'
+import { replaceSanitizedQuot } from '../validations/input.js'
 // logs
 // import logger from '../utils/log.js'
 // import { LogMessage } from '../utils/logMessage.js'
@@ -163,7 +164,12 @@ export const instructorCreateCourse = async (req, res, next) => {
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.sanitizedBody
 
-        const topics = await findTopicByName(JSON.parse(topicCourse))
+        const newString = replaceSanitizedQuot(topicCourse)
+        console.log(newString)
+
+        console.log(replaceSanitizedQuot(topicCourse))
+
+        const topics = await findTopicByName(JSON.parse(replaceSanitizedQuot(topicCourse)))
 
         const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
         fs.unlinkSync(image[0].path)
@@ -203,6 +209,7 @@ export const instructorCreateCourse = async (req, res, next) => {
             }
         })
     } catch (err) {
+        console.log(err)
         let error
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
             error = new Response('Internal Server Error', 'res_internalServer')

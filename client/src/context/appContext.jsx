@@ -66,9 +66,10 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            const token = getAccessToken()
-            if (token) {
-                config.headers.common['authorization'] = `Bearer ${token}`
+            if (user) {
+                const { accessToken } = JSON.parse(user)
+                console.log(accessToken)
+                config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
         },
