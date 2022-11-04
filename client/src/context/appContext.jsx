@@ -110,7 +110,7 @@ const AppProvider = ({ children }) => {
             const originalConfig = err.config
             if (err.response) {
                 // If access token is expired
-                if (err.response.data.result.status === 401 && !originalConfig._retry) {
+                if (err.response.data.result.status === 401 && !originalConfig._retry && user) {
                     originalConfig._retry = true
                     try {
                         const { refreshToken } = JSON.parse(user)
