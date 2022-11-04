@@ -6,8 +6,8 @@ import LoadingMsg from './LoadingMsg'
 import NavbarModal from './NavbarModal'
 import Navbar from './Navbar'
 import PopularCourse from './PopularCourse'
-import TopCategories from './TopCategories'
 import TopicCard from './TopicCard'
+import TopTopics from './TopTopics'
 
 export {
     Alert,
@@ -18,6 +18,6 @@ export {
     NavbarModal,
     Navbar,
     PopularCourse,
-    TopCategories,
     TopicCard,
+    TopTopics,
 }
