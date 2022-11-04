@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import {
+    AccountsPage,
     AllCourses,
     AllTopics,
     CourseContent,
@@ -35,6 +36,7 @@ function App() {
                     <Route path="content" element={<CourseContent />} />
                     <Route path="topics/:topicName" element={<CoursesByTopic />} />
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
+                    <Route path="accountmanagement" element={<AccountsPage />} />
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />
