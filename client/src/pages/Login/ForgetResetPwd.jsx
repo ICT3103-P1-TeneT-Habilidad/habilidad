@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useAppContext } from '../../context/appContext'
 import { Alert } from '../../components'
 
-export default function ForgetResetPwd() {
+const ForgetResetPwd = () => {
     const {
         register,
         handleSubmit,
@@ -22,7 +22,7 @@ export default function ForgetResetPwd() {
             <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
                 <h2 className="mt-6 text-3xl font-extrabold text-gray-900 mb-4">Forget Password</h2>
                 <span className="text-center text-gray-500 text-sm">
-                Enter your email address to reset your password.
+                    Enter your email address to reset your password.
                 </span>
             </div>
 
@@ -68,3 +68,5 @@ export default function ForgetResetPwd() {
         </div>
     )
 }
+
+export default ForgetResetPwd

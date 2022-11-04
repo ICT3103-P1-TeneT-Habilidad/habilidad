@@ -1,5 +1,5 @@
 import ForgetResetPwd from './ForgetResetPwd'
-import LoginPage from './LoginPage'
 import LoginOtp from './LoginOtp'
+import LoginPage from './LoginPage'
 
-export { ForgetResetPwd, LoginPage, LoginOtp }
+export { ForgetResetPwd, LoginOtp, LoginPage }
