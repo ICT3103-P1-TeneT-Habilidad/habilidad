@@ -53,7 +53,7 @@ const CoursesByTopic = () => {
                     <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
                         <h3 className="font-semibold text-2xl p-4">{topicName}</h3>
                         <div>
-                            {courses_topics.result.data.length !== 0 ? (
+                            {courses_topics && courses_topics.result.data.length !== 0 ? (
                                 <CourseCard data={courses_topics.result.data} />
                             ) : (
                                 empty()
