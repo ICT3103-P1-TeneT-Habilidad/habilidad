@@ -8,8 +8,8 @@ import imagePlaceholder from '../assets/noimage.jpg'
 import { useAppContext } from '../context/appContext'
 
 const CreateCourse = () => {
-    const { createNewCourse } = useAppContext()
-    
+    const { createNewCourse, getAllTopics, topics } = useAppContext()
+
     const animatedComponents = makeAnimated()
     const [emptyUpload, setEmptyUpload] = useState(true)
 
@@ -31,7 +31,20 @@ const CreateCourse = () => {
     const currentMaterialComponents = useRef({})
     currentMaterialComponents.current = materialComponents
 
-    const topicOptions = languageOptions // get list from get all topics API
+    const [topicOptions, setTopicOptions] = useState([])
+
+    useEffect(() => {
+        getAllTopics()
+    }, [])
+
+    useEffect(() => {
+        setTopicOptions(
+            topics?.map((topic) => ({
+                label: topic.topicName,
+                value: topic.topicId,
+            }))
+        )
+    }, [topics])
 
     const {
         register,
@@ -153,7 +166,10 @@ const CreateCourse = () => {
     const addComponent = () => {
         const keyId = uuid()
         setKeysList([...keysList, keyId])
-        setMaterialInfo({ ...materialInfo, [keyId]: { title: null, file: null, order: currentKeyList.current.length + 1 } })
+        setMaterialInfo({
+            ...materialInfo,
+            [keyId]: { title: null, file: null, order: currentKeyList.current.length + 1 },
+        })
         setMaterialComponents({
             ...materialComponents,
             [keyId]: <NewCourseMaterial keyId={keyId} />,

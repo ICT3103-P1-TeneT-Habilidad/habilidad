@@ -86,27 +86,33 @@ export const validateEmail = (req) => {
 
 // Prevent Code Injection, XSS
 export const sanitizeBody = async (req, res, next) => {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;',
-        '/': '&#x2F;',
-        '`': '&#x60;',
-        '=': '&#x3D;',
+
+    try {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;',
+        }
+        const reg = /[&<>"'`=\/]/g
+
+        const sanitizedBody = {}
+
+        for (let x in req.body) {
+            sanitizedBody[x] = req.body[x].replace(reg, (match) => map[match])
+        }
+
+        req.sanitizedBody = sanitizedBody
+
+        next()
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
     }
-    const reg = /[&<>"'`=\/]/g
-
-    const sanitizedBody = {}
-
-    for (let x in req.body) {
-        sanitizedBody[x] = req.body[x].replace(reg, (match) => map[match])
-    }
-
-    req.sanitizedBody = sanitizedBody
-
-    next()
 }
 
 export const sanitizeUrlParam = async (req, res, next) => {
@@ -131,4 +137,18 @@ export const sanitizeUrlParam = async (req, res, next) => {
     req.sanitizedParams = sanitizedParams
 
     next()
+}
+
+export const replaceSanitizedQuot = (string) => {
+    const map = {
+
+        '&quot;': '"',
+        '&#39;': "'",
+    }
+    const reg = /&quot;|&#39;/g
+
+    const newString = string.replace(reg, (match) => map[match])
+
+    return newString
+
 }
