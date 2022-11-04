@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import { useAppContext } from '../context/appContext'
+import { useAppContext } from '../../context/appContext'
 import { useForm } from 'react-hook-form'
-import { Alert, LoadingMsg } from '../components'
+import { Alert, LoadingMsg } from '../../components'
 import { Link, useNavigate } from 'react-router-dom'
 
-const Login = () => {
+const LoginPage = () => {
     const { showAlert, sendLoginOtp, loginOtp, isLoading } = useAppContext()
 
     const navigate = useNavigate()
@@ -109,4 +109,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default LoginPage

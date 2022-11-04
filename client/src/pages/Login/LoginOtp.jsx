@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { useAppContext } from '../context/appContext'
+import { useAppContext } from '../../context/appContext'
 
 const LoginOtp = () => {
     const { login, user } = useAppContext()

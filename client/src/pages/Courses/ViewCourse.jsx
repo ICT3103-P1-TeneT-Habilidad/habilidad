@@ -1,8 +1,7 @@
-import { useEffect } from 'react'
-import { React, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useAppContext } from '../context/appContext'
-import { sortCourseMaterials } from '../utils/Helpers'
+import { useAppContext } from '../../context/appContext'
+import { sortCourseMaterials } from '../../utils/Helpers'
 
 const ViewCourse = () => {
     const { courseDetail, getCourseDetail } = useAppContext()

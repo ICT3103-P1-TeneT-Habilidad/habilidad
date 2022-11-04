@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { IoIosArrowForward } from 'react-icons/io'
 
 const PopularCourse = () => {
+
     return (
         <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
             <div className="items-center">
