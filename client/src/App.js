@@ -33,7 +33,7 @@ function App() {
                     <Route path="editcourse" element={<EditCourse />} />
                     <Route path="studentviewcourse" element={<StudentViewCourse />} />
                     <Route path="content" element={<CourseContent />} />
-                    <Route path="/topics/:topicName" element={<CoursesByTopic />} />
+                    <Route path="topics/:topicName" element={<CoursesByTopic />} />
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
