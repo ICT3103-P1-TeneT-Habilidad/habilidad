@@ -149,7 +149,7 @@ const reducer = (state, action) => {
         case GET_ALL_TOPICS_SUCCESS:
             return {
                 ...state,
-                topics: action.payload.result.data,
+                topics: action.payload.result,
             }
         case RESET_PASSWORD_LINK_BEGIN:
             return {
