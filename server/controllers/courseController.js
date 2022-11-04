@@ -164,11 +164,6 @@ export const instructorCreateCourse = async (req, res, next) => {
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.sanitizedBody
 
-        const newString = replaceSanitizedQuot(topicCourse)
-        console.log(newString)
-
-        console.log(replaceSanitizedQuot(topicCourse))
-
         const topics = await findTopicByName(JSON.parse(replaceSanitizedQuot(topicCourse)))
 
         const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
@@ -179,7 +174,8 @@ export const instructorCreateCourse = async (req, res, next) => {
         for (const file in materialFiles) {
             fs.unlinkSync(materialFiles[file].path)
         }
-        const courseMaterials = JSON.parse(materials)
+
+        const courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
         for (const material in courseMaterials) {
             courseMaterials[material].url = uploadResult[material].secure_url
             courseMaterials[material].publicId = uploadResult[material].public_id
