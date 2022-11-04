@@ -14,6 +14,9 @@ import {
     CREATE_USER_BEGIN,
     CREATE_USER_SUCCESS,
     CREATE_USER_ERROR,
+    GET_USER_BEGIN,
+    GET_USER_SUCCESS,
+    GET_USER_ERROR,
     // UPDATE_USER_BEGIN,
     // UPDATE_USER_SUCCESS,
     // UPDATE_USER_ERROR,
@@ -46,6 +49,7 @@ import {
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
 } from './action'
+import { Navigate } from 'react-router-dom'
 
 const user = localStorage.getItem('user')
 
@@ -54,7 +58,6 @@ export const initialState = {
 
     showNavbarModal: false,
     openModal: false,
-    // loginFail: false,
     showAlert: false,
     isLoading: false,
     loginOtp: false,
@@ -64,8 +67,9 @@ export const initialState = {
     alert_type: '',
     courses: null,
     topics: null,
-
     edit_course: null,
+
+    user_details: {},
 }
 
 const AppContext = React.createContext()
@@ -79,7 +83,6 @@ const AppProvider = ({ children }) => {
         (config) => {
             if (user) {
                 const { accessToken } = JSON.parse(user)
-                console.log(accessToken)
                 config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
@@ -108,8 +111,8 @@ const AppProvider = ({ children }) => {
                         authFetch.headers = {
                             ...authFetch.headers,
                             authorization: `Bearer ${accessToken}`,
-                        };
-                        
+                        }
+
                         return authFetch(originalConfig)
                     } catch (_error) {
                         if (_error.response && _error.response.data) {
@@ -119,7 +122,6 @@ const AppProvider = ({ children }) => {
                         return Promise.reject(_error)
                     }
                 }
-
                 if (err.response.data.status === 403 && err.response.data) {
                     return Promise.reject(err.response.data)
                 }
@@ -164,7 +166,7 @@ const AppProvider = ({ children }) => {
     }
 
     const refreshToken = () => {
-        return axios.post('/api/users/refreshAccessToken', {refreshToken: getRefreshToken})
+        return axios.post('/api/users/refreshAccessToken', { refreshToken: getRefreshToken })
     }
 
     const sendLoginOtp = async (user_data) => {
@@ -248,7 +250,7 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_ALL_TOPICS_BEGIN })
         try {
             const { data } = await axios.get(`/api/topics/`)
-            const result  = data.result.data
+            const result = data.result.data
             console.log(result)
             dispatch({
                 type: GET_ALL_TOPICS_SUCCESS,
@@ -290,7 +292,6 @@ const AppProvider = ({ children }) => {
                 type: CREATE_COURSE_SUCCESS,
             })
         } catch (err) {
-            console.log(err.response)
             dispatch({
                 type: CREATE_COURSE_ERROR,
                 payload: { msg: err.response.data.result.message },
@@ -306,12 +307,28 @@ const AppProvider = ({ children }) => {
         }, 5000)
     }
 
-    const getAllPopularCourses = async () => {
-        dispatch({type: GET_ALL_POPULAR_COURSES_BEGIN})
-        try{
-            const {data} = await axios.get('/api/course/popularCourses')
-        }catch(err){
-            dispatch({type: GET_ALL_POPULAR_COURSES_ERROR, payload: {msg: err.response.data.result.message}})
+    // const getAllPopularCourses = async () => {
+    //     dispatch({ type: GET_ALL_POPULAR_COURSES_BEGIN })
+    //     try {
+    //         const { data } = await axios.get('/api/course/popularCourses')
+    //     } catch (err) {
+    //         dispatch({ type: GET_ALL_POPULAR_COURSES_ERROR, payload: { msg: err.response.data.result.message } })
+    //     }
+    // }
+
+    const getUserDetails = async () => {
+        dispatch({ type: GET_USER_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/users/`)
+            const result = data.result.data
+            dispatch({
+                type: GET_USER_SUCCESS,
+                payload: {
+                    result,
+                },
+            })
+        } catch (err) {
+            dispatch({ type: GET_USER_ERROR })
         }
     }
 
@@ -335,6 +352,7 @@ const AppProvider = ({ children }) => {
                 getAllTopics,
                 sendPasswordResetLink,
                 createNewCourse,
+                getUserDetails,
             }}
         >
             {children}

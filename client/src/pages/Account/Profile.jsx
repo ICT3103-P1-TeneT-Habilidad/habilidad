@@ -1,6 +1,5 @@
 import { React, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import AnonProfile from '../../assets/anon-profile.svg'
 
 const Profile = () => {
 
@@ -119,7 +118,6 @@ const Profile = () => {
         // main div for background
         <div className="min-h-screen bg-background">
             <div className="flex items-center justify-center pt-10 flex-col">
-                <img src={AnonProfile} alt="Profile" className="rounded-full w-32" />
                 <h1 className="text-gray-800 font-semibold text-xl mt-5">NAME</h1>
                 <h1 className="text-gray-500 text-sm">ROLE</h1>
             </div>
