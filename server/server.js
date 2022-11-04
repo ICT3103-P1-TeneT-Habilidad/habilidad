@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 
 // import routes
 import routes from './routes/routes.js'
-import { Response } from './utils/response.js'
+import { Response } from './responses/response.js'
 import { setHeaderTimestamp } from './utils/time.js'
 
 // import constants
@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 // Error Handling all errors
 app.use((err, req, res, next) => {
     res.status(err.statusCode || 500).json({
-        error: {
+        result: {
             status: err.statusCode || 500,
             message: err.message || 'Internal Server Error',
         },

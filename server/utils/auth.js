@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
+import { generateTokens } from '../utils/jwt.js'
 
 export const generateSalt = (num) => {
     return bcrypt.genSaltSync(num)
@@ -12,13 +14,18 @@ export const verifyPassword = (password, dbPassword) => {
     return bcrypt.compareSync(password, dbPassword)
 }
 
-export const verifyAccessToken = (token) => {
-    jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, user) => {
+export const generateTokenProcedure = async (user) => {
+    // Generate uuid
+    const jti = crypto.randomUUID()
 
-        if (err) return res.sendStatus(403)
+    const userId = user.userId
 
-        req.user = user
+    // Generate Token
+    const { accessToken, refreshToken } = generateTokens(userId, jti)
 
-        next()
-    })
+    return {
+        accessToken,
+        refreshToken,
+        jti
+    }
 }

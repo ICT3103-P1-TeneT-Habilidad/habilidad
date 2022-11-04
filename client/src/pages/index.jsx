@@ -1,9 +1,11 @@
-import Accounts from './Accounts'
 import Dashboard from './Dashboard'
-import Error from './Error'
-import ForgetResetPwd from './ForgetResetPwd'
-import Login from './Login'
-import Register from './Register'
-import Profile from './Profile'
+import OtpRoute from './OtpRoute'
+import ProtectedRoutes from './ProtectedRoute'
 
-export { Accounts, Dashboard, Error, ForgetResetPwd, Login, Register, Profile }
+export { Dashboard, OtpRoute, ProtectedRoutes }
+
+export * from './Account'
+export * from './Courses'
+export * from './Errors'
+export * from './Login'
+export * from './Topics'

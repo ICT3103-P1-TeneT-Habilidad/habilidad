@@ -17,14 +17,13 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
-#    ports:
-#      - "${SERVER_HOST}:${SERVER_PORT}"
+    ports:
+      - "${SERVER_HOST}:${SERVER_PORT}"
     network_mode: "host"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ./server:/app/
       - /app/node_modules
     container_name: server
+  # entrypoint: npm start
 volumes:
   data:
