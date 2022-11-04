@@ -1,12 +1,11 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { BigTable } from '../../components'
 import { useAppContext } from '../../context/appContext'
 import moment from 'moment'
-// import icons
-import { MdModeEditOutline } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 
 const AccountsPage = () => {
-    const {user_data, getAllUsers} = useAppContext()
+    const { user_data, getAllUsers } = useAppContext()
 
     useEffect(() => {
         getAllUsers()
@@ -37,13 +36,9 @@ const AccountsPage = () => {
             Header: 'last updated',
             accessor: 'updatedOn',
             Cell: ({ row }) => {
-                let date = row.original.updatedOn;
-                return (
-                  <div className="text-sm text-gray-900">
-                    {moment(date).format('MMMM Do YYYY, h:mm:ss a')}
-                  </div>
-                );
-              }
+                let date = row.original.updatedOn
+                return <div className="text-sm text-gray-900">{moment(date).format('MMMM Do YYYY, h:mm:ss a')}</div>
+            },
         },
         {
             id: 'Actions',
@@ -51,9 +46,8 @@ const AccountsPage = () => {
             Cell: () => {
                 return (
                     <div>
-                        <button type="button">
-                            <MdModeEditOutline />
-                        </button>
+                        <button type="button">Activate</button>
+                        <button type="button">Deactivate</button>
                     </div>
                 )
             },
@@ -61,7 +55,19 @@ const AccountsPage = () => {
     ]
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-background">
+            <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
+                <div className="flex justify-end mt-4">
+                    <Link to="/create-user" className="flex-1">
+                        <button
+                            type="button"
+                            className="float-right inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md text-white bg-slate-500 focus:outline-none"
+                        >
+                            Create New User
+                        </button>
+                    </Link>
+                </div>
+            </div>
             {user_data && <BigTable columns={columns} data={user_data.result} />}
         </div>
     )

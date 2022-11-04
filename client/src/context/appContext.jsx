@@ -414,6 +414,7 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_ALL_USERS_BEGIN })
         try {
             const { data } = await authFetch.get(`/api/users/allUsers`)
+            console.log(data)
             const result = data.data
             dispatch({
                 type: GET_ALL_USERS_SUCCESS,
