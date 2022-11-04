@@ -4,6 +4,7 @@ import {
     AllCourses,
     AllTopics,
     CourseContent,
+    CoursesByTopic,
     CreateCourse,
     Dashboard,
     EditCourse,
@@ -33,6 +34,7 @@ function App() {
                     <Route path="editcourse" element={<EditCourse />} />
                     <Route path="studentviewcourse" element={<StudentViewCourse />} />
                     <Route path="content" element={<CourseContent />} />
+                    <Route path='/topics/:topicName' element={<CoursesByTopic/>}/>
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />

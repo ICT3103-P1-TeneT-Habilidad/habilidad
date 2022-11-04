@@ -64,7 +64,7 @@ const AllTopics = () => {
     return topics ? (
         <div className="min-h-screen bg-background">
             <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
-                <h3 className="font-semibold text-2xl p-4">All Courses</h3>
+                <h3 className="font-semibold text-2xl p-4">All Topics</h3>
                 <div> {renderGroup()}</div>
             </div>
         </div>
