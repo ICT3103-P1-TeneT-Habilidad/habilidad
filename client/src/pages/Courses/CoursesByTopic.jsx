@@ -31,15 +31,6 @@ const CoursesByTopic = () => {
         // eslint-disable-next-line
     }, [])
 
-    useEffect(() => {
-        console.log(check)
-        // eslint-disable-next-line
-    }, [check])
-
-    useEffect(() => {
-        console.log(courses_topics)
-    }, [courses_topics])
-
     const empty = () => {
         return <div>There is no courses under this topic right now</div>
     }
