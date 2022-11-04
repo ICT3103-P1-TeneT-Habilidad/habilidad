@@ -9,7 +9,7 @@ import imagePlaceholder from '../../assets/noimage.jpg'
 import { useParams } from 'react-router-dom'
 
 const EditCourse = () => {
-    const { getAllTopics, topics, getCourseDetail, courseDetail } = useAppContext()
+    const { getAllTopics, topics, getCourseDetail, courseDetail, editCourse } = useAppContext()
     const animatedComponents = makeAnimated()
     const { courseId } = useParams()
 
@@ -110,14 +110,12 @@ const EditCourse = () => {
                 for (const i in data[key]) {
                     if (typeof data[key][i].file === 'object') {
                         formData.append('materialFiles', data[key][i].file)
-                    } else {
-                        formData.append('materialFiles', null)
+                        material.push({
+                            courseMaterialId: i,
+                            title: data[key][i].title,
+                            order: data[key][i].order,
+                        })
                     }
-                    material.push({
-                        courseMaterialId: i,
-                        title: data[key][i].title,
-                        order: data[key][i].order,
-                    })
                 }
                 formData.append(key, JSON.stringify(material))
             } else if (key === 'topicCourse') {
@@ -126,6 +124,7 @@ const EditCourse = () => {
                 formData.append(key, data[key])
             }
         }
+        editCourse(courseId, formData)
     }
 
     const fileHandler = (file, keyId) => {
@@ -188,7 +187,6 @@ const EditCourse = () => {
                                             className="w-full border border-slate-300 rounded-md p-2"
                                             id="materialTitle"
                                             type="text"
-                                            value={materialInfo[keyId].title}
                                             onChange={(e) => {
                                                 titleChangeHandler(e.target.value, keyId)
                                             }}

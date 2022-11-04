@@ -137,6 +137,7 @@ const AppProvider = ({ children }) => {
 
                         return authFetch(originalConfig)
                     } catch (_error) {
+                        removeUser()
                         if (_error.response && _error.response.data) {
                             return Promise.reject(_error.response.data)
                         }
@@ -407,6 +408,22 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const editCourse = async (courseId, course) => {
+        dispatch({ type: EDIT_COURSE_BEGIN })
+        console.log(course)
+        console.log(courseId)
+        try {
+            const { data } = await axios.put(`/api/course/${courseId}`, course)
+            const result = data.result
+            dispatch({
+                type: EDIT_COURSE_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({ type: EDIT_COURSE_ERROR })
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -431,6 +448,7 @@ const AppProvider = ({ children }) => {
                 updateUserDetails,
                 getCourseByTopic,
                 getCourseDetail,
+                editCourse,
             }}
         >
             {children}
