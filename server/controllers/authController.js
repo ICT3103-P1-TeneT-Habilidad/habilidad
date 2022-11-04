@@ -27,6 +27,7 @@ export const isAuthenticate = async (req, res, next) => {
         next()
 
     } catch (err) {
+        console.log(err)
         let error
         if (err.name === 'TokenExpiredError') {
             error = new Response('Token Expired', 'res_unauthorised')
