@@ -74,7 +74,7 @@ import {
 const user = localStorage.getItem('user')
 
 export const initialState = {
-    user: user ? user : null,
+    user: user ? JSON.parse(user) : null,
 
     showNavbarModal: false,
     openModal: false,
@@ -106,8 +106,11 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            if (user) {
-                const { accessToken } = user
+            const newUser = getUser()
+            if (newUser) {
+                console.log(newUser)
+                const { accessToken } = newUser
+                console.log(accessToken)
                 config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
@@ -129,7 +132,9 @@ const AppProvider = ({ children }) => {
                 if (err.response.data.result.status === 401 && !originalConfig._retry && user) {
                     originalConfig._retry = true
                     try {
-                        const { refreshToken } = user
+                        const newUser = getUser()
+
+                        const { refreshToken } = newUser
 
                         // const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
                         // const result = data.result.data
@@ -140,14 +145,12 @@ const AppProvider = ({ children }) => {
                             refreshToken,
                         })
                         const result = data.result.data
-                        initialState.user = result
                         setUser(result)
 
                         const { accessToken } = result
-                        updateAccessToken(accessToken)
                         // authFetch.headers['authorization'] = `Bearer ${accessToken}`
-                        authFetch.headers = {
-                            ...authFetch.headers,
+                        originalConfig.headers = {
+                            ...originalConfig.headers,
                             authorization: `Bearer ${accessToken}`,
                         }
 
@@ -173,14 +176,14 @@ const AppProvider = ({ children }) => {
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
         console.log(user)
-        return user?.refreshToken
+        return JSON.parse(user)?.refreshToken
     }
 
     const getAccessToken = () => {
         const user = localStorage.getItem('user')
         console.log(user)
 
-        return user?.accessToken
+        return JSON.parse(user)?.accessToken
     }
 
     const updateAccessToken = (token) => {
@@ -190,11 +193,11 @@ const AppProvider = ({ children }) => {
     }
 
     const getUser = () => {
-        return localStorage.getItem('user')
+        return JSON.parse(localStorage.getItem('user'))
     }
 
     const setUser = (user) => {
-        localStorage.setItem('user', user)
+        localStorage.setItem('user', JSON.stringify(user))
     }
 
     const removeUser = () => {
@@ -370,8 +373,8 @@ const AppProvider = ({ children }) => {
     }
 
     const clearValues = () => {
-        dispatch({ type: CLEAR_VALUES });
-      };
+        dispatch({ type: CLEAR_VALUES })
+    }
 
     const getUserDetails = async () => {
         dispatch({ type: GET_USER_BEGIN })
@@ -487,7 +490,7 @@ const AppProvider = ({ children }) => {
     }
 
     const deactivateUser = async (data) => {
-        console.log("hit")
+        console.log('hit')
         console.log(data)
         dispatch({ type: DEACTIVATE_USER_BEGIN })
         try {
@@ -531,7 +534,7 @@ const AppProvider = ({ children }) => {
                 getPopularCourses,
                 activateUser,
                 deactivateUser,
-                clearValues
+                clearValues,
             }}
         >
             {children}

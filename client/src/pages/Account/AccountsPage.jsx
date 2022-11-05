@@ -42,7 +42,7 @@ const AccountsPage = () => {
             Header: 'Actions',
             Cell: ({ row }) => {
                 const { activateUser, deactivateUser } = useAppContext()
-              
+
                 if (row.original.deactivationDate !== null) {
                     return (
                         <div className="p-2">
