@@ -18,6 +18,7 @@ import {
     validateEmailAndPassword
 } from '../controllers/usersController.js'
 import { isRoleModerator } from '../middleware/checkRole.js'
+import { sanitizeBody } from '../validations/input.js'
 
 const router = express.Router()
 
@@ -31,10 +32,10 @@ router.route('/').get(isAuthenticate, getOneUser)
 router.route('/').patch(isAuthenticate, updateUser)
 
 // login
-router.route('/login').post(userLogin, sendEmailOtp)
+router.route('/login').post(sanitizeBody, userLogin, sendEmailOtp)
 
 // Verify email otp
-router.route('/verifyOTP').post(verifyEmailOtp)
+router.route('/verifyOTP').post(sanitizeBody, verifyEmailOtp)
 
 // logout
 router.route('/logout').post(userLogout)

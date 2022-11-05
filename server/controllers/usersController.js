@@ -71,7 +71,8 @@ export const deactivateUser = async (req, res, next) => {
 
 export const userLogin = async (req, res, next) => {
     try {
-        const { username, password } = req.body
+        const { password } = req.body
+        const { username } = req.sanitizedBody
 
         // Verify email
         const user = await findUserByUsername(username)
@@ -352,7 +353,7 @@ export const reactivateUser = async (req, res, next) => {
 
 export const sendEmailOtp = async (req, res, next) => {
     try {
-        const { username } = req.body
+        const { username } = req.sanitizedBody
         const user = await findUserByUsername(username)
 
         if (!user) throw new Response('Invalid OTP', 'res_unauthorised')
