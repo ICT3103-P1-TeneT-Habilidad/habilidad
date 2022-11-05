@@ -335,7 +335,9 @@ export const validateEmailAndPassword = async (req, res, next) => {
 
 export const reactivateUser = async (req, res, next) => {
     try {
-        const userId = req.body.userId
+        const { userId } = req.body
+
+        if (!userId) throw new Response('Bad Request', 'res_badRequest')
 
         const result = await updateDeactivationDateToNull({ userId })
 
