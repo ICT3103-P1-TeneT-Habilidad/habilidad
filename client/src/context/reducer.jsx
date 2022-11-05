@@ -34,9 +34,9 @@ import {
     // GET_ALL_PURCHASED_COURSES_BEGIN,
     // GET_ALL_PURCHASED_COURSES_SUCCESS,
     // GET_ALL_PURCHASED_COURSES_ERROR,
-    // GET_ALL_POPULAR_COURSES_BEGIN,
-    // GET_ALL_POPULAR_COURSES_SUCCESS,
-    // GET_ALL_POPULAR_COURSES_ERROR,
+    GET_ALL_POPULAR_COURSES_BEGIN,
+    GET_ALL_POPULAR_COURSES_SUCCESS,
+    GET_ALL_POPULAR_COURSES_ERROR,
     // GET_ALL_TOP_COURSES_BEGIN,
     // GET_ALL_TOP_COURSES_SUCCESS,
     // GET_ALL_TOP_COURSES_ERROR,
@@ -305,6 +305,19 @@ const reducer = (state, action) => {
                 top_topics: action.payload,
             }
         case GET_TOP_TOPICS_ERROR:
+            return {
+                ...state,
+            }
+        case GET_ALL_POPULAR_COURSES_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_POPULAR_COURSES_SUCCESS:
+            return {
+                ...state,
+                popular_course: action.payload,
+            }
+        case GET_ALL_POPULAR_COURSES_ERROR:
             return {
                 ...state,
             }

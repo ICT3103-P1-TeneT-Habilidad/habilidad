@@ -62,6 +62,9 @@ import {
     GET_TOP_TOPICS_BEGIN,
     GET_TOP_TOPICS_SUCCESS,
     GET_TOP_TOPICS_ERROR,
+    GET_ALL_POPULAR_COURSES_BEGIN,
+    GET_ALL_POPULAR_COURSES_SUCCESS,
+    GET_ALL_POPULAR_COURSES_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -85,6 +88,7 @@ export const initialState = {
     edit_course: null,
     courses_topics: null,
     top_topics: null,
+    popular_course: null,
 
     user_details: {},
 }
@@ -294,7 +298,7 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             console.log(err.response)
-            dispatch({ type: GET_ALL_TOPICS_ERROR})
+            dispatch({ type: GET_ALL_TOPICS_ERROR })
             // logout()
         }
     }
@@ -447,15 +451,28 @@ const AppProvider = ({ children }) => {
     const getTopTopics = async () => {
         dispatch({ type: GET_TOP_TOPICS_BEGIN })
         try {
-            const { data } = await authFetch.get(`/api/topics/popularTopics`)
+            const { data } = await axios.get(`/api/topics/popularTopics`)
             const result = data.result.data
-            console.log(result)
             dispatch({
                 type: GET_TOP_TOPICS_SUCCESS,
                 payload: result,
             })
         } catch (err) {
             dispatch({ type: GET_TOP_TOPICS_ERROR })
+        }
+    }
+
+    const getPopularCourses = async () => {
+        dispatch({ type: GET_ALL_POPULAR_COURSES_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/course/popularCourses`)
+            const result = data.result.data
+            dispatch({
+                type: GET_ALL_POPULAR_COURSES_SUCCESS,
+                payload: result,
+            })
+        } catch (err) {
+            dispatch({ type: GET_ALL_POPULAR_COURSES_ERROR })
         }
     }
 
@@ -487,6 +504,7 @@ const AppProvider = ({ children }) => {
                 editCourse,
                 getTopTopics,
                 refreshToken,
+                getPopularCourses,
             }}
         >
             {children}

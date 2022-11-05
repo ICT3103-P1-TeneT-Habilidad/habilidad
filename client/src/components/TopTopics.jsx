@@ -12,10 +12,6 @@ const TopTopics = () => {
         getTopTopics()
     }, [])
 
-    useEffect(() => {
-        console.log(top_topics)
-    }, [top_topics])
-
     return (
         <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
             <div className="items-center">
@@ -31,7 +27,7 @@ const TopTopics = () => {
                 <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">
                     {top_topics &&
                         top_topics.map(function (d, i) {
-                            return i < 5 ? <OneTopicCard data={d} /> : null
+                            return i < 5 ? <OneTopicCard data={d} key={i}/> : null
                         })}
                 </div>
             </div>
