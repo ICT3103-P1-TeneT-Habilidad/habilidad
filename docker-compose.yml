@@ -51,7 +51,7 @@ services:
 
   server:
     depends_on:
-      - habilidad_database
+      - database
     stdin_open: true
     build:
       dockerfile: Dockerfile
