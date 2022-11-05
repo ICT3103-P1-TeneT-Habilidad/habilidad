@@ -5,6 +5,7 @@ import {
     SHOW_MODAL,
     CLEAR_ALERT,
     LOGOUT,
+    CLEAR_VALUES,
     SETUP_USER_BEGIN,
     SETUP_USER_SUCCESS,
     SETUP_USER_ERROR,
@@ -73,7 +74,7 @@ import {
 const user = localStorage.getItem('user')
 
 export const initialState = {
-    user: user ? JSON.parse(user) : null,
+    user: user ? user : null,
 
     showNavbarModal: false,
     openModal: false,
@@ -106,7 +107,7 @@ const AppProvider = ({ children }) => {
     authFetch.interceptors.request.use(
         (config) => {
             if (user) {
-                const { accessToken } = JSON.parse(user)
+                const { accessToken } = user
                 config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
@@ -128,7 +129,7 @@ const AppProvider = ({ children }) => {
                 if (err.response.data.result.status === 401 && !originalConfig._retry && user) {
                     originalConfig._retry = true
                     try {
-                        const { refreshToken } = JSON.parse(user)
+                        const { refreshToken } = user
 
                         // const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
                         // const result = data.result.data
@@ -185,7 +186,7 @@ const AppProvider = ({ children }) => {
     const updateAccessToken = (token) => {
         let user = localStorage.getItem('user')
         user.accessToken = token
-        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('user', user)
     }
 
     const getUser = () => {
@@ -193,7 +194,7 @@ const AppProvider = ({ children }) => {
     }
 
     const setUser = (user) => {
-        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('user', user)
     }
 
     const removeUser = () => {
@@ -368,6 +369,10 @@ const AppProvider = ({ children }) => {
         }, 5000)
     }
 
+    const clearValues = () => {
+        dispatch({ type: CLEAR_VALUES });
+      };
+
     const getUserDetails = async () => {
         dispatch({ type: GET_USER_BEGIN })
         try {
@@ -526,6 +531,7 @@ const AppProvider = ({ children }) => {
                 getPopularCourses,
                 activateUser,
                 deactivateUser,
+                clearValues
             }}
         >
             {children}

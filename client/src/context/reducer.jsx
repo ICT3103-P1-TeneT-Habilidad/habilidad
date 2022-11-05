@@ -2,6 +2,7 @@ import {
     SHOW_MODAL,
     CLEAR_ALERT,
     LOGOUT,
+    CLEAR_VALUES,
     SETUP_USER_BEGIN,
     SETUP_USER_SUCCESS,
     SETUP_USER_ERROR,
@@ -75,12 +76,32 @@ const reducer = (state, action) => {
                 ...state,
                 openModal: !state.openModal,
             }
-        // case CLEAR_VALUES: {
-        //     const initialState = {
-        //         user_type: '',
-        //     }
-        //     return { ...state, ...initialState }
-        // }
+        case CLEAR_VALUES: {
+            const initialState = {
+                user: null,
+
+                showNavbarModal: false,
+                openModal: false,
+                showAlert: false,
+                isLoading: false,
+                loginOtp: false,
+
+                user_data: null, // to store all users
+                alert_msg: '',
+                alert_type: '',
+                courses: null,
+                topics: null,
+                courseDetail: null,
+
+                edit_course: null,
+                courses_topics: null,
+                top_topics: null,
+                popular_course: null,
+
+                user_details: {},
+            }
+            return { ...initialState }
+        }
         case CLEAR_ALERT:
             return {
                 ...state,

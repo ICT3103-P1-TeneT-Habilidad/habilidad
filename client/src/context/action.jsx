@@ -2,6 +2,7 @@
 export const SHOW_MODAL = 'SHOW_MODAL'
 export const CLEAR_ALERT = 'CLEAR_ALERT'
 export const LOGOUT = 'LOGOUT'
+export const CLEAR_VALUES = 'CLEAR_VALUES'
 
 /*------------------------------------------------------------------------------------
 USER RELATED
