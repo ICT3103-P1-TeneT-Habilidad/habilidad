@@ -2,6 +2,7 @@ import {
     SHOW_MODAL,
     CLEAR_ALERT,
     LOGOUT,
+    CLEAR_VALUES,
     SETUP_USER_BEGIN,
     SETUP_USER_SUCCESS,
     SETUP_USER_ERROR,
@@ -17,12 +18,21 @@ import {
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
+    ACTIVATE_USER_BEGIN,
+    ACTIVATE_USER_SUCCESS,
+    ACTIVATE_USER_ERROR,
+    DEACTIVATE_USER_BEGIN,
+    DEACTIVATE_USER_SUCCESS,
+    DEACTIVATE_USER_ERROR,
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
+    GET_ALL_USERS_BEGIN,
+    GET_ALL_USERS_SUCCESS,
+    GET_ALL_USERS_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ONE_COURSE_BEGIN,
@@ -31,9 +41,9 @@ import {
     // GET_ALL_PURCHASED_COURSES_BEGIN,
     // GET_ALL_PURCHASED_COURSES_SUCCESS,
     // GET_ALL_PURCHASED_COURSES_ERROR,
-    // GET_ALL_POPULAR_COURSES_BEGIN,
-    // GET_ALL_POPULAR_COURSES_SUCCESS,
-    // GET_ALL_POPULAR_COURSES_ERROR,
+    GET_ALL_POPULAR_COURSES_BEGIN,
+    GET_ALL_POPULAR_COURSES_SUCCESS,
+    GET_ALL_POPULAR_COURSES_ERROR,
     // GET_ALL_TOP_COURSES_BEGIN,
     // GET_ALL_TOP_COURSES_SUCCESS,
     // GET_ALL_TOP_COURSES_ERROR,
@@ -48,9 +58,13 @@ import {
     GET_ONE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    GET_ALL_TOPICS_ERROR,
     GET_COURSE_BY_TOPIC_BEGIN,
     GET_COURSE_BY_TOPIC_SUCCESS,
     GET_COURSE_BY_TOPIC_ERROR,
+    GET_TOP_TOPICS_BEGIN,
+    GET_TOP_TOPICS_SUCCESS,
+    GET_TOP_TOPICS_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -62,12 +76,32 @@ const reducer = (state, action) => {
                 ...state,
                 openModal: !state.openModal,
             }
-        // case CLEAR_VALUES: {
-        //     const initialState = {
-        //         user_type: '',
-        //     }
-        //     return { ...state, ...initialState }
-        // }
+        case CLEAR_VALUES: {
+            const initialState = {
+                user: null,
+
+                showNavbarModal: false,
+                openModal: false,
+                showAlert: false,
+                isLoading: false,
+                loginOtp: false,
+
+                user_data: null, // to store all users
+                alert_msg: '',
+                alert_type: '',
+                courses: null,
+                topics: null,
+                courseDetail: null,
+
+                edit_course: null,
+                courses_topics: null,
+                top_topics: null,
+                popular_course: null,
+
+                user_details: {},
+            }
+            return { ...initialState }
+        }
         case CLEAR_ALERT:
             return {
                 ...state,
@@ -202,6 +236,10 @@ const reducer = (state, action) => {
                 ...state,
                 topics: action.payload.result,
             }
+        case GET_ALL_TOPICS_ERROR:
+            return {
+                ...state,
+            }
         case RESET_PASSWORD_LINK_BEGIN:
             return {
                 ...state,
@@ -268,6 +306,69 @@ const reducer = (state, action) => {
                 courses_topics: action.payload,
             }
         case GET_COURSE_BY_TOPIC_ERROR:
+            return {
+                ...state,
+            }
+        case GET_ALL_USERS_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_USERS_SUCCESS:
+            return {
+                ...state,
+                user_data: action.payload,
+            }
+        case GET_ALL_USERS_ERROR:
+            return {
+                ...state,
+            }
+        case GET_TOP_TOPICS_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_TOP_TOPICS_SUCCESS:
+            return {
+                ...state,
+                top_topics: action.payload,
+            }
+        case GET_TOP_TOPICS_ERROR:
+            return {
+                ...state,
+            }
+        case GET_ALL_POPULAR_COURSES_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_POPULAR_COURSES_SUCCESS:
+            return {
+                ...state,
+                popular_course: action.payload,
+            }
+        case GET_ALL_POPULAR_COURSES_ERROR:
+            return {
+                ...state,
+            }
+        case ACTIVATE_USER_BEGIN:
+            return {
+                ...state,
+            }
+        case ACTIVATE_USER_SUCCESS:
+            return {
+                ...state,
+            }
+        case ACTIVATE_USER_ERROR:
+            return {
+                ...state,
+            }
+        case DEACTIVATE_USER_BEGIN:
+            return {
+                ...state,
+            }
+        case DEACTIVATE_USER_SUCCESS:
+            return {
+                ...state,
+            }
+        case DEACTIVATE_USER_ERROR:
             return {
                 ...state,
             }

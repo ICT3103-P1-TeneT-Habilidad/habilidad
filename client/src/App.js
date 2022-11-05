@@ -21,20 +21,20 @@ import {
     Register,
     ViewCourse,
 } from './pages/index'
-import { Footer, Navbar } from './components/index'
+import { Footer, NewNavbar } from './components/index'
 
 function App() {
     return (
         <BrowserRouter>
-            <Navbar />
+            <NewNavbar/>
             <Routes>
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="createcourse" element={<CreateCourse />} />
+                    <Route path="topics/:topicName" element={<CoursesByTopic />} />
                     <Route path="editcourse/:courseId" element={<EditCourse />} />
                     <Route path="studentviewcourse/:courseId" element={<StudentViewCourse />} />
                     <Route path="content/:courseId" element={<CourseContent />} />
-                    <Route path="/topics/:topicName" element={<CoursesByTopic />} />
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
                     <Route path="accountmanagement" element={<AccountsPage />} />
                 </Route>

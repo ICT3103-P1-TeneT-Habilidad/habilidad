@@ -5,6 +5,7 @@ import {
     SHOW_MODAL,
     CLEAR_ALERT,
     LOGOUT,
+    CLEAR_VALUES,
     SETUP_USER_BEGIN,
     SETUP_USER_SUCCESS,
     SETUP_USER_ERROR,
@@ -20,9 +21,12 @@ import {
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
-    // DELETE_USER_BEGIN,
-    // DELETE_USER_SUCCESS,
-    // DELETE_USER_ERROR,
+    ACTIVATE_USER_BEGIN,
+    ACTIVATE_USER_SUCCESS,
+    ACTIVATE_USER_ERROR,
+    DEACTIVATE_USER_BEGIN,
+    DEACTIVATE_USER_SUCCESS,
+    DEACTIVATE_USER_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ALL_COURSES_ERROR,
@@ -37,9 +41,13 @@ import {
     EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    GET_ALL_TOPICS_ERROR,
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
+    GET_ALL_USERS_BEGIN,
+    GET_ALL_USERS_SUCCESS,
+    GET_ALL_USERS_ERROR,
     // GET_ONE_COURSE_BEGIN,
     // GET_ONE_COURSE_SUCCESS,
     // GET_ONE_COURSE_ERROR,
@@ -55,6 +63,12 @@ import {
     GET_COURSE_BY_TOPIC_BEGIN,
     GET_COURSE_BY_TOPIC_SUCCESS,
     GET_COURSE_BY_TOPIC_ERROR,
+    GET_TOP_TOPICS_BEGIN,
+    GET_TOP_TOPICS_SUCCESS,
+    GET_TOP_TOPICS_ERROR,
+    GET_ALL_POPULAR_COURSES_BEGIN,
+    GET_ALL_POPULAR_COURSES_SUCCESS,
+    GET_ALL_POPULAR_COURSES_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -68,7 +82,7 @@ export const initialState = {
     isLoading: false,
     loginOtp: false,
 
-    user_data: {},
+    user_data: null, // to store all users
     alert_msg: '',
     alert_type: '',
     courses: null,
@@ -77,6 +91,8 @@ export const initialState = {
 
     edit_course: null,
     courses_topics: null,
+    top_topics: null,
+    popular_course: null,
 
     user_details: {},
 }
@@ -90,8 +106,11 @@ const AppProvider = ({ children }) => {
     // interceptors
     authFetch.interceptors.request.use(
         (config) => {
-            if (user) {
-                const { accessToken } = JSON.parse(user)
+            const newUser = getUser()
+            if (newUser) {
+                console.log(newUser)
+                const { accessToken } = newUser
+                console.log(accessToken)
                 config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
@@ -113,7 +132,9 @@ const AppProvider = ({ children }) => {
                 if (err.response.data.result.status === 401 && !originalConfig._retry && user) {
                     originalConfig._retry = true
                     try {
-                        const { refreshToken } = JSON.parse(user)
+                        const newUser = getUser()
+
+                        const { refreshToken } = newUser
 
                         // const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
                         // const result = data.result.data
@@ -124,14 +145,12 @@ const AppProvider = ({ children }) => {
                             refreshToken,
                         })
                         const result = data.result.data
-                        initialState.user = result
                         setUser(result)
 
                         const { accessToken } = result
-                        updateAccessToken(accessToken)
                         // authFetch.headers['authorization'] = `Bearer ${accessToken}`
-                        authFetch.headers = {
-                            ...authFetch.headers,
+                        originalConfig.headers = {
+                            ...originalConfig.headers,
                             authorization: `Bearer ${accessToken}`,
                         }
 
@@ -157,24 +176,24 @@ const AppProvider = ({ children }) => {
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
         console.log(user)
-        return user?.refreshToken
+        return JSON.parse(user)?.refreshToken
     }
 
     const getAccessToken = () => {
         const user = localStorage.getItem('user')
         console.log(user)
 
-        return user?.accessToken
+        return JSON.parse(user)?.accessToken
     }
 
     const updateAccessToken = (token) => {
         let user = localStorage.getItem('user')
         user.accessToken = token
-        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('user', user)
     }
 
     const getUser = () => {
-        return localStorage.getItem('user')
+        return JSON.parse(localStorage.getItem('user'))
     }
 
     const setUser = (user) => {
@@ -286,7 +305,7 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             console.log(err.response)
-            // logout()
+            dispatch({ type: GET_ALL_TOPICS_ERROR })
         }
     }
 
@@ -353,14 +372,9 @@ const AppProvider = ({ children }) => {
         }, 5000)
     }
 
-    // const getAllPopularCourses = async () => {
-    //     dispatch({ type: GET_ALL_POPULAR_COURSES_BEGIN })
-    //     try {
-    //         const { data } = await axios.get('/api/course/popularCourses')
-    //     } catch (err) {
-    //         dispatch({ type: GET_ALL_POPULAR_COURSES_ERROR, payload: { msg: err.response.data.result.message } })
-    //     }
-    // }
+    const clearValues = () => {
+        dispatch({ type: CLEAR_VALUES })
+    }
 
     const getUserDetails = async () => {
         dispatch({ type: GET_USER_BEGIN })
@@ -408,6 +422,21 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const getAllUsers = async () => {
+        dispatch({ type: GET_ALL_USERS_BEGIN })
+        try {
+            const { data } = await authFetch.get(`/api/users/allUsers`)
+            const result = data.data
+            console.log(result)
+            dispatch({
+                type: GET_ALL_USERS_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({ type: GET_ALL_USERS_ERROR })
+        }
+    }
+
     const editCourse = async (courseId, course) => {
         dispatch({ type: EDIT_COURSE_BEGIN })
         try {
@@ -418,6 +447,60 @@ const AppProvider = ({ children }) => {
         } catch (err) {
             dispatch({ type: EDIT_COURSE_ERROR })
         }
+    }
+
+    const getTopTopics = async () => {
+        dispatch({ type: GET_TOP_TOPICS_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/topics/popularTopics`)
+            const result = data.result.data
+            dispatch({
+                type: GET_TOP_TOPICS_SUCCESS,
+                payload: result,
+            })
+        } catch (err) {
+            dispatch({ type: GET_TOP_TOPICS_ERROR })
+        }
+    }
+
+    const getPopularCourses = async () => {
+        dispatch({ type: GET_ALL_POPULAR_COURSES_BEGIN })
+        try {
+            const { data } = await axios.get(`/api/course/popularCourses`)
+            const result = data.result.data
+            dispatch({
+                type: GET_ALL_POPULAR_COURSES_SUCCESS,
+                payload: result,
+            })
+        } catch (err) {
+            dispatch({ type: GET_ALL_POPULAR_COURSES_ERROR })
+        }
+    }
+
+    const activateUser = async () => {
+        dispatch({ type: ACTIVATE_USER_BEGIN })
+        try {
+            const { data } = await authFetch.patch(`api/users/reactivate`)
+            const result = data.result
+            dispatch({ type: ACTIVATE_USER_SUCCESS, payload: result })
+        } catch (err) {
+            dispatch({ type: ACTIVATE_USER_ERROR })
+        }
+        getAllUsers()
+    }
+
+    const deactivateUser = async (data) => {
+        console.log('hit')
+        console.log(data)
+        dispatch({ type: DEACTIVATE_USER_BEGIN })
+        try {
+            const { data } = await authFetch.patch(`api/users/deactivate`)
+            const result = data.result
+            dispatch({ type: DEACTIVATE_USER_SUCCESS, payload: result })
+        } catch (err) {
+            dispatch({ type: DEACTIVATE_USER_ERROR })
+        }
+        getAllUsers()
     }
 
     return (
@@ -444,7 +527,14 @@ const AppProvider = ({ children }) => {
                 updateUserDetails,
                 getCourseByTopic,
                 getCourseDetail,
+                getAllUsers,
                 editCourse,
+                getTopTopics,
+                refreshToken,
+                getPopularCourses,
+                activateUser,
+                deactivateUser,
+                clearValues,
             }}
         >
             {children}
