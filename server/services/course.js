@@ -154,15 +154,6 @@ export const findPopularCourse = async () => {
         where: {
             isPopular: true
         },
-        select: {
-            courseId: true,
-            courseName: true,
-            imageUrl: true,
-            description: true,
-            price: true,
-            duration: true,
-            instructor: true
-        },
         include: {
             instructor: true
         }
