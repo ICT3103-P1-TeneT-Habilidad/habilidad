@@ -219,7 +219,6 @@ export const resetPassword = async (req, res, next) => {
         const result = await updatePasswordAndDeleteToken({ userId, hashedPassword, username })
 
         if (result.length > 0) {
-            // return result
             res.status(responseCode.res_ok).json({
                 status: 'Password reset sucessfully',
             })
@@ -278,9 +277,7 @@ export const sendEmailResetLink = async (req, res, next) => {
             }
         })
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err, 'res_internalServer', 'Failed to send reset link')
-        console.log(error)
         next(error)
     }
 }
@@ -293,7 +290,6 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
 
         const user = await findUserByEmail(email)
 
-        console.log(user)
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
         const emailMsg = email_template_deactivate
@@ -381,7 +377,6 @@ export const sendEmailOtp = async (req, res, next) => {
             }
         })
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err, 'res_internalServer', 'Failed to send OTP')
         next(error)
     }
@@ -397,8 +392,6 @@ export const verifyEmailOtp = async (req, res, next) => {
 
         // verify if token
         const currentdata = new Date()
-        console.log(otp[0].expiredAt)
-        console.log(currentdata)
         if (otp[0].expiredAt < currentdata) throw new Response('Token Expired', 'res_unauthorised')
 
         await deleteOtpById(otp[0].oTokenId)
