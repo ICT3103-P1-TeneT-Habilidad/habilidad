@@ -35,6 +35,22 @@ export default function NewNavbar() {
                                     </Link>
                                 </div>
                             </div>
+                            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                                {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
+                                <Link
+                                    to="/courselist"
+                                    className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                                >
+                                    Course Lists
+                                </Link>
+
+                                <Link
+                                    to="/accountmanagement"
+                                    className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                                >
+                                    Account Management
+                                </Link>
+                            </div>
                             <div className="hidden sm:ml-6 sm:flex sm:items-center">
                                 {/* Profile dropdown */}
                                 <Menu as="div" className="ml-3 relative">
@@ -47,7 +63,7 @@ export default function NewNavbar() {
                                                 </div>
                                             </Menu.Button>
                                         ) : (
-                                            <Menu.Button className="rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <Menu.Button className="flex text-sm">
                                                 <span className="sr-only">Open user menu</span>
                                                 <span className="uppercase font-medium">{username}</span>
                                             </Menu.Button>

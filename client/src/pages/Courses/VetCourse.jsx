@@ -5,7 +5,7 @@ import { sortCourseMaterials } from '../../utils/Helpers'
 import { Error404 } from '../Errors'
 
 const VetCourse = () => {
-    const { courseDetail, getCourseDetail, courses, getAllCourses } = useAppContext()
+    const { courseDetail, getCourseDetail, courses, getAllCourses, updateCourseApproval } = useAppContext()
     const { courseId } = useParams()
 
     const [courseData2, setCourseData2] = useState()
@@ -38,12 +38,20 @@ const VetCourse = () => {
                     <Error404 />
                 ) : (
                     <>
-                        <div className="flex justify-end">
+                        <div className="relative flex flex-row space-x-2 justify-end">
                             <button
-                                className="absolute shadow focus:shadow-outline focus:outline-none text-black bg-emerald-400 font-bold py-2 px-4 rounded"
+                                className=" shadow focus:shadow-outline focus:outline-none text-black bg-emerald-400 font-bold py-2 px-4 rounded"
                                 type="button"
+                                onClick={() => updateCourseApproval({status: "APPROVED", courseId: courseId})}
                             >
                                 Approve Course
+                            </button>
+                            <button
+                                className=" shadow focus:shadow-outline focus:outline-none text-black bg-red-400 font-bold py-2 px-4 rounded"
+                                type="button"
+                                onClick={() => updateCourseApproval({status: "REJECTED", courseId: courseId})}
+                            >
+                                Reject Course
                             </button>
                         </div>
                         <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">

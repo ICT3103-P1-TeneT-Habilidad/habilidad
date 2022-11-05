@@ -69,6 +69,9 @@ import {
     GET_ALL_POPULAR_COURSES_BEGIN,
     GET_ALL_POPULAR_COURSES_SUCCESS,
     GET_ALL_POPULAR_COURSES_ERROR,
+    APPROVE_COURSE_BEGIN,
+    APPROVE_COURSE_SUCCESS,
+    APPROVE_COURSE_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -496,6 +499,18 @@ const AppProvider = ({ children }) => {
         getAllUsers()
     }
 
+    const updateCourseApproval = async (course_data) => {
+        dispatch({ type: APPROVE_COURSE_BEGIN })
+        try {
+            const { data } = await authFetch.patch(`api/course/${course_data.courseId}`, course_data.status)
+            const result = data.result
+            dispatch({ type: APPROVE_COURSE_SUCCESS })
+        } catch (err) {
+            dispatch({ type: APPROVE_COURSE_ERROR })
+        }
+        getAllCourses()
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -528,6 +543,7 @@ const AppProvider = ({ children }) => {
                 activateUser,
                 deactivateUser,
                 clearValues,
+                updateCourseApproval,
             }}
         >
             {children}
