@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { BigTable } from '../../components'
 import { useAppContext } from '../../context/appContext'
 import moment from 'moment'
-import { Link } from 'react-router-dom'
 
 const AccountsPage = () => {
     const { user_data, getAllUsers } = useAppContext()

@@ -10,7 +10,7 @@ import { BsFillPersonFill } from 'react-icons/bs'
 import BigLogo from '../assets/habilidad_large_logo.png'
 
 export default function NewNavbar() {
-    const { showModal, openModal, getUserDetails, user_details } = useAppContext()
+    const { getUserDetails, user_details, logout } = useAppContext()
     const [username, setUsername] = useState()
 
     useEffect(() => {
@@ -46,9 +46,9 @@ export default function NewNavbar() {
                                                 </div>
                                             </Menu.Button>
                                         ) : (
-                                            <Menu.Button className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <Menu.Button className="rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                 <span className="sr-only">Open user menu</span>
-                                                <span>{username}</span>
+                                                <span className='uppercase font-medium'>{username}</span>
                                             </Menu.Button>
                                         )}
                                     </div>
@@ -64,28 +64,33 @@ export default function NewNavbar() {
                                         <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100' : '',
-                                                            'block px-4 py-2 text-sm text-gray-700'
-                                                        )}
-                                                    >
-                                                        Your Profile
-                                                    </a>
+                                                    <Link to="/profile">
+                                                        <button
+                                                            className={classNames(
+                                                                active ? 'bg-gray-100' : '',
+                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                            )}
+                                                        >
+                                                            Your Profile
+                                                        </button>
+                                                    </Link>
                                                 )}
                                             </Menu.Item>
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            active ? 'bg-gray-100' : '',
-                                                            'block px-4 py-2 text-sm text-gray-700'
-                                                        )}
-                                                    >
-                                                        Sign out
-                                                    </a>
+                                                    <Link to="/">
+                                                        <button
+                                                            onClick={() => {
+                                                                logout()
+                                                            }}
+                                                            className={classNames(
+                                                                active ? 'bg-gray-100' : '',
+                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                            )}
+                                                        >
+                                                            Sign out
+                                                        </button>
+                                                    </Link>
                                                 )}
                                             </Menu.Item>
                                         </Menu.Items>
@@ -114,18 +119,21 @@ export default function NewNavbar() {
                                 </div>
                             </div>
                             <div className="mt-3 space-y-1">
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                                >
-                                    Your Profile
-                                </a>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
-                                >
-                                    Sign out
-                                </a>
+                                <Link to="/profile">
+                                    <button className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                                        Your Profile
+                                    </button>
+                                </Link>
+                                <Link to="/">
+                                    <button
+                                        onClick={() => {
+                                            logout()
+                                        }}
+                                        className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                                    >
+                                        Sign out
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </Disclosure.Panel>
