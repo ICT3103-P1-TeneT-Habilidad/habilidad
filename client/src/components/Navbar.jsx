@@ -1,54 +1,48 @@
-import React, { useState } from 'react'
+import { Disclosure, Menu } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
-import { NavbarModal } from '../components/index'
-// import icons
-import { AiOutlineMenu } from 'react-icons/ai'
+import { NavbarModal } from './index'
+// import icons and assets
 import { BsFillPersonFill } from 'react-icons/bs'
-// import logos
-import Logo_big from '../assets/habilidad_large_logo.png'
+import BigLogo from '../assets/habilidad_large_logo.png'
 
-export default function Navbar({ fixed }) {
-    const [navbarOpen, setNavbarOpen] = useState(false)
+export default function NewNavbar() {
     const { showModal, openModal } = useAppContext()
 
     return (
         <>
-            <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-navbarfooter">
-                <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
-                    <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start items-center">
-                        <Link
-                            to="/"
-                            className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-black"
-                        >
-                            {/* {website_name} */}
-                            <img src={Logo_big} alt="Big Logo" className="object-scale-down h-28" />
-                        </Link>
-                        <button
-                            className="text-black cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
-                            type="button"
-                            onClick={() => setNavbarOpen(!navbarOpen)}
-                        >
-                            <AiOutlineMenu />
-                        </button>
-                    </div>
-                    <div
-                        className={'lg:flex flex-grow items-center' + (navbarOpen ? ' flex' : ' hidden')}
-                        id="example-navbar-danger"
-                    >
-                        <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-                            <li className="nav-item">
-                                <div className="flex text-sm font-bold leading-relaxed mr-4 py-2 uppercase text-black items-center">
-                                    <BsFillPersonFill />
-                                    <button type="button" className="ml-2" onClick={() => showModal()}>
-                                        LOGIN/REGISTER
-                                    </button>
+            <Disclosure as="nav" className="bg-navbarfooter shadow">
+                {({ open }) => (
+                    <>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between h-16">
+                                <div className="flex">
+                                    <div className="flex-shrink-0 flex items-center">
+                                        <Link to="/">
+                                            <img className="hidden lg:block h-24 w-auto" src={BigLogo} alt="biglogo" />
+                                        </Link>
+                                    </div>
                                 </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+                                <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                                    {/* Profile dropdown */}
+                                    <Menu as="div" className="ml-3 relative">
+                                        <div>
+                                            <Menu.Button>
+                                                <div className="flex text-sm font-bold leading-relaxed mr-4 py-2 uppercase text-black items-center">
+                                                    <BsFillPersonFill />
+                                                    <button type="button" className="ml-2" onClick={() => showModal()}>
+                                                        LOGIN/REGISTER
+                                                    </button>
+                                                </div>
+                                            </Menu.Button>
+                                        </div>
+                                    </Menu>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </Disclosure>
             {openModal && <NavbarModal />}
         </>
     )

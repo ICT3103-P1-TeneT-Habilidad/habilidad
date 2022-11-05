@@ -4,8 +4,9 @@ import CourseCard from './CourseCard'
 import CourseContentNav from './CourseContentNav'
 import Footer from './Footer'
 import LoadingMsg from './LoadingMsg'
+import NavbarAuth from './NavbarAuth'
 import NavbarModal from './NavbarModal'
-import NewNavbar from './NewNavbar'
+import Navbar from './Navbar'
 import OneCourseCard from './OneCourseCard'
 import OneTopicCard from './OneTopicCard'
 import PopularCourse from './PopularCourse'
@@ -19,8 +20,9 @@ export {
     CourseContentNav,
     Footer,
     LoadingMsg,
+    Navbar,
+    NavbarAuth,
     NavbarModal,
-    NewNavbar,
     PopularCourse,
     OneCourseCard,
     OneTopicCard,

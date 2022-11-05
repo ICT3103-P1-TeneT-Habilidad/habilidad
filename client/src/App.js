@@ -21,12 +21,16 @@ import {
     Register,
     ViewCourse,
 } from './pages/index'
-import { Footer, NewNavbar } from './components/index'
+import { Footer, NavbarAuth, Navbar } from './components/index'
+import { useAppContext } from './context/appContext'
 
 function App() {
+
+    const {user} = useAppContext()
+
     return (
         <BrowserRouter>
-            <NewNavbar/>
+        {user?.accessToken ? <NavbarAuth/> : <Navbar/>}
             <Routes>
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
