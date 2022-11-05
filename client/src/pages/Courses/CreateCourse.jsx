@@ -1,11 +1,11 @@
-import { React, useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { v4 as uuid } from 'uuid'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { languageOptions } from '../utils/Constants'
-import { v4 as uuid } from 'uuid'
-import imagePlaceholder from '../assets/noimage.jpg'
-import { useAppContext } from '../context/appContext'
+import { languageOptions } from '../../utils/Constants'
+import imagePlaceholder from '../../assets/noimage.jpg'
+import { useAppContext } from '../../context/appContext'
 
 const CreateCourse = () => {
     const { createNewCourse, getAllTopics, topics } = useAppContext()
@@ -35,6 +35,7 @@ const CreateCourse = () => {
 
     useEffect(() => {
         getAllTopics()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -68,7 +69,7 @@ const CreateCourse = () => {
                     <div className="w-10/12 p-3">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-2"
-                            for={keyId}
+                            htmlFor={keyId}
                         >
                             Lesson {currentKeyList.current.length}
                         </label>
@@ -234,7 +235,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="courseName"
+                                        htmlFor="courseName"
                                     >
                                         Course Name
                                     </label>
@@ -253,7 +254,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="duration"
+                                        htmlFor="duration"
                                     >
                                         Course Duration (in hours)
                                     </label>
@@ -272,7 +273,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="topicCourse"
+                                        htmlFor="topicCourse"
                                     >
                                         Relevant Topics
                                     </label>
@@ -307,7 +308,7 @@ const CreateCourse = () => {
                                 <div className="flex flex-col p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="courseDescription"
+                                        htmlFor="courseDescription"
                                     >
                                         Description
                                     </label>
@@ -327,7 +328,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="language"
+                                        htmlFor="language"
                                     >
                                         Language
                                     </label>
@@ -357,7 +358,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="price"
+                                        htmlFor="price"
                                     >
                                         Course Price (in SGD)
                                     </label>
@@ -376,7 +377,7 @@ const CreateCourse = () => {
                                 <div className="p-3">
                                     <label
                                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                        for="image"
+                                        htmlFor="image"
                                     >
                                         Cover Image
                                     </label>

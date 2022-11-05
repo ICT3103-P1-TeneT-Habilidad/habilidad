@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
-import LoginOtp from './LoginOtp'
+import LoginOtp from './Login/LoginOtp'
 
 const OtpRoute = () => {
     const { loginOtp, user } = useAppContext()

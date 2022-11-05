@@ -1,11 +1,9 @@
 import db from '../utils/db.js'
 
 export const findOneCourse = async (courseId) => {
-    return db.course.findMany({
+    return db.course.findUnique({
         where: {
-            courseId: {
-                equals: courseId,
-            },
+            courseId: courseId,
         },
         include: {
             courseMaterial: true,
@@ -155,15 +153,6 @@ export const findPopularCourse = async () => {
     return db.course.findMany({
         where: {
             isPopular: true
-        },
-        select: {
-            courseId: true,
-            courseName: true,
-            imageUrl: true,
-            description: true,
-            price: true,
-            duration: true,
-            instructor: true
         },
         include: {
             instructor: true

@@ -2,14 +2,30 @@ import { React, useEffect, useState, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { languageOptions } from '../utils/Constants'
-import { useAppContext } from '../context/appContext'
-import { formatTopicOption, sortCourseMaterials } from '../utils/Helpers'
-import imagePlaceholder from '../assets/noimage.jpg'
+import { languageOptions } from '../../utils/Constants'
+import { useAppContext } from '../../context/appContext'
+import { formatTopicOption, sortCourseMaterials } from '../../utils/Helpers'
+import imagePlaceholder from '../../assets/noimage.jpg'
+import { useParams } from 'react-router-dom'
+import { Alert, LoadingMsg } from '../../components'
 
 const EditCourse = () => {
-    const { getAllTopics, topics } = useAppContext()
+    const { getAllTopics, topics, getCourseDetail, courseDetail, editCourse, isLoading, showAlert } = useAppContext()
     const animatedComponents = makeAnimated()
+    const { courseId } = useParams()
+
+    useEffect(() => {
+        showLoadingMsg()
+    }, [isLoading])
+
+    const showLoadingMsg = () => {
+        return <LoadingMsg />
+    }
+
+    useEffect(() => {
+        getCourseDetail(courseId)
+        getAllTopics()
+    }, [])
 
     const [coverImagePreview, setCoverImagePreview] = useState(imagePlaceholder)
     const [materialVideoPreview, setMaterialVideoPreview] = useState({})
@@ -32,76 +48,16 @@ const EditCourse = () => {
     const currentMaterialComponents = useRef({})
     currentMaterialComponents.current = materialComponents
 
-    const courseData = {
-        courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
-        courseName: 'dumb',
-        imageUrl: 'https://res.cloudinary.com/drznyznmo/image/upload/v1667308005/xhgr8cefstr8t0uu8nn0.jpg',
-        duration: 10000,
-        price: 10.99,
-        description: 'test_course_1_des',
-        language: 'ENGLISH',
-        courseMaterial: [
-            {
-                courseMaterialId: '7477c8cb-d51e-4a25-872b-89b058656710',
-                title: 'Basics of React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 2,
-            },
-            {
-                courseMaterialId: 'e5e7fdff-517a-4533-b024-ccda2b819601',
-                title: 'Death 1 to React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 1,
-            },
-            {
-                courseMaterialId: 'f921ad6d-d4cd-4b9b-9ff0-103c65e9998e',
-                title: 'Death 2 to React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 4,
-            },
-            {
-                courseMaterialId: '8841a240-8893-491f-86fb-49a03a4d32c6',
-                title: 'Death 3 to React',
-                url: 'https://res.cloudinary.com/drznyznmo/video/upload/v1667394035/video_2022-11-02_20-58-06_ae87rs.mp4',
-                order: 3,
-            },
-        ],
-        topicCourse: [
-            {
-                topicCourseId: '017855b1-58f4-4efd-b1ab-ce74857745a8',
-                courseId: 'd9f4092c-b629-494d-b223-fb5c9b076b4a',
-                topicId: '791ecc1c-4729-4838-b4bc-81cdf4ba10f3',
-                topic: {
-                    topicName: 'REEEEEEEEEEEE',
-                    //whatever other info
-                },
-            },
-        ],
-    }
-
     const getOriginalTopics = () => {
-        return courseData.topicCourse.map((element) => ({
+        const temp = courseDetail?.topicCourse?.map((element) => ({
             value: element.topicId,
-            label: element.topic.topicName,
+            label: element.topics?.topicName,
         }))
-    }
-
-    const setDefaults = () => {
-        const defaults = {
-            courseName: courseData.courseName,
-            duration: courseData.duration,
-            price: courseData.price,
-            courseDescription: courseData.description,
-            image: courseData.imageUrl,
-            topicCourse: getOriginalTopics(),
-            language: languageOptions[languageOptions.findIndex((obj) => obj.value === courseData.language)],
-        }
-
-        return defaults
+        return temp
     }
 
     const loadCourseMaterials = () => {
-        const sorted = sortCourseMaterials(courseData.courseMaterial)
+        const sorted = sortCourseMaterials(courseDetail?.courseMaterial)
         setKeysList(sorted.map((material) => material.courseMaterialId))
         sorted.forEach((material) => {
             const tempMaterialInfo = currentMaterialInfo.current
@@ -127,9 +83,18 @@ const EditCourse = () => {
         handleSubmit,
         formState: { errors },
         control,
+        reset,
     } = useForm({
         mode: 'onBlur',
-        defaultValues: setDefaults(),
+        defaultValues: {
+            courseName: courseDetail?.courseName,
+            duration: courseDetail?.duration,
+            price: courseDetail?.price,
+            courseDescription: courseDetail?.description,
+            image: courseDetail?.imageUrl,
+            topicCourse: getOriginalTopics(),
+            language: {},
+        },
     })
 
     const dataCleanUp = (data) => {
@@ -145,7 +110,6 @@ const EditCourse = () => {
 
     const onSubmit = (data) => {
         data = dataCleanUp(data)
-        console.log(data)
 
         const formData = new FormData()
         for (const key in data) {
@@ -154,14 +118,12 @@ const EditCourse = () => {
                 for (const i in data[key]) {
                     if (typeof data[key][i].file === 'object') {
                         formData.append('materialFiles', data[key][i].file)
-                    } else {
-                        formData.append('materialFiles', null)
+                        material.push({
+                            courseMaterialId: i,
+                            title: data[key][i].title,
+                            order: data[key][i].order,
+                        })
                     }
-                    material.push({
-                        courseMaterialId: i,
-                        title: data[key][i].title,
-                        order: data[key][i].order,
-                    })
                 }
                 formData.append(key, JSON.stringify(material))
             } else if (key === 'topicCourse') {
@@ -170,7 +132,7 @@ const EditCourse = () => {
                 formData.append(key, data[key])
             }
         }
-
+        editCourse(courseId, formData)
     }
 
     const fileHandler = (file, keyId) => {
@@ -267,10 +229,21 @@ const EditCourse = () => {
     }
 
     useEffect(() => {
-        getAllTopics()
-        setCoverImagePreview(courseData.imageUrl)
+        setCoverImagePreview(courseDetail?.imageUrl)
         loadCourseMaterials()
-    }, [])
+        reset({
+            courseName: courseDetail?.courseName,
+            duration: courseDetail?.duration,
+            price: courseDetail?.price,
+            courseDescription: courseDetail?.description,
+            image: courseDetail?.imageUrl,
+            topicCourse: getOriginalTopics(),
+            language: {
+                value: courseDetail?.language,
+                label: courseDetail?.language.charAt(0) + courseDetail?.language.slice(1).toLowerCase(),
+            },
+        })
+    }, [courseDetail])
 
     return (
         <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 w-full">
@@ -466,7 +439,7 @@ const EditCourse = () => {
                                 <h3 className="text-xl font-extrabold text-gray-900">Upload Course Material</h3>
                             </div>
                             {keysList.map((keyId) => (
-                                <div id={keyId}>{materialComponents[keyId]}</div>
+                                <div key={keyId}>{materialComponents[keyId]}</div>
                             ))}
                         </div>
                         {/* button row */}
@@ -479,6 +452,7 @@ const EditCourse = () => {
                                     Submit
                                 </button>
                             </div>
+                            {showAlert ? <Alert /> : isLoading && showLoadingMsg()}
                         </div>
                     </div>
                 </form>

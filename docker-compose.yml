@@ -6,24 +6,45 @@ services:
       context: ./client
     ports:
       - "${CLIENT_HOST}:${CLIENT_PORT}"
+    network_mode: "host"
     environment:
       - WATCHPACK_POLLING=true
     volumes:
       - ./client:/app/
       - /app/node_modules
     container_name: client
+  database:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: "${DB_NAME}"
+      # MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
+    ports:
+      - "${DB_HOST}:${DB_PORT}"
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      - backend
+    container_name: database
   server:
+    depends_on:
+      - database
     stdin_open: true
     build:
       dockerfile: Dockerfile
       context: ./server
     ports:
       - "${SERVER_HOST}:${SERVER_PORT}"
-    network_mode: "host"
+    networks:
+      - backend
     volumes:
       - ./server:/app/
       - /app/node_modules
     container_name: server
-  # entrypoint: npm start
+
 volumes:
-  data:
+  my-db:
+
+networks:
+  backend:
