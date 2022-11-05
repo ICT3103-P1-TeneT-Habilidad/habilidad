@@ -135,7 +135,7 @@ export const userRegister = async (req, res, next) => {
     try {
         const { status, message } = req.validate
 
-        if (!status) throw new Response(`Does not meet requirement: ${message}`, 'res_badRequest')
+        if (!status) throw new Response(`${message}`, 'res_badRequest')
 
         const { email, password, username, phoneNumber, name, role, confirmedPassword } = req.body
         if (password !== confirmedPassword) {
