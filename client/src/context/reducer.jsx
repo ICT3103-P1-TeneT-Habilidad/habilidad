@@ -51,9 +51,13 @@ import {
     GET_ONE_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    GET_ALL_TOPICS_ERROR,
     GET_COURSE_BY_TOPIC_BEGIN,
     GET_COURSE_BY_TOPIC_SUCCESS,
     GET_COURSE_BY_TOPIC_ERROR,
+    GET_TOP_TOPICS_BEGIN,
+    GET_TOP_TOPICS_SUCCESS,
+    GET_TOP_TOPICS_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -205,6 +209,10 @@ const reducer = (state, action) => {
                 ...state,
                 topics: action.payload.result,
             }
+        case GET_ALL_TOPICS_ERROR:
+            return {
+                ...state,
+            }
         case RESET_PASSWORD_LINK_BEGIN:
             return {
                 ...state,
@@ -284,6 +292,19 @@ const reducer = (state, action) => {
                 user_data: action.payload,
             }
         case GET_ALL_USERS_ERROR:
+            return {
+                ...state,
+            }
+        case GET_TOP_TOPICS_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_TOP_TOPICS_SUCCESS:
+            return {
+                ...state,
+                top_topics: action.payload,
+            }
+        case GET_TOP_TOPICS_ERROR:
             return {
                 ...state,
             }

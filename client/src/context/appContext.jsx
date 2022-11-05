@@ -37,6 +37,7 @@ import {
     EDIT_COURSE_ERROR,
     GET_ALL_TOPICS_BEGIN,
     GET_ALL_TOPICS_SUCCESS,
+    GET_ALL_TOPICS_ERROR,
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
@@ -58,6 +59,9 @@ import {
     GET_COURSE_BY_TOPIC_BEGIN,
     GET_COURSE_BY_TOPIC_SUCCESS,
     GET_COURSE_BY_TOPIC_ERROR,
+    GET_TOP_TOPICS_BEGIN,
+    GET_TOP_TOPICS_SUCCESS,
+    GET_TOP_TOPICS_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -80,6 +84,7 @@ export const initialState = {
 
     edit_course: null,
     courses_topics: null,
+    top_topics: null,
 
     user_details: {},
 }
@@ -289,6 +294,7 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             console.log(err.response)
+            dispatch({ type: GET_ALL_TOPICS_ERROR})
             // logout()
         }
     }
@@ -423,6 +429,9 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             dispatch({ type: GET_ALL_USERS_ERROR })
+        }
+    }
+
     const editCourse = async (courseId, course) => {
         dispatch({ type: EDIT_COURSE_BEGIN })
         try {
@@ -432,6 +441,21 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             dispatch({ type: EDIT_COURSE_ERROR })
+        }
+    }
+
+    const getTopTopics = async () => {
+        dispatch({ type: GET_TOP_TOPICS_BEGIN })
+        try {
+            const { data } = await authFetch.get(`/api/topics/popularTopics`)
+            const result = data.result.data
+            console.log(result)
+            dispatch({
+                type: GET_TOP_TOPICS_SUCCESS,
+                payload: result,
+            })
+        } catch (err) {
+            dispatch({ type: GET_TOP_TOPICS_ERROR })
         }
     }
 
@@ -461,6 +485,8 @@ const AppProvider = ({ children }) => {
                 getCourseDetail,
                 getAllUsers,
                 editCourse,
+                getTopTopics,
+                refreshToken,
             }}
         >
             {children}

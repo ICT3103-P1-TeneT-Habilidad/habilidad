@@ -4,8 +4,9 @@ import CourseCard from './CourseCard'
 import CourseContentNav from './CourseContentNav'
 import Footer from './Footer'
 import LoadingMsg from './LoadingMsg'
-import NavbarModal from './NavbarModal'
 import Navbar from './Navbar'
+import NavbarModal from './NavbarModal'
+import OneTopicCard from './OneTopicCard'
 import PopularCourse from './PopularCourse'
 import TopicCard from './TopicCard'
 import TopTopics from './TopTopics'
@@ -20,6 +21,7 @@ export {
     NavbarModal,
     Navbar,
     PopularCourse,
+    OneTopicCard,
     TopicCard,
     TopTopics,
 }
