@@ -13,14 +13,16 @@ export const purchaseOneCourse = async (req, res, next) => {
 
         const { result } = await addOneCoursePurchased({ userId, courseId, amountPaid })
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'success',
-            },
-        })
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }

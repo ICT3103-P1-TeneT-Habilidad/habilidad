@@ -18,6 +18,9 @@ export const getAllTopics = async (req, res, next) => {
     try {
         const topics = await findAllTopics()
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -26,6 +29,10 @@ export const getAllTopics = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -40,6 +47,9 @@ export const createTopic = async (req, res, next) => {
 
         const topic = await createNewTopic({ topicName, description, url: uploadResult.secure_url })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -48,6 +58,10 @@ export const createTopic = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -57,6 +71,9 @@ export const getPopularTopics = async (req, res, next) => {
 
         const topics = await findPopularTopic()
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -64,8 +81,11 @@ export const getPopularTopics = async (req, res, next) => {
             },
         })
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
