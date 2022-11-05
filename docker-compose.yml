@@ -23,7 +23,7 @@ services:
     volumes:
       - ./client:/app/
       - /app/node_modules
-    container_name: client
+    container_name: habilidad_client
 
   ####################
   ###   database   ###
@@ -43,7 +43,7 @@ services:
     networks:
       backend:
         ipv4_address: 172.16.1.4
-    container_name: database
+    container_name: habilidad_database
 
   ####################
   ###    Server    ###
@@ -51,7 +51,7 @@ services:
 
   habilidad_server:
     depends_on:
-      - database
+      - habilidad_database
     stdin_open: true
     build:
       dockerfile: Dockerfile
@@ -64,7 +64,7 @@ services:
     volumes:
       - ./server:/app/
       - /app/node_modules
-    container_name: server
+    container_name: habilidad_server
 
 volumes:
   my-db:
