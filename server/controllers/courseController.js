@@ -293,6 +293,7 @@ export const editCourse = async (req, res, next) => {
 
         const { courseId } = req.sanitizedParams
         const course = await findOneCourse(courseId)
+
         if (!course) throw new Response('Bad Request', 'res_badRequest')
 
         const { image, materialFiles } = req.files
@@ -300,23 +301,27 @@ export const editCourse = async (req, res, next) => {
         const { courseName, duration, price, courseDescription, language, topicCourse, materials } =
             req.sanitizedBody
 
-        const topics = topicCourse ? await findTopicByName(JSON.parse(topicCourse)) : []
+        const topics = topicCourse ? await findTopicByName(JSON.parse(replaceSanitizedQuot(topicCourse))) : []
 
         let imageUploadResult
-        if (image.length > 1) throw new Response('Bad Request', 'res_badRequest')
-        else if (image.length == 1) {
-            imageUploadResult = await cloudinary.uploader.upload(image[0].path, { resource_type: 'video', asset_id: course.imageAssetId, public_id: course.imagePublicId })
-            fs.unlinkSync(image[0].path)
+        if (image) {
+            if (image.length > 1) throw new Response('Bad Request', 'res_badRequest')
+            else if (image.length == 1) {
+                imageUploadResult = await cloudinary.uploader.upload(image[0].path, { resource_type: 'video', asset_id: course.imageAssetId, public_id: course.imagePublicId })
+                fs.unlinkSync(image[0].path)
+            }
+
         }
+        const courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
 
         let uploadResult
-        if (image.length > 0) {
+        if (materialFiles && materialFiles.length > 0) {
 
             let materialUpload = []
             for (const file in materialFiles) {
-                const { assetId, publicId } = getPublibAndAssetId(course, materialFiles[file].courseMaterialId)
+                const { assetId, publicId } = getPublibAndAssetId(course, courseMaterials[file].courseMaterialId)
                 materialUpload.push(
-                    cloudinary.uploader.upload(ele.path, { resource_type: 'video', asset_id: assetId, public_id: publicId })
+                    cloudinary.uploader.upload(materialFiles[file].path, { resource_type: 'video', asset_id: assetId, public_id: publicId })
                 )
             }
             uploadResult = await Promise.all(materialUpload)
@@ -325,7 +330,6 @@ export const editCourse = async (req, res, next) => {
             }
         }
 
-        const courseMaterials = JSON.parse(materials)
 
         await updateOneCourse({
             courseId,
@@ -335,8 +339,8 @@ export const editCourse = async (req, res, next) => {
             courseDescription,
             language,
             topicCourse: topics,
-            imageAssetId: uploadResult.asset_id,
-            imagePublicId: uploadResult.public_id,
+            imageAssetId: uploadResult?.asset_id,
+            imagePublicId: uploadResult?.public_id,
             courseMaterials: courseMaterials.length > 0 ? courseMaterials : null
         })
 

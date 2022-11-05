@@ -38,11 +38,11 @@ router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesCreat
 
 // Get all courses that are by category
 // Sanitized: Req.Body
-router.route('/byCategory').get(sanitizeBody, getCoursesByCategory)
+router.route('/byCategory').post(sanitizeBody, getCoursesByCategory)
 
 // Get all courses that are by top category
 // Sanitized: Req.Body
-router.route('/topCategories').get(sanitizeBody, getCoursesByTopCategories)
+router.route('/topCategories').post(sanitizeBody, getCoursesByTopCategories)
 
 // Get all courses popular among new signups
 router.route('/popularCourses').get(getPopularCourses)
@@ -87,4 +87,5 @@ router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, sanitizeUrlP
 // Auth: Token, Role based
 // Sanitized: Req.Body, Req.Params
 router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, sanitizeUrlParam, editCourse)
+
 export default router

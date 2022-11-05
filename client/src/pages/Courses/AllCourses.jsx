@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import { useAppContext } from '../context/appContext.jsx'
-import { CourseCard } from '../components/index.jsx'
+import { useAppContext } from '../../context/appContext.jsx'
+import { CourseCard } from '../../components/index.jsx'
 import Select from 'react-select'
-import { filterOptions } from '../utils/Constants.jsx'
+import { filterOptions } from '../../utils/Constants.jsx'
 import { useForm, Controller } from 'react-hook-form'
 
 const AllCourses = () => {

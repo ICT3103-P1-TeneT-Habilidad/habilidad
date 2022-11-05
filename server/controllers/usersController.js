@@ -113,8 +113,22 @@ export const userLogin = async (req, res, next) => {
 }
 
 export const userLogout = async (req, res, next) => {
-    const err = new Response('userLogout not implemented', 'res_notImplemented')
-    next(err)
+    try {
+
+        const { userId } = req.payload
+        await deleteRefreshTokenByUserId(userId)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                message: 'success'
+            },
+        })
+
+    } catch (err) {
+        const error = getErrorResponse(err)
+        next(error)
+    }
 }
 
 export const userRegister = async (req, res, next) => {
@@ -162,7 +176,11 @@ export const updateUser = async (req, res, next) => {
 
     try {
         const { userId } = req.payload
-        const { password, phoneNumber, email, name } = req.body
+        const { password, phoneNumber, email, name, confirmedPassword } = req.body
+
+        if (password !== confirmedPassword) {
+            throw new Response('Passwords do not match.', 'res_badRequest')
+        }
 
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await updateUserByUserId({
@@ -392,7 +410,6 @@ export const verifyEmailOtp = async (req, res, next) => {
 
         const { username, token } = req.body
         const otp = await findOtpTokenByUsername({ username, token })
-
 
         if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
 

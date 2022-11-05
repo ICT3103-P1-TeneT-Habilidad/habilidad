@@ -1,6 +1,6 @@
 import React from 'react'
 import Banner from '../assets/banner.png'
-import { PopularCourse, TopCategories } from '../components/index'
+import { PopularCourse, TopTopics } from '../components/index'
 import { useAppContext } from '../context/appContext'
 
 const Dashboard = () => {
@@ -13,7 +13,7 @@ const Dashboard = () => {
                 <img src={Banner} alt="banner" className="object-fill flex-1"></img>
             </div>
             <PopularCourse />
-            <TopCategories />
+            <TopTopics />
         </div>
     )
 }

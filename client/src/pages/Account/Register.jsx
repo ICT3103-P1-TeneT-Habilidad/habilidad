@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAppContext } from '../context/appContext'
-import { Alert } from '../components/index'
+import { useAppContext } from '../../context/appContext'
+import { Alert } from '../../components/index'
 
 const Register = () => {
     const { createUser, showAlert } = useAppContext()
@@ -17,13 +17,8 @@ const Register = () => {
     const password = useRef({})
     password.current = watch('password', '')
 
-    const formatData = (data) => {
-        delete data.re_pwd
-    }
-
     const onSubmit = (data) => {
         console.log(data)
-        formatData(data)
         createUser(data)
         reset()
     }
@@ -169,18 +164,18 @@ const Register = () => {
                             <label>Re-enter Password</label>
                             <div className="mt-1">
                                 <input
-                                    id="re_pwd"
-                                    name="re_pwd"
+                                    id="confirmedPassword"
+                                    name="confirmedPassword"
                                     type="password"
                                     placeholder="Re-Enter Password"
                                     className="w-full border border-slate-300 rounded-md p-2"
-                                    {...register('re_pwd', {
+                                    {...register('confirmedPassword', {
                                         validate: (value) => value === password.current || 'The passwords do not match',
                                         required: 'Please enter the password again',
                                     })}
                                 />
-                                {errors.re_pwd ? (
-                                    <span className="text-sm text-red-500">{errors.re_pwd.message}</span>
+                                {errors.confirmedPassword ? (
+                                    <span className="text-sm text-red-500">{errors.confirmedPassword.message}</span>
                                 ) : null}
                             </div>
                         </div>
