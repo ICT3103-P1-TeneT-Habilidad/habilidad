@@ -28,9 +28,6 @@ function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) 
 
 // Table function
 function BigTable({ columns, data }) {
-
-    console.log(data)
-
     // React-table states and functions
     const {
         getTableProps,

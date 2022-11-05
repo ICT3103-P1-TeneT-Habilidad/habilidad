@@ -20,9 +20,12 @@ import {
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
-    // DELETE_USER_BEGIN,
-    // DELETE_USER_SUCCESS,
-    // DELETE_USER_ERROR,
+    ACTIVATE_USER_BEGIN,
+    ACTIVATE_USER_SUCCESS,
+    ACTIVATE_USER_ERROR,
+    DEACTIVATE_USER_BEGIN,
+    DEACTIVATE_USER_SUCCESS,
+    DEACTIVATE_USER_ERROR,
     GET_ALL_COURSES_BEGIN,
     GET_ALL_COURSES_SUCCESS,
     // GET_ALL_COURSES_ERROR,
@@ -466,6 +469,32 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const activateUser = async () => {
+        dispatch({ type: ACTIVATE_USER_BEGIN })
+        try {
+            const { data } = await authFetch.patch(`api/users/reactivate`)
+            const result = data.result
+            dispatch({ type: ACTIVATE_USER_SUCCESS, payload: result })
+        } catch (err) {
+            dispatch({ type: ACTIVATE_USER_ERROR })
+        }
+        getAllUsers()
+    }
+
+    const deactivateUser = async (data) => {
+        console.log("hit")
+        console.log(data)
+        dispatch({ type: DEACTIVATE_USER_BEGIN })
+        try {
+            const { data } = await authFetch.patch(`api/users/deactivate`)
+            const result = data.result
+            dispatch({ type: DEACTIVATE_USER_SUCCESS, payload: result })
+        } catch (err) {
+            dispatch({ type: DEACTIVATE_USER_ERROR })
+        }
+        getAllUsers()
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -495,6 +524,8 @@ const AppProvider = ({ children }) => {
                 getTopTopics,
                 refreshToken,
                 getPopularCourses,
+                activateUser,
+                deactivateUser,
             }}
         >
             {children}

@@ -85,7 +85,8 @@ export const findAllUsers = async () => {
             username: true,
             createdOn: true,
             updatedOn: true,
-            deactivationDate: true
+            deactivationDate: true,
+            userId: true
         }
     })
 }

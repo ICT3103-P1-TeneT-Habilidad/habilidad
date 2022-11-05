@@ -12,10 +12,6 @@ const AccountsPage = () => {
         // eslint-disable-next-line
     }, [])
 
-    useEffect(() => {
-        console.log(user_data)
-    }, [user_data])
-
     const columns = [
         {
             Header: 'username',
@@ -44,13 +40,38 @@ const AccountsPage = () => {
         {
             id: 'Actions',
             Header: 'Actions',
-            Cell: () => {
-                return (
-                    <div>
-                        <button type="button">Activate</button>
-                        <button type="button">Deactivate</button>
-                    </div>
-                )
+            Cell: ({ row }) => {
+                const { activateUser, deactivateUser } = useAppContext()
+              
+                if (row.original.deactivationDate !== null) {
+                    return (
+                        <div className="p-2">
+                            <button
+                                type="button"
+                                className="rounded-md bg-red-500 text-white p-2"
+                                onClick={() => {
+                                    deactivateUser(row.original.email)
+                                }}
+                            >
+                                Deactivate
+                            </button>
+                        </div>
+                    )
+                } else {
+                    return (
+                        <div className="p-2">
+                            <button
+                                type="button"
+                                className="rounded-md bg-emerald-600 text-white p-2"
+                                onClick={() => {
+                                    activateUser(row.original.userId)
+                                }}
+                            >
+                                Activate
+                            </button>
+                        </div>
+                    )
+                }
             },
         },
     ]

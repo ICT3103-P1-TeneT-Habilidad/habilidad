@@ -17,6 +17,12 @@ import {
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
+    ACTIVATE_USER_BEGIN,
+    ACTIVATE_USER_SUCCESS,
+    ACTIVATE_USER_ERROR,
+    DEACTIVATE_USER_BEGIN,
+    DEACTIVATE_USER_SUCCESS,
+    DEACTIVATE_USER_ERROR,
     // DELETE_USER_BEGIN,
     // DELETE_USER_SUCCESS,
     // DELETE_USER_ERROR,
@@ -318,6 +324,30 @@ const reducer = (state, action) => {
                 popular_course: action.payload,
             }
         case GET_ALL_POPULAR_COURSES_ERROR:
+            return {
+                ...state,
+            }
+        case ACTIVATE_USER_BEGIN:
+            return {
+                ...state,
+            }
+        case ACTIVATE_USER_SUCCESS:
+            return {
+                ...state,
+            }
+        case ACTIVATE_USER_ERROR:
+            return {
+                ...state,
+            }
+        case DEACTIVATE_USER_BEGIN:
+            return {
+                ...state,
+            }
+        case DEACTIVATE_USER_SUCCESS:
+            return {
+                ...state,
+            }
+        case DEACTIVATE_USER_ERROR:
             return {
                 ...state,
             }
