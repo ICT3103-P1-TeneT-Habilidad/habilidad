@@ -60,7 +60,7 @@ services:
       - "${SERVER_HOST}:${SERVER_PORT}"
     networks:
       backend:
-        ipv4_address: 1172.16.1.2
+        ipv4_address: 172.16.1.2
     volumes:
       - ./server:/app/
       - /app/node_modules
