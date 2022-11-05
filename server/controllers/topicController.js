@@ -11,7 +11,6 @@ import fs from 'fs'
 import cloudinary from '../utils/cloudinary.js'
 
 // logs
-import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
 
 export const getAllTopics = async (req, res, next) => {
