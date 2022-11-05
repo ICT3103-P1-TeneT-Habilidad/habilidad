@@ -407,7 +407,6 @@ export const verifyEmailOtp = async (req, res, next) => {
         const { username, token } = req.body
         const otp = await findOtpTokenByUsername({ username, token })
 
-
         if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
 
         // verify if token

@@ -33,7 +33,7 @@ function App() {
                     <Route path="createcourse" element={<CreateCourse />} />
                     <Route path="editcourse/:courseId" element={<EditCourse />} />
                     <Route path="studentviewcourse" element={<StudentViewCourse />} />
-                    <Route path="content" element={<CourseContent />} />
+                    <Route path="content/:courseId" element={<CourseContent />} />
                     <Route path="/topics/:topicName" element={<CoursesByTopic />} />
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
                     <Route path="accountmanagement" element={<AccountsPage />} />
