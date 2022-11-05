@@ -10,6 +10,7 @@ const PopularCourse = () => {
 
     useEffect(() => {
         getPopularCourses()
+        // eslint-disable-next-line
     }, [])
 
     return (

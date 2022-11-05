@@ -10,6 +10,7 @@ const TopTopics = () => {
 
     useEffect(() => {
         getTopTopics()
+        // eslint-disable-next-line
     }, [])
 
     return (

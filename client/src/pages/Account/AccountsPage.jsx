@@ -9,6 +9,7 @@ const AccountsPage = () => {
 
     useEffect(() => {
         getAllUsers()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {

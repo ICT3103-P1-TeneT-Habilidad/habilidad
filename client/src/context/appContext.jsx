@@ -78,7 +78,7 @@ export const initialState = {
     isLoading: false,
     loginOtp: false,
 
-    user_data: {}, // to store all users
+    user_data: null, // to store all users
     alert_msg: '',
     alert_type: '',
     courses: null,
@@ -299,7 +299,6 @@ const AppProvider = ({ children }) => {
         } catch (err) {
             console.log(err.response)
             dispatch({ type: GET_ALL_TOPICS_ERROR })
-            // logout()
         }
     }
 
@@ -366,15 +365,6 @@ const AppProvider = ({ children }) => {
         }, 5000)
     }
 
-    // const getAllPopularCourses = async () => {
-    //     dispatch({ type: GET_ALL_POPULAR_COURSES_BEGIN })
-    //     try {
-    //         const { data } = await axios.get('/api/course/popularCourses')
-    //     } catch (err) {
-    //         dispatch({ type: GET_ALL_POPULAR_COURSES_ERROR, payload: { msg: err.response.data.result.message } })
-    //     }
-    // }
-
     const getUserDetails = async () => {
         dispatch({ type: GET_USER_BEGIN })
         try {
@@ -425,8 +415,8 @@ const AppProvider = ({ children }) => {
         dispatch({ type: GET_ALL_USERS_BEGIN })
         try {
             const { data } = await authFetch.get(`/api/users/allUsers`)
-            console.log(data)
             const result = data.data
+            console.log(result)
             dispatch({
                 type: GET_ALL_USERS_SUCCESS,
                 payload: { result },
