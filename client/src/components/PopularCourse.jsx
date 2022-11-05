@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { OneCourseCard } from '../components'
 import { useAppContext } from '../context/appContext'
-import { useEffect } from 'react'
 // import icons
 import { IoIosArrowForward } from 'react-icons/io'
 
@@ -28,7 +27,11 @@ const PopularCourse = () => {
                 <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">
                     {popular_course &&
                         popular_course.map(function (d, i) {
-                            return i < 5 ? <OneCourseCard data={d} key={i}/> : null
+                            return i < 5 ? (
+                                <Link>
+                                    <OneCourseCard data={d} key={i} />
+                                </Link>
+                            ) : null
                         })}
                 </div>
             </div>

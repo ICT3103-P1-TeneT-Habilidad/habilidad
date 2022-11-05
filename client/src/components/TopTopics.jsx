@@ -27,7 +27,11 @@ const TopTopics = () => {
                 <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">
                     {top_topics &&
                         top_topics.map(function (d, i) {
-                            return i < 5 ? <OneTopicCard data={d} key={i}/> : null
+                            return i < 5 ? (
+                                <Link to={`/topics/${d.topicName}`}>
+                                    <OneTopicCard data={d} key={i} />
+                                </Link>
+                            ) : null
                         })}
                 </div>
             </div>
