@@ -27,6 +27,9 @@ import { addRefreshTokenToWhitelist, deleteRefreshTokenByUserId } from '../servi
 import {
     createNewOTP, deleteOtpByEmail, deleteOtpById, findOtpTokenByUsername
 } from '../services/otpToken.js'
+// logs
+import logger from '../utils/logging/log.js'
+import { LogMessage } from '../utils/logging/logMessage.js'
 
 export const getAllUsers = async (req, res, next) => {
     try {

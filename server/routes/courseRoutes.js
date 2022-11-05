@@ -77,6 +77,8 @@ router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, 
 // Sanitized: Req.Params
 router.route('/:courseId').get(isAuthenticate, sanitizeUrlParam, getOneCourse)
 
+// Get course details 
+
 // Delete course
 // Auth: Token, Role based
 // Sanitized: Req.Params

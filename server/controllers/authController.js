@@ -1,13 +1,14 @@
 // import responses
 import { Response } from '../responses/response.js'
 import jwt from 'jsonwebtoken'
-import logger from '../utils/logging/log.js'
-import { LogMessage } from '../utils/logging/logMessage.js'
 import { getErrorResponse } from '../utils/error.js'
 import { responseCode } from '../responses/responseCode.js'
 import { findRefreshTokenByUserId, revokeTokensByUserId, addRefreshTokenToWhitelist, revokeLastTokenById } from '../services/refreshTokens.js'
 import { generateTokenProcedure } from '../utils/auth.js'
 import { hashToken } from '../utils/hash.js'
+// import logs
+import logger from '../utils/logging/log.js'
+import { LogMessage } from '../utils/logging/logMessage.js'
 
 export const isAuthenticate = async (req, res, next) => {
     try {
