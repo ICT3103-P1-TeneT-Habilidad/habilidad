@@ -240,32 +240,35 @@ const reducer = (state, action) => {
         case EDIT_COURSE_BEGIN:
             return {
                 ...state,
-                edit_course: action.payload,
+                isLoading: true,
             }
         case EDIT_COURSE_SUCCESS:
             return {
                 ...state,
                 showAlert: true,
+                alert_msg: 'Successfuly Updated',
                 alert_type: 'success',
+                isLoading: false,
             }
         case EDIT_COURSE_ERROR:
             return {
                 ...state,
                 showAlert: true,
-                alert_msg: action.payload.msg,
+                alert_msg: 'Error',
                 alert_type: 'danger',
+                isLoading: false,
             }
         case GET_COURSE_BY_TOPIC_BEGIN:
             return {
                 ...state,
             }
         case GET_COURSE_BY_TOPIC_SUCCESS:
-            return{
+            return {
                 ...state,
-                courses_topics: action.payload
+                courses_topics: action.payload,
             }
         case GET_COURSE_BY_TOPIC_ERROR:
-            return{
+            return {
                 ...state,
             }
         default:

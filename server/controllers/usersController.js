@@ -176,7 +176,11 @@ export const updateUser = async (req, res, next) => {
 
     try {
         const { userId } = req.payload
-        const { password, phoneNumber, email, name } = req.body
+        const { password, phoneNumber, email, name, confirmedPassword } = req.body
+
+        if (password !== confirmedPassword) {
+            throw new Response('Passwords do not match.', 'res_badRequest')
+        }
 
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await updateUserByUserId({
@@ -406,7 +410,6 @@ export const verifyEmailOtp = async (req, res, next) => {
 
         const { username, token } = req.body
         const otp = await findOtpTokenByUsername({ username, token })
-
 
         if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
 
