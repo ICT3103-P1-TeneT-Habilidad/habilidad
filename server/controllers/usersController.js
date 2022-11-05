@@ -90,22 +90,6 @@ export const userLogin = async (req, res, next) => {
         // Go to send email OTP
         next()
 
-        // // Process of generating tokens
-        // const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
-        // const { userId } = user
-        // // Whitelist refresh token (store in db)
-        // await deleteRefreshTokenByUserId(userId)
-        // await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
-
-        // res.status(responseCode.res_ok).json({
-        //     result: {
-        //         status: responseCode.res_ok,
-        //         data: {
-        //             accessToken,
-        //             refreshToken,
-        //         }
-        //     },
-        // })
     } catch (err) {
         const error = getErrorResponse(err)
         next(error)
@@ -390,7 +374,6 @@ export const sendEmailOtp = async (req, res, next) => {
 
         await sendEmailLink(email, 'Habilidad: One-Time Password', emailMsg)
 
-
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -405,7 +388,6 @@ export const sendEmailOtp = async (req, res, next) => {
 }
 
 export const verifyEmailOtp = async (req, res, next) => {
-
     try {
 
         const { username, token } = req.body
@@ -429,20 +411,14 @@ export const verifyEmailOtp = async (req, res, next) => {
         await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
 
         res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                data: {
-                    accessToken,
-                    refreshToken,
-                }
-            },
+            result: { status: responseCode.res_ok, data: { accessToken, refreshToken, } },
         })
 
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err, 'res_internalServer', 'Failed to verify')
         next(error)
 
     }
 
 }
+
