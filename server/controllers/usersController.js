@@ -138,18 +138,7 @@ export const userRegister = async (req, res, next) => {
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
 
-        // Process of generating tokens
-        const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
-        const { userId } = user
-        // Whitelist refresh token (store in db)
-        await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
-
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'success'
-            },
-        })
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
     } catch (err) {
         const error = getErrorResponse(err)
         next(error)
@@ -158,7 +147,6 @@ export const userRegister = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
 
-
     try {
         const { userId } = req.payload
         const { password, phoneNumber, email, name, confirmedPassword } = req.body
@@ -166,6 +154,10 @@ export const updateUser = async (req, res, next) => {
         if (password !== confirmedPassword) {
             throw new Response('Passwords do not match.', 'res_badRequest')
         }
+
+        await validatePasswords(req).catch((reject) => {
+            throw new Response(reject, 'res_badRequest')
+        })
 
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await updateUserByUserId({
@@ -177,12 +169,7 @@ export const updateUser = async (req, res, next) => {
             phoneNumber,
         })
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'success'
-            },
-        })
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
     } catch (err) {
         const error = getErrorResponse(err)
         next(error)

@@ -31,6 +31,9 @@ router.route('/').get(isAuthenticate, getOneUser)
 // Update user detail
 router.route('/').patch(isAuthenticate, updateUser)
 
+// register
+router.route('/register').post(validateEmailAndPassword, userRegister)
+
 // login
 router.route('/login').post(sanitizeBody, userLogin, sendEmailOtp)
 
@@ -39,9 +42,6 @@ router.route('/verifyOTP').post(sanitizeBody, verifyEmailOtp)
 
 // logout
 router.route('/logout').post(userLogout)
-
-// register
-router.route('/register').post(validateEmailAndPassword, userRegister)
 
 // verify access token
 
