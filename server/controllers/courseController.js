@@ -13,7 +13,6 @@ import {
     updateCourseApprovalStatus,
     deleteOneCourse,
     updateOneCourse,
-    findPublicAndAssetId,
     findPopularCourse,
     findCourseByTopic,
     updateCourseToNotPopular,
@@ -23,27 +22,27 @@ import {
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
 import { findStudentIdByUserId } from '../services/student.js'
-import { findModeratorIdByUserId } from '../services/moderator.js'
 import { findTopicByName } from '../services/topic.js'
 import { getErrorResponse } from '../utils/error.js'
 import { addOneCoursePurchased } from '../services/transaction.js'
 import { replaceSanitizedQuot } from '../validations/input.js'
+
 // logs
-// import logger from '../utils/log.js'
-// import { LogMessage } from '../utils/logMessage.js'
+import { LogMessage } from '../utils/logging/logMessage.js'
+
 
 /**
  * Get course description for one course
  */
 export const getOneCourse = async (req, res, next) => {
     try {
+
         const { courseId } = req.sanitizedParams
 
         const course = await findOneCourse(courseId)
 
-        // Log for sending response
-        // let logMsg = new LogMessage(200, req).msg
-        // logger.log(logMsg)
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -52,11 +51,11 @@ export const getOneCourse = async (req, res, next) => {
             },
         })
     } catch (err) {
-        // Log for error message
-        // let logMsg = new LogMessage(err.statusCode, req).msg
-        // logger.error(logMsg)
-
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -68,6 +67,9 @@ export const getAllCourses = async (req, res, next) => {
     try {
         const courses = await findAllCourses()
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -76,6 +78,10 @@ export const getAllCourses = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -89,6 +95,9 @@ export const getCoursesCreatedByInstructor = async (req, res, next) => {
         const { instructorId } = await findInstructorIdByUserId(userId)
         const courses = await findCoursesWhereCreatedByInstructor(instructorId)
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -97,6 +106,10 @@ export const getCoursesCreatedByInstructor = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -110,6 +123,9 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
         const { studentId } = await findStudentIdByUserId(userId)
         const courses = await findCoursesWherePurchasedByStudent(studentId)
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -118,6 +134,10 @@ export const getCoursesPurchasedByStudent = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -127,6 +147,10 @@ export const getCoursesByCategory = async (req, res, next) => {
         const { topicName } = req.sanitizedBody
         if (!topicName) throw new Response('Bad Request', 'res_badRequest')
         const courses = await findCourseByTopic(topicName)
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -135,6 +159,10 @@ export const getCoursesByCategory = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -144,6 +172,10 @@ export const getCoursesByTopCategories = async (req, res, next) => {
         const { topicName } = req.sanitizedBody
         if (!topicName) throw new Response('Bad Request', 'res_badRequest')
         const courses = await findCourseByPopularTopic(topicName)
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -152,6 +184,10 @@ export const getCoursesByTopCategories = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -160,6 +196,9 @@ export const getPopularCourses = async (req, res, next) => {
     try {
         const courses = await findPopularCourse()
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -168,6 +207,10 @@ export const getPopularCourses = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -216,6 +259,9 @@ export const instructorCreateCourse = async (req, res, next) => {
             courseMaterials
         })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -223,13 +269,16 @@ export const instructorCreateCourse = async (req, res, next) => {
             }
         })
     } catch (err) {
-        console.log(err)
         let error
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
             error = new Response('Internal Server Error', 'res_internalServer')
         } else {
             error = new Response('Internal Server Error', 'res_internalServer')
         }
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -242,6 +291,9 @@ export const approveCourse = async (req, res, next) => {
 
         await updateCourseApprovalStatus({ courseId, moderatorId, approvalStatus })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -250,6 +302,10 @@ export const approveCourse = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -261,6 +317,9 @@ export const deleteCourse = async (req, res, next) => {
 
         const result = await deleteOneCourse({ courseId, moderatorId })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -269,6 +328,10 @@ export const deleteCourse = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -344,6 +407,9 @@ export const editCourse = async (req, res, next) => {
             courseMaterials: courseMaterials.length > 0 ? courseMaterials : null
         })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -352,6 +418,10 @@ export const editCourse = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -364,6 +434,9 @@ export const setCoursePopular = async (req, res, next) => {
 
         if (!result) throw new Response('Bad Request', 'res_badRequest')
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -372,6 +445,10 @@ export const setCoursePopular = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -386,6 +463,9 @@ export const setCourseNotPopular = async (req, res, next) => {
 
         if (!result) throw new Response('Bad Request', 'res_badRequest')
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -394,6 +474,10 @@ export const setCourseNotPopular = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -409,6 +493,9 @@ export const purchaseOneCourse = async (req, res, next) => {
 
         await addOneCoursePurchased({ studentId, courseId, amountPaid })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -417,6 +504,10 @@ export const purchaseOneCourse = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
 
     }
