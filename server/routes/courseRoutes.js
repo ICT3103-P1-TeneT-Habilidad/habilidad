@@ -1,5 +1,4 @@
 import express from 'express'
-import multer from 'multer'
 // import controllers
 import { isAuthenticate } from '../controllers/authController.js'
 import {

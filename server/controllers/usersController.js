@@ -32,12 +32,16 @@ export const getAllUsers = async (req, res, next) => {
     try {
         const result = await findAllUsers()
 
-        res.status(responseCode.res_ok).json({
-            status: responseCode.res_ok,
-            data: result,
-        })
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
+        res.status(responseCode.res_ok).json({ status: responseCode.res_ok, data: result, })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -48,11 +52,16 @@ export const getOneUser = async (req, res, next) => {
 
         const result = await findUserbyUserId(userId)
 
-        res.status(responseCode.res_ok).json({
-            result,
-        })
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
+        res.status(responseCode.res_ok).json({ result })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -62,16 +71,24 @@ export const deactivateUser = async (req, res, next) => {
 
         const result = await updateDeactivateDate({ userId })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         next()
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
 
 export const userLogin = async (req, res, next) => {
     try {
-        const { username, password } = req.body
+        const { password } = req.body
+        const { username } = req.sanitizedBody
 
         // Verify email
         const user = await findUserByUsername(username)
@@ -87,27 +104,18 @@ export const userLogin = async (req, res, next) => {
             throw new Response('Wrong username or password', 'res_unauthorised')
         }
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         // Go to send email OTP
         next()
 
-        // // Process of generating tokens
-        // const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
-        // const { userId } = user
-        // // Whitelist refresh token (store in db)
-        // await deleteRefreshTokenByUserId(userId)
-        // await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
-
-        // res.status(responseCode.res_ok).json({
-        //     result: {
-        //         status: responseCode.res_ok,
-        //         data: {
-        //             accessToken,
-        //             refreshToken,
-        //         }
-        //     },
-        // })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -118,15 +126,17 @@ export const userLogout = async (req, res, next) => {
         const { userId } = req.payload
         await deleteRefreshTokenByUserId(userId)
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'success'
-            },
-        })
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
 
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -153,26 +163,21 @@ export const userRegister = async (req, res, next) => {
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await storeNewUser({ email, hashedPassword, username, phoneNumber, name, role })
 
-        // Process of generating tokens
-        const { accessToken, refreshToken, jti } = await generateTokenProcedure(user)
-        const { userId } = user
-        // Whitelist refresh token (store in db)
-        await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'success'
-            },
-        })
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
 
 export const updateUser = async (req, res, next) => {
-
 
     try {
         const { userId } = req.payload
@@ -181,6 +186,10 @@ export const updateUser = async (req, res, next) => {
         if (password !== confirmedPassword) {
             throw new Response('Passwords do not match.', 'res_badRequest')
         }
+
+        await validatePasswords(req).catch((reject) => {
+            throw new Response(reject, 'res_badRequest')
+        })
 
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await updateUserByUserId({
@@ -192,14 +201,16 @@ export const updateUser = async (req, res, next) => {
             phoneNumber,
         })
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'success'
-            },
-        })
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -235,15 +246,21 @@ export const resetPassword = async (req, res, next) => {
         const result = await updatePasswordAndDeleteToken({ userId, hashedPassword, username })
 
         if (result.length > 0) {
-            // return result
-            res.status(responseCode.res_ok).json({
-                status: 'Password reset sucessfully',
-            })
+
+            const logMsg = new LogMessage(200, req)
+            logger.log(logMsg)
+
+            res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'success' } })
+
         } else {
             throw new Response('Failed to reset password', 'res_internalServer')
         }
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -287,6 +304,9 @@ export const sendEmailResetLink = async (req, res, next) => {
 
         await sendEmailLink(email, 'Password reset', emailMsg)
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
             result: {
                 status: responseCode.res_ok,
@@ -294,9 +314,11 @@ export const sendEmailResetLink = async (req, res, next) => {
             }
         })
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err, 'res_internalServer', 'Failed to send reset link')
-        console.log(error)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -309,12 +331,14 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
 
         const user = await findUserByEmail(email)
 
-        console.log(user)
         if (user.length != 1) throw new Response('Internal Error', 'res_internalServer')
 
         const emailMsg = email_template_deactivate
 
         await sendEmailLink(email, 'Deactivate Account', emailMsg)
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
 
         res.status(responseCode.res_ok).json({
             status: responseCode.res_ok,
@@ -322,6 +346,10 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
@@ -344,9 +372,17 @@ export const validateEmailAndPassword = async (req, res, next) => {
                     message: reject,
                 }
             })
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         next()
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
 
     }
@@ -354,11 +390,16 @@ export const validateEmailAndPassword = async (req, res, next) => {
 
 export const reactivateUser = async (req, res, next) => {
     try {
-        const userId = req.body.userId
+        const { userId } = req.body
+
+        if (!userId) throw new Response('Bad Request', 'res_badRequest')
 
         const result = await updateDeactivationDateToNull({ userId })
 
         if (!result) throw new Response('Fail to reactivate account', 'res_badRequest')
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
 
         res.status(responseCode.res_ok).json({
             message: 'Reactivate acccount sucessfully',
@@ -366,13 +407,17 @@ export const reactivateUser = async (req, res, next) => {
         })
     } catch (err) {
         const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
 
 export const sendEmailOtp = async (req, res, next) => {
     try {
-        const { username } = req.body
+        const { username } = req.sanitizedBody
         const user = await findUserByUsername(username)
 
         if (!user) throw new Response('Invalid OTP', 'res_unauthorised')
@@ -390,22 +435,21 @@ export const sendEmailOtp = async (req, res, next) => {
 
         await sendEmailLink(email, 'Habilidad: One-Time Password', emailMsg)
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
 
-        res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                message: 'OTP was sent to your email account',
-            }
-        })
+        res.status(responseCode.res_ok).json({ result: { status: responseCode.res_ok, message: 'OTP was sent to your email account', } })
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err, 'res_internalServer', 'Failed to send OTP')
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
 
 export const verifyEmailOtp = async (req, res, next) => {
-
     try {
 
         const { username, token } = req.body
@@ -415,8 +459,6 @@ export const verifyEmailOtp = async (req, res, next) => {
 
         // verify if token
         const currentdata = new Date()
-        console.log(otp[0].expiredAt)
-        console.log(currentdata)
         if (otp[0].expiredAt < currentdata) throw new Response('Token Expired', 'res_unauthorised')
 
         await deleteOtpById(otp[0].oTokenId)
@@ -428,21 +470,22 @@ export const verifyEmailOtp = async (req, res, next) => {
         await deleteRefreshTokenByUserId(userId)
         await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         res.status(responseCode.res_ok).json({
-            result: {
-                status: responseCode.res_ok,
-                data: {
-                    accessToken,
-                    refreshToken,
-                }
-            },
+            result: { status: responseCode.res_ok, data: { accessToken, refreshToken, } },
         })
 
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err, 'res_internalServer', 'Failed to verify')
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
 
     }
 
 }
+
