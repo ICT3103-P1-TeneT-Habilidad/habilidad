@@ -5,6 +5,9 @@ pipeline {
             args '-p 3000:3000'
         }
     }
+    environment {
+        CI = 'true'
+    }
     stages {
         stage('Build') {
             steps {
@@ -12,10 +15,20 @@ pipeline {
                 sh 'chmod +x -R ./jenkins/scripts'
             }
         }
-        stage('Test') { 
+        stage('OWASP Dependency Check'){
+            steps{
+                dependencyCheck additionalArguments: ''' -o ./ --format HTML --format XML --disableYarnAudit''', odcInstallation: 'DependencyCheck'
+            }
+        }
+        stage('Test') {
             steps {
-                sh './jenkins/scripts/test.sh' 
+                sh './jenkins/scripts/test.sh'
             }
         }
     }
+    post {
+		success {
+			dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+		}
+	}
 }
