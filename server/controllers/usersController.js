@@ -176,7 +176,11 @@ export const updateUser = async (req, res, next) => {
 
     try {
         const { userId } = req.payload
-        const { password, phoneNumber, email, name } = req.body
+        const { password, phoneNumber, email, name, confirmedPassword } = req.body
+
+        if (password !== confirmedPassword) {
+            throw new Response('Passwords do not match.', 'res_badRequest')
+        }
 
         const hashedPassword = hashText(password, generateSalt(12))
         const user = await updateUserByUserId({
