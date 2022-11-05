@@ -76,7 +76,18 @@ export const updatePasswordAndDeleteToken = async (user) => {
 }
 
 export const findAllUsers = async () => {
-    return db.user.findMany()
+    return db.user.findMany({
+        select:{
+            email: true,
+            name: true,
+            phoneNumber: true,
+            role: true,
+            username: true,
+            createdOn: true,
+            updatedOn: true,
+            deactivationDate: true
+        }
+    })
 }
 
 export const updateUserByUserId = async (data) => {
