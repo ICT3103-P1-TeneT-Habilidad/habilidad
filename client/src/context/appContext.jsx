@@ -108,9 +108,7 @@ const AppProvider = ({ children }) => {
         (config) => {
             const newUser = getUser()
             if (newUser) {
-                console.log(newUser)
                 const { accessToken } = newUser
-                console.log(accessToken)
                 config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
@@ -175,14 +173,11 @@ const AppProvider = ({ children }) => {
 
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
-        console.log(user)
         return JSON.parse(user)?.refreshToken
     }
 
     const getAccessToken = () => {
         const user = localStorage.getItem('user')
-        console.log(user)
-
         return JSON.parse(user)?.accessToken
     }
 
@@ -279,6 +274,7 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.get(`/api/course/`)
             const result = data.result.data
+            console.log(result)
             dispatch({
                 type: GET_ALL_COURSES_SUCCESS,
                 payload: {
@@ -409,7 +405,6 @@ const AppProvider = ({ children }) => {
 
     const getCourseByTopic = async (topicName) => {
         dispatch({ type: GET_COURSE_BY_TOPIC_BEGIN })
-        console.log(topicName)
         try {
             const { data } = await axios.post(`/api/course/byCategory`, { topicName })
             const result = data.result
@@ -427,7 +422,6 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await authFetch.get(`/api/users/allUsers`)
             const result = data.data
-            console.log(result)
             dispatch({
                 type: GET_ALL_USERS_SUCCESS,
                 payload: { result },
@@ -490,7 +484,6 @@ const AppProvider = ({ children }) => {
     }
 
     const deactivateUser = async (data) => {
-        console.log('hit')
         console.log(data)
         dispatch({ type: DEACTIVATE_USER_BEGIN })
         try {

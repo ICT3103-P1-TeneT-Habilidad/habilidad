@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { classNames } from '../utils/Helpers'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 // import icons and assets
 import { MdOutlineCancel } from 'react-icons/md'
@@ -15,6 +15,7 @@ export default function NewNavbar() {
 
     useEffect(() => {
         getUserDetails()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -30,7 +31,7 @@ export default function NewNavbar() {
                             <div className="flex">
                                 <div className="flex-shrink-0 flex items-center">
                                     <Link to="/">
-                                        <img className="hidden lg:block h-24 w-auto" src={BigLogo} />
+                                        <img className="hidden lg:block h-24 w-auto" src={BigLogo} alt="logo" />
                                     </Link>
                                 </div>
                             </div>
@@ -48,7 +49,7 @@ export default function NewNavbar() {
                                         ) : (
                                             <Menu.Button className="rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                 <span className="sr-only">Open user menu</span>
-                                                <span className='uppercase font-medium'>{username}</span>
+                                                <span className="uppercase font-medium">{username}</span>
                                             </Menu.Button>
                                         )}
                                     </div>

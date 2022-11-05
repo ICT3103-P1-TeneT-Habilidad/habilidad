@@ -4,7 +4,7 @@ import { useAppContext } from '../../context/appContext'
 import { sortCourseMaterials } from '../../utils/Helpers'
 import { Error404 } from '../Errors'
 
-const ViewCourse = () => {
+const VetCourse = () => {
     const { courseDetail, getCourseDetail, courses, getAllCourses } = useAppContext()
     const { courseId } = useParams()
 
@@ -39,12 +39,12 @@ const ViewCourse = () => {
                 ) : (
                     <>
                         <div className="flex justify-end">
-                            <Link
-                                className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                                to="/editcourse"
+                            <button
+                                className="absolute shadow focus:shadow-outline focus:outline-none text-black bg-emerald-400 font-bold py-2 px-4 rounded"
+                                type="button"
                             >
-                                Edit Course
-                            </Link>
+                                Approve Course
+                            </button>
                         </div>
                         <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">
                             <img
@@ -103,4 +103,4 @@ const ViewCourse = () => {
     )
 }
 
-export default ViewCourse
+export default VetCourse
