@@ -1,40 +1,21 @@
 pipeline {
-    options {
-        disableConcurrentBuilds()
-    }
-    // agent any
     agent {
         docker {
-            image 'node:lts-buster-slim'
-            args '-p 3001:3000'
+            image 'node:lts-bullseye-slim'
+            args '-p 3000:3000'
         }
-    }
-    environment {
-        CI = 'true'
     }
     stages {
         stage('Build') {
             steps {
-                sh 'ls -la /var/jenkins_home/workspace/habilidad-client_feat_jenkins/server'
-                sh 'ls -la /var/jenkins_home/workspace/habilidad-client_feat_jenkins/client'
                 sh 'npm install'
                 sh 'chmod +x -R ./jenkins/scripts'
             }
         }
-        stage('OWASP Dependency Check'){
-            steps{
-                dependencyCheck additionalArguments: ''' -o ./ --format HTML --format XML --disableYarnAudit''', odcInstallation: 'DependencyCheck'
-            }
-        }
-        stage('Test') {
+        stage('Test') { 
             steps {
-                sh './jenkins/scripts/test.sh'
+                sh './jenkins/scripts/test.sh' 
             }
         }
     }
-    post {
-		success {
-			dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-		}
-	}
 }
