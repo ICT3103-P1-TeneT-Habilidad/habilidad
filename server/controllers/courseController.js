@@ -28,6 +28,7 @@ import { addOneCoursePurchased } from '../services/transaction.js'
 import { replaceSanitizedQuot } from '../validations/input.js'
 
 // logs
+import logger from '../utils/logging/log.js'
 import { LogMessage } from '../utils/logging/logMessage.js'
 
 
