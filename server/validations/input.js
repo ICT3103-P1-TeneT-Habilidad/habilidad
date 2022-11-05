@@ -41,7 +41,7 @@ export const validatePasswords = async (req) => {
 
     // Check password length
     if (password.length < 8 || password.length > 15) {
-        return Promise.reject(false)
+        return Promise.reject('Password does not meet complexity requirements or is a pwned password')
     }
 
     // Check against passowrds obtained from previous breach corpuses
@@ -51,23 +51,23 @@ export const validatePasswords = async (req) => {
     const breach = await axios.get(`https://api.pwnedpasswords.com/range/${hashedPassword.slice(0, 5)}`)
     const data = breach.data.split(/[\r\n:]/)
     if (data.includes(hashedPassword.slice(5, hashedPassword.length))) {
-        return Promise.reject(false)
+        return Promise.reject('Password does not meet complexity requirements or is a pwned password')
     }
 
     // Check against dictionary words
     const words = (await fs.readFile('./assets/words.txt', { encoding: 'utf8' })).split(/\n/)
     if (words.includes(password)) {
-        return Promise.reject(false)
+        return Promise.reject('Password does not meet complexity requirements or is a pwned password')
     }
 
     // Check for repetitive or sequential characters
     if (isSequentialOrRepetitive(password, 3)) {
-        return Promise.reject(false)
+        return Promise.reject('Password does not meet complexity requirements or is a pwned password')
     }
 
     // Check for context-specific words
     if (isContext({ password, username, email, name })) {
-        return Promise.reject(false)
+        return Promise.reject('Password does not meet complexity requirements or is a pwned password')
     }
 
     return Promise.resolve(true)
@@ -78,7 +78,7 @@ export const validateEmail = (req) => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
     if (reg.test(req.body.password)) {
-        return Promise.reject(false)
+        return Promise.reject('Entered value does not match email format')
     }
 
     return Promise.resolve(true)
