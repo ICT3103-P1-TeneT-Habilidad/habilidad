@@ -31,10 +31,10 @@ function App() {
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="createcourse" element={<CreateCourse />} />
-                    <Route path="editcourse" element={<EditCourse />} />
-                    <Route path="studentviewcourse" element={<StudentViewCourse />} />
-                    <Route path="content" element={<CourseContent />} />
                     <Route path="topics/:topicName" element={<CoursesByTopic />} />
+                    <Route path="editcourse/:courseId" element={<EditCourse />} />
+                    <Route path="studentviewcourse/:courseId" element={<StudentViewCourse />} />
+                    <Route path="content/:courseId" element={<CourseContent />} />
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
                     <Route path="accountmanagement" element={<AccountsPage />} />
                 </Route>

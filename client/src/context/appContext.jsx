@@ -140,6 +140,7 @@ const AppProvider = ({ children }) => {
 
                         return authFetch(originalConfig)
                     } catch (_error) {
+                        removeUser()
                         if (_error.response && _error.response.data) {
                             return Promise.reject(_error.response.data)
                         }
@@ -422,6 +423,15 @@ const AppProvider = ({ children }) => {
             })
         } catch (err) {
             dispatch({ type: GET_ALL_USERS_ERROR })
+    const editCourse = async (courseId, course) => {
+        dispatch({ type: EDIT_COURSE_BEGIN })
+        try {
+            await axios.put(`/api/course/${courseId}`, course)
+            dispatch({
+                type: EDIT_COURSE_SUCCESS,
+            })
+        } catch (err) {
+            dispatch({ type: EDIT_COURSE_ERROR })
         }
     }
 
@@ -449,7 +459,8 @@ const AppProvider = ({ children }) => {
                 updateUserDetails,
                 getCourseByTopic,
                 getCourseDetail,
-                getAllUsers
+                getAllUsers,
+                editCourse,
             }}
         >
             {children}

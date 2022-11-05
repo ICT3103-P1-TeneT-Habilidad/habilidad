@@ -119,9 +119,7 @@ function BigTable({ columns, data }) {
                                                             {...restCellProps}
                                                             className="px-6 py-4 text-left whitespace-nowrap text-sm text-gray-500"
                                                         >
-                                                            <p className="text-gray-500 truncate group-hover:text-gray-900">
-                                                                {cell.render('Cell')}
-                                                            </p>
+                                                            {cell.render('Cell')}
                                                         </td>
                                                     )
                                                 })}

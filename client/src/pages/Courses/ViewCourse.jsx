@@ -11,8 +11,6 @@ const ViewCourse = () => {
     const [courseData2, setCourseData2] = useState()
     const [check, setCheck] = useState(false)
 
-    console.log(courseId)
-
     useEffect(() => {
         getCourseDetail(courseId)
         getAllCourses()
