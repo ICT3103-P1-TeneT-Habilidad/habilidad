@@ -78,7 +78,7 @@ const AccountsPage = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
+            {/* <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
                 <div className="flex justify-end mt-4">
                     <Link to="/create-user" className="flex-1">
                         <button
@@ -89,7 +89,7 @@ const AccountsPage = () => {
                         </button>
                     </Link>
                 </div>
-            </div>
+            </div> */}
             {user_data && <BigTable columns={columns} data={user_data.result} />}
         </div>
     )
