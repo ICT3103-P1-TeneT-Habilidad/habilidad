@@ -31,7 +31,6 @@ function App() {
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
                     <Route path="createcourse" element={<CreateCourse />} />
-                    <Route path="topics/:topicName" element={<CoursesByTopic />} />
                     <Route path="editcourse/:courseId" element={<EditCourse />} />
                     <Route path="studentviewcourse/:courseId" element={<StudentViewCourse />} />
                     <Route path="content/:courseId" element={<CourseContent />} />
@@ -49,6 +48,7 @@ function App() {
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="topics/:topicName" element={<CoursesByTopic />} />
             </Routes>
             <Footer />
         </BrowserRouter>
