@@ -10,7 +10,7 @@ const router = express.Router()
 router.route('/').get(getAllTopics)
 
 // Create new topic
-router.route('/create').post(isAuthenticate, imageUpload, createTopic)
+// router.route('/create').post(isAuthenticate, imageUpload, createTopic)
 
 // Get Popular Topics
 router.route('/popularTopics').get(getPopularTopics)

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { createHash } from 'crypto'
+import { body } from 'express-validator'
 import fs from 'fs/promises'
 
 // Check if password matches email, useername or name
@@ -81,6 +82,33 @@ export const validateEmail = (req) => {
         return Promise.reject('Entered value does not match email format')
     }
 
+    return Promise.resolve(true)
+}
+
+// Username requirement
+export const validateUsername = (req) => {
+    const { username } = req.body
+    if (username < 4 || username > 20) {
+        return Promise.reject('username does not meet length requirement')
+    }
+    return Promise.resolve(true)
+}
+
+// Name requirement
+export const validateName = (req) => {
+    const { name } = req.body
+    if (name < 4 || name > 14) {
+        return Promise.reject('name does not meet length requirement')
+    }
+    return Promise.resolve(true)
+}
+
+// Phone number requirement
+export const validatePhoneNum = (req) => {
+    const { phoneNumber } = req.body
+    if (phoneNumber < 80000000 || phoneNumber > 99999999) {
+        return Promise.reject('Phone number is not Singapore number ')
+    }
     return Promise.resolve(true)
 }
 
