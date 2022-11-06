@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import routes from './routes/routes.js'
 import { Response } from './responses/response.js'
 import { setHeaderTimestamp } from './utils/time.js'
+import { corsOptionsDelegate } from './utils/cors.js'
 
 // import constants
 // import { prod_url, dev_url } from './constants.js'
@@ -17,7 +18,7 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(helmet())
-app.use(cors())
+app.use(cors(corsOptionsDelegate))
 
 // Routes
 app.use('/', setHeaderTimestamp, routes)
