@@ -4,7 +4,8 @@ const instance = axios.create({
     baseURL: 'http://172.16.1.3:5000',
     // baseURL: 'http://localhost:5000',
     headers: {
-        "Access-Control-Allow-Origin": '*'
+        "Access-Control-Allow-Origin": '*',
+        mode: 'cors',
     }
 });
 
