@@ -23,7 +23,8 @@ app.use(helmet())
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
-            ...defaultDirectives,
+            'script-src': ["'self'"],
+            upgradeInsecureRequests: true,
         },
     })
 )
