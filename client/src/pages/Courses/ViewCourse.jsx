@@ -5,15 +5,16 @@ import { sortCourseMaterials } from '../../utils/Helpers'
 import { Error404 } from '../Errors'
 
 const ViewCourse = () => {
-    const { courseDetail, getCourseDetail, courses, getAllCourses } = useAppContext()
+    const { courseDetail, getCourseDetail, courses, getAllCourses, user_details, getUserDetails, updateCourseApproval } = useAppContext()
     const { courseId } = useParams()
-    
+
     const [courseData2, setCourseData2] = useState()
     const [check, setCheck] = useState(false)
 
     useEffect(() => {
         getCourseDetail(courseId)
         getAllCourses()
+        getUserDetails()
     }, [])
 
     useEffect(() => {
@@ -33,18 +34,46 @@ const ViewCourse = () => {
 
     return (
         <div className="min-h-screen bg-background py-12 sm:px-6 lg:px-8 w-full">
-            <div className="bg-white rounded-lg px-6 py-10 mx-auto relative">
+            <div className="bg-white rounded-lg px-6 py-10 mx-auto relative mt-5">
                 {!check ? (
                     <Error404 />
                 ) : (
                     <>
                         <div className="flex justify-end">
-                            <Link
-                                className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                                to="/editcourse"
-                            >
-                                Edit Course
-                            </Link>
+                            {user_details.role !== 'MODERATOR' ? (
+                                <>
+                                    {' '}
+                                    <Link
+                                        className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
+                                        to="/editcourse"
+                                    >
+                                        Edit Course
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="relative flex flex-row space-x-2 justify-end">
+                                        <button
+                                            className=" shadow focus:shadow-outline focus:outline-none text-black bg-emerald-400 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() =>
+                                                updateCourseApproval({ status: 'APPROVED', courseId: courseId })
+                                            }
+                                        >
+                                            Approve Course
+                                        </button>
+                                        <button
+                                            className=" shadow focus:shadow-outline focus:outline-none text-black bg-red-400 font-bold py-2 px-4 rounded"
+                                            type="button"
+                                            onClick={() =>
+                                                updateCourseApproval({ status: 'REJECTED', courseId: courseId })
+                                            }
+                                        >
+                                            Reject Course
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">
                             <img

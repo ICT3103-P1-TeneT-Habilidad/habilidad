@@ -69,6 +69,9 @@ import {
     GET_ALL_POPULAR_COURSES_BEGIN,
     GET_ALL_POPULAR_COURSES_SUCCESS,
     GET_ALL_POPULAR_COURSES_ERROR,
+    APPROVE_COURSE_BEGIN,
+    APPROVE_COURSE_SUCCESS,
+    APPROVE_COURSE_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -108,9 +111,7 @@ const AppProvider = ({ children }) => {
         (config) => {
             const newUser = getUser()
             if (newUser) {
-                console.log(newUser)
                 const { accessToken } = newUser
-                console.log(accessToken)
                 config.headers['authorization'] = `Bearer ${accessToken}`
             }
             return config
@@ -175,14 +176,11 @@ const AppProvider = ({ children }) => {
 
     const getRefreshToken = () => {
         const user = localStorage.getItem('user')
-        console.log(user)
         return JSON.parse(user)?.refreshToken
     }
 
     const getAccessToken = () => {
         const user = localStorage.getItem('user')
-        console.log(user)
-
         return JSON.parse(user)?.accessToken
     }
 
@@ -279,6 +277,7 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.get(`/api/course/`)
             const result = data.result.data
+            console.log(result)
             dispatch({
                 type: GET_ALL_COURSES_SUCCESS,
                 payload: {
@@ -348,9 +347,27 @@ const AppProvider = ({ children }) => {
         dispatch({
             type: GET_ONE_COURSE_BEGIN,
         })
-
         try {
             const { data } = await authFetch.get(`/api/course/${courseId}`)
+            const { result } = data
+            dispatch({
+                type: GET_ONE_COURSE_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({
+                type: GET_ONE_COURSE_ERROR,
+                payload: { msg: err.response.data.result.message },
+            })
+        }
+    }
+
+    const getCourseDetailNoAuth = async(courseId) => {
+        dispatch({
+            type: GET_ONE_COURSE_BEGIN
+        })
+        try{
+        const { data } = await authFetch.get(`/api/course/viewCourse/${courseId}`)
             const { result } = data
             dispatch({
                 type: GET_ONE_COURSE_SUCCESS,
@@ -409,7 +426,6 @@ const AppProvider = ({ children }) => {
 
     const getCourseByTopic = async (topicName) => {
         dispatch({ type: GET_COURSE_BY_TOPIC_BEGIN })
-        console.log(topicName)
         try {
             const { data } = await axios.post(`/api/course/byCategory`, { topicName })
             const result = data.result
@@ -427,7 +443,6 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await authFetch.get(`/api/users/allUsers`)
             const result = data.data
-            console.log(result)
             dispatch({
                 type: GET_ALL_USERS_SUCCESS,
                 payload: { result },
@@ -490,7 +505,6 @@ const AppProvider = ({ children }) => {
     }
 
     const deactivateUser = async (data) => {
-        console.log('hit')
         console.log(data)
         dispatch({ type: DEACTIVATE_USER_BEGIN })
         try {
@@ -501,6 +515,18 @@ const AppProvider = ({ children }) => {
             dispatch({ type: DEACTIVATE_USER_ERROR })
         }
         getAllUsers()
+    }
+
+    const updateCourseApproval = async (course_data) => {
+        dispatch({ type: APPROVE_COURSE_BEGIN })
+        try {
+            const { data } = await authFetch.patch(`api/course/${course_data.courseId}`, course_data.status)
+            const result = data.result
+            dispatch({ type: APPROVE_COURSE_SUCCESS })
+        } catch (err) {
+            dispatch({ type: APPROVE_COURSE_ERROR })
+        }
+        getAllCourses()
     }
 
     return (
@@ -535,6 +561,7 @@ const AppProvider = ({ children }) => {
                 activateUser,
                 deactivateUser,
                 clearValues,
+                updateCourseApproval,
             }}
         >
             {children}

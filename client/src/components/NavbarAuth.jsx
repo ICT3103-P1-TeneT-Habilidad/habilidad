@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { classNames } from '../utils/Helpers'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 // import icons and assets
 import { MdOutlineCancel } from 'react-icons/md'
@@ -15,6 +15,7 @@ export default function NewNavbar() {
 
     useEffect(() => {
         getUserDetails()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -30,9 +31,25 @@ export default function NewNavbar() {
                             <div className="flex">
                                 <div className="flex-shrink-0 flex items-center">
                                     <Link to="/">
-                                        <img className="hidden lg:block h-24 w-auto" src={BigLogo} />
+                                        <img className="hidden lg:block h-24 w-auto" src={BigLogo} alt="logo" />
                                     </Link>
                                 </div>
+                            </div>
+                            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                                {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
+                                <Link
+                                    to="/courselist"
+                                    className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                                >
+                                    Course Lists
+                                </Link>
+
+                                <Link
+                                    to="/accountmanagement"
+                                    className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                                >
+                                    Account Management
+                                </Link>
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:items-center">
                                 {/* Profile dropdown */}
@@ -46,9 +63,9 @@ export default function NewNavbar() {
                                                 </div>
                                             </Menu.Button>
                                         ) : (
-                                            <Menu.Button className="rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <Menu.Button className="flex text-sm">
                                                 <span className="sr-only">Open user menu</span>
-                                                <span className='uppercase font-medium'>{username}</span>
+                                                <span className="uppercase font-medium">{username}</span>
                                             </Menu.Button>
                                         )}
                                     </div>

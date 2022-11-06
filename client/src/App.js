@@ -6,6 +6,7 @@ import {
     AllTopics,
     CourseContent,
     CoursesByTopic,
+    CourseList,
     CreateCourse,
     Dashboard,
     EditCourse,
@@ -20,17 +21,17 @@ import {
     StudentViewCourse,
     Register,
     ViewCourse,
+    VetCourse,
 } from './pages/index'
 import { Footer, NavbarAuth, Navbar } from './components/index'
 import { useAppContext } from './context/appContext'
 
 function App() {
-
-    const {user} = useAppContext()
+    const { user } = useAppContext()
 
     return (
         <BrowserRouter>
-        {user?.accessToken ? <NavbarAuth/> : <Navbar/>}
+            {user?.accessToken ? <NavbarAuth /> : <Navbar />}
             <Routes>
                 <Route path="/" element={<ProtectedRoutes />}>
                     <Route path="profile" element={<Profile />} />
@@ -40,6 +41,7 @@ function App() {
                     <Route path="content/:courseId" element={<CourseContent />} />
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
                     <Route path="accountmanagement" element={<AccountsPage />} />
+                    <Route path="courselist" element={<CourseList />} />
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />

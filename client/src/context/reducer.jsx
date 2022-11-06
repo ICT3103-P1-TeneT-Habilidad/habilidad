@@ -65,6 +65,9 @@ import {
     GET_TOP_TOPICS_BEGIN,
     GET_TOP_TOPICS_SUCCESS,
     GET_TOP_TOPICS_ERROR,
+    APPROVE_COURSE_BEGIN,
+    APPROVE_COURSE_SUCCESS,
+    APPROVE_COURSE_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -369,6 +372,18 @@ const reducer = (state, action) => {
                 ...state,
             }
         case DEACTIVATE_USER_ERROR:
+            return {
+                ...state,
+            }
+        case APPROVE_COURSE_BEGIN:
+            return {
+                ...state,
+            }
+        case APPROVE_COURSE_SUCCESS:
+            return {
+                ...state,
+            }
+        case APPROVE_COURSE_ERROR:
             return {
                 ...state,
             }
