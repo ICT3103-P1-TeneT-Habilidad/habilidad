@@ -91,7 +91,33 @@ export const createNewCourse = async (info) => {
 }
 
 export const findAllCourses = async () => {
-    return db.course.findMany()
+    return db.course.findMany({
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            duration: true,
+            isPopular: true,
+            price: true,
+            description: true,
+            language: true,
+            createdOn: true,
+            updatedOn: true,
+            instructorId: true,
+            instructor: {
+                select: {
+                    user: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+
+            }
+
+
+        },
+    })
 }
 
 export const updateCourseApprovalStatus = async (data) => {
