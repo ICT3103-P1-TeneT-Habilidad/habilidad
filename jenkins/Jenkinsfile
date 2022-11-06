@@ -3,12 +3,6 @@ pipeline {
         disableConcurrentBuilds()
     }
     agent any
-    // agent {
-    //     docker {
-    //         image 'node:lts-buster-slim'
-    //         args '-p 3000:3000'
-    //     }
-    // }
     environment {
         CI = 'true'
     }
@@ -43,7 +37,7 @@ pipeline {
         }
     }
     post {
-		success {
+		always {
 			dependencyCheckPublisher pattern: 'dependency-check-report.xml'
 		}
 	}
