@@ -26,8 +26,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./client
-    ports:
-      - "${CLIENT_HOST}:${CLIENT_PORT}"
+    expose:
+      - 3000
     #    network_mode: "host"
     networks:
       backend:
