@@ -15,7 +15,8 @@ import {
     setCoursePopular,
     setCourseNotPopular,
     purchaseOneCourse,
-    getCoursesByCategory
+    getCoursesByCategory,
+    getViewCourses
 } from '../controllers/courseController.js'
 // import middleware
 import { courseUpload } from '../middleware/multer.js'
@@ -26,6 +27,9 @@ const router = express.Router()
 
 // Get all courses (unauth)
 router.route('/').get(getAllCourses)
+
+// Get one course detail (unauth)
+router.route('/viewCourse/:courseId').get(sanitizeUrlParam, getViewCourses)
 
 // Get all purchases courses by student
 // Auth: Token, Role based

@@ -138,6 +138,20 @@ export const findAllCourses = async () => {
     })
 }
 
+export const findAllCoursesNoCourseMaterial = async (courseId) => {
+    return db.course.findUnique({
+        where: {
+            courseId: courseId,
+        },
+        include: {
+            topicCourse: {
+                include: { topics: true }
+            },
+        },
+    })
+}
+
+
 export const updateCourseApprovalStatus = async (data) => {
     return db.course.update({
         where: {
