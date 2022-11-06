@@ -22,7 +22,9 @@ const CourseList = () => {
         },
         {
             Header: 'Instructor',
-            accessor: 'instructorId',
+            Cell: ({ row }) => {
+                return <div>{row.original.instructor.user.name}</div>
+            },
         },
         {
             Header: 'Language',

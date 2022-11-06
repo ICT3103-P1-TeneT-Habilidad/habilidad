@@ -17,7 +17,7 @@ const StudentViewCourse = () => {
                     <div className="flex justify-end">
                         <Link
                             className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                            to="/content"
+                            to={`/content/${courseId}`}
                         >
                             Start Course
                         </Link>
