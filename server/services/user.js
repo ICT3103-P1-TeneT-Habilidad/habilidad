@@ -23,12 +23,21 @@ export const findUserByUsername = async (username) => {
     })
 }
 
+export const findActivatedUserByUsername = async (username) => {
+    return db.user.findMany({
+        where: {
+            username: username,
+            deactivationDate: null
+        },
+    })
+}
+
 export const findUserbyUserId = async (userId) => {
     return db.user.findUnique({
         where: {
             userId: userId,
         },
-        select:{
+        select: {
             email: true,
             name: true,
             phoneNumber: true,
@@ -77,7 +86,7 @@ export const updatePasswordAndDeleteToken = async (user) => {
 
 export const findAllUsers = async () => {
     return db.user.findMany({
-        select:{
+        select: {
             email: true,
             name: true,
             phoneNumber: true,

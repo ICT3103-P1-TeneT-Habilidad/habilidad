@@ -7,7 +7,8 @@ import {
     updateUserByUserId,
     storeNewUser,
     findAllUsers,
-    updateDeactivationDateToNull
+    updateDeactivationDateToNull,
+    findActivatedUserByUsername
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
@@ -94,14 +95,17 @@ export const userLogin = async (req, res, next) => {
         const { username } = req.sanitizedBody
 
         // Verify email
-        const user = await findUserByUsername(username)
+        const user = await findActivatedUserByUsername(username)
 
-        if (!user) {
+        if (user.length === 0) {
             throw new Response('Wrong username or password', 'res_unauthorised')
+        }
+        else if (user.length > 1) {
+            throw new Response('Internal Server Error', 'res_internalServer')
         }
 
         // Verify password
-        const result = verifyPassword(password, user.password)
+        const result = verifyPassword(password, user[0].password)
 
         if (!result) {
             throw new Response('Wrong username or password', 'res_unauthorised')
