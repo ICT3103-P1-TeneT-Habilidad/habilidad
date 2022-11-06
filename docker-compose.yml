@@ -70,7 +70,6 @@ services:
       - database
     stdin_open: true
     env_file:
-      - ../.env
       - ./.env
     expose:
       - 5000
