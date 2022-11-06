@@ -18,11 +18,11 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(helmet())
-app.use(
-    helmet({
-        contentSecurityPolicy: true
-    })
-)
+// app.use(
+//     helmet({
+//         contentSecurityPolicy: true
+//     })
+// )
 app.use(cors(corsOptionsDelegate))
 
 // Routes
