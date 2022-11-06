@@ -1,11 +1,14 @@
 import { React, useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../context/appContext'
 
 const Profile = () => {
-    const { getUserDetails, user_details, updateUserDetails } = useAppContext()
+    const { getUserDetails, user_details, updateUserDetails, deactivateUser } = useAppContext()
 
     const [isDisabled, setIsDisabled] = useState(true)
+
+    const navigate = useNavigate()
 
     const {
         register,
@@ -41,7 +44,8 @@ const Profile = () => {
     }
 
     const onDeactivation = () => {
-        console.log('send access code')
+        deactivateUser()
+        navigate('/')
     }
 
     const ShowEditButton = () => {

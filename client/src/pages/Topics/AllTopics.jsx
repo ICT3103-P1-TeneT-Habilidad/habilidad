@@ -21,7 +21,6 @@ const AllTopics = () => {
     }, [topics])
 
     const sortTopicsByName = (topics) => {
-        console.log(topics)
         topics = topics.sort(function (a, b) {
             return compare(a.topicName, b.topicName)
         })
@@ -41,13 +40,10 @@ const AllTopics = () => {
         setSorted(result)
     }
 
-    console.log(topics)
-
     function renderGroup() {
         return (
             <div>
                 {sorted.map((alphabet) => {
-                    console.log(alphabet)
                     return (
                         <div key={alphabet.group} className="flex flex-col p-2">
                             <div className="border border-slate-400 bg-slate-300 text-grey-base p-3 w-24 h-12 text-center font-medium">

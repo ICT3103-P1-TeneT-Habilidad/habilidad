@@ -18,7 +18,7 @@ const LoginOtp = () => {
         console.log(data)
         login(data)
     }
-    
+
     useEffect(() => {
         if (user) navigate('/')
     }, [user, navigate])
