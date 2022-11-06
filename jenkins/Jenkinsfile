@@ -3,28 +3,40 @@ pipeline {
         disableConcurrentBuilds()
     }
     agent any
-//     agent {
-//         docker {
-//             image 'node:lts-buster-slim'
-//             args '-p 3000:3000'
-//         }
-//     }
+    agent {
+        docker {
+            image 'node:lts-buster-slim'
+            args '-p 3000:3000'
+        }
+    }
     environment {
         CI = 'true'
     }
     stages {
-        stage('Build') {
-            steps {
-                sh 'npm install'
-                sh 'chmod +x -R ./jenkins/scripts'
-            }
-        }
         stage('OWASP Dependency Check'){
             steps{
                 dependencyCheck additionalArguments: ''' -o ./ --format HTML --format XML --disableYarnAudit''', odcInstallation: 'DependencyCheck'
             }
         }
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:lts-buster-slim'
+                    args '-p 3000:3000'
+                }
+            }
+            steps {
+                sh 'npm install'
+                sh 'chmod +x -R ./jenkins/scripts'
+            }
+        }
         stage('Test') {
+            agent {
+                docker {
+                    image 'node:lts-buster-slim'
+                    args '-p 3000:3000'
+                }
+            }
             steps {
                 sh './jenkins/scripts/test.sh'
             }
