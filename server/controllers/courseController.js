@@ -229,20 +229,32 @@ export const instructorCreateCourse = async (req, res, next) => {
 
         const topics = await findTopicByName(JSON.parse(replaceSanitizedQuot(topicCourse)))
 
-        const imageUploadResult = await cloudinary.uploader.upload(image[0].path)
-        fs.unlinkSync(image[0].path)
 
-        const materialUpload = materialFiles.map((ele) => cloudinary.uploader.upload(ele.path, { resource_type: 'video' }))
-        const uploadResult = await Promise.all(materialUpload)
-        for (const file in materialFiles) {
-            fs.unlinkSync(materialFiles[file].path)
+        let imageUploadResult
+        if (image) {
+            imageUploadResult = await cloudinary.uploader.upload(image[0].path)
+            fs.unlinkSync(image[0].path)
         }
 
-        const courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
-        for (const material in courseMaterials) {
-            courseMaterials[material].url = uploadResult[material].secure_url
-            courseMaterials[material].publicId = uploadResult[material].public_id
-            courseMaterials[material].assetId = uploadResult[material].asset_id
+        let materialUpload
+        let uploadResult
+        if (materialFiles) {
+            materialUpload = materialFiles.map((ele) => cloudinary.uploader.upload(ele.path, { resource_type: 'video' }))
+            uploadResult = await Promise.all(materialUpload)
+            for (const file in materialFiles) {
+                fs.unlinkSync(materialFiles[file].path)
+            }
+        }
+
+        let courseMaterials
+        if (materials) {
+            courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
+            for (const material in courseMaterials) {
+                courseMaterials[material].url = uploadResult[material].secure_url
+                courseMaterials[material].publicId = uploadResult[material].public_id
+                courseMaterials[material].assetId = uploadResult[material].asset_id
+            }
+
         }
 
         const { instructorId } = req.payload
@@ -255,9 +267,9 @@ export const instructorCreateCourse = async (req, res, next) => {
             language,
             instructorId,
             topicCourse: topics,
-            imageUrl: imageUploadResult.secure_url,
-            imageAssetId: imageUploadResult.asset_id,
-            imagePublicId: imageUploadResult.public_id,
+            imageUrl: imageUploadResult ? imageUploadResult.secure_url : "undefined",
+            imageAssetId: imageUploadResult ? imageUploadResult.asset_id : "undefined",
+            imagePublicId: imageUploadResult ? imageUploadResult.public_id : "undefined",
             courseMaterials
         })
 
