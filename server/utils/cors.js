@@ -1,4 +1,4 @@
-var allowlist = ['http://172.16.1.2:3000', 'http://128.199.202.23:2096']
+var allowlist = ['http://172.16.1.2:3000', 'http://128.199.202.23:2096', 'https://habilidad.tk', 'https://www.habilidad.tk']
 export const corsOptionsDelegate = (req, callback) => {
     var corsOptions;
     if (allowlist.indexOf(req.header('Origin')) !== -1) {
