@@ -3,7 +3,7 @@ import { useAppContext } from '../context/appContext'
 
 const Alert = () => {
     const { alert_type, alert_msg } = useAppContext()
-    console.log(alert_msg)
+    // console.log(alert_msg)
 
     return renderAlert(alert_type, alert_msg)
 }

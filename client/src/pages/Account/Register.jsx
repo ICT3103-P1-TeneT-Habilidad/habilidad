@@ -18,7 +18,7 @@ const Register = () => {
     password.current = watch('password', '')
 
     const onSubmit = (data) => {
-        console.log(data)
+        // console.log(data)
         createUser(data)
         reset()
     }

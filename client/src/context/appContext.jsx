@@ -127,7 +127,7 @@ const AppProvider = ({ children }) => {
             return res
         },
         async (err) => {
-            console.log(err)
+            // console.log(err)
             const originalConfig = err.config
             if (err.response) {
                 // If access token is expired
@@ -214,7 +214,7 @@ const AppProvider = ({ children }) => {
     }
 
     const sendLoginOtp = async (user_data) => {
-        console.log(user_data)
+        // console.log(user_data)
         dispatch({ type: LOGIN_OTP_BEGIN })
         try {
             await axios.post(`/api/users/login`, user_data)
@@ -223,7 +223,7 @@ const AppProvider = ({ children }) => {
                 payload: { msg: 'OTP is sent to your email!' },
             })
         } catch (err) {
-            console.log(err)
+            // console.log(err)
             dispatch({
                 type: LOGIN_OTP_ERROR,
                 payload: { msg: err.response.data.result.message },
@@ -237,7 +237,7 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.post(`/api/users/verifyOTP`, user_data)
             const result = data.result.data
-            console.log(result)
+            // console.log(result)
             dispatch({ type: SETUP_USER_SUCCESS, payload: { user: result, msg: 'Success' } })
             setUser(result)
         } catch (err) {
@@ -265,7 +265,7 @@ const AppProvider = ({ children }) => {
                 payload: { msg: 'Account Successfully Created' },
             })
         } catch (err) {
-            console.log(err)
+            // console.log(err)
             dispatch({
                 type: CREATE_USER_ERROR,
                 payload: { msg: err.response.data.result.message },
@@ -279,7 +279,7 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.get(`/api/course/`)
             const result = data.result.data
-            console.log(result)
+            // console.log(result)
             dispatch({
                 type: GET_ALL_COURSES_SUCCESS,
                 payload: {
@@ -287,7 +287,7 @@ const AppProvider = ({ children }) => {
                 },
             })
         } catch (err) {
-            console.log(err.response)
+            // console.log(err.response)
             logout()
         }
     }
@@ -297,7 +297,7 @@ const AppProvider = ({ children }) => {
         try {
             const { data } = await axios.get(`/api/topics/`)
             const result = data.result.data
-            console.log(result)
+            // console.log(result)
             dispatch({
                 type: GET_ALL_TOPICS_SUCCESS,
                 payload: {
@@ -305,7 +305,7 @@ const AppProvider = ({ children }) => {
                 },
             })
         } catch (err) {
-            console.log(err.response)
+            // console.log(err.response)
             dispatch({ type: GET_ALL_TOPICS_ERROR })
         }
     }
@@ -318,7 +318,7 @@ const AppProvider = ({ children }) => {
                 type: RESET_PASSWORD_LINK_SUCCESS,
             })
         } catch (err) {
-            console.log(err)
+            // console.log(err)
             if (err.response.status !== 401) {
                 dispatch({
                     type: RESET_PASSWORD_LINK_ERROR,
@@ -394,7 +394,7 @@ const AppProvider = ({ children }) => {
     }
 
     const updateUserDetails = async (user_data) => {
-        console.log(user_data)
+        // console.log(user_data)
         dispatch({ type: UPDATE_USER_BEGIN })
         try {
             const { data } = await axios.patch(`/api/users/`, user_data)
@@ -489,7 +489,7 @@ const AppProvider = ({ children }) => {
     }
 
     const deactivateUser = async (data) => {
-        console.log(data)
+        // console.log(data)
         dispatch({ type: DEACTIVATE_USER_BEGIN })
         try {
             const { data } = await authFetch.patch(`api/users/deactivate`)

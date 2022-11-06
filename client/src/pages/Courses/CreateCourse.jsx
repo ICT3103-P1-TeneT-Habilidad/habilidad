@@ -59,7 +59,7 @@ const CreateCourse = () => {
 
     useEffect(() => {
         checkEmptyUpload()
-        console.log(materialInfo)
+        // console.log(materialInfo)
     })
 
     const NewCourseMaterial = ({ keyId }) => {

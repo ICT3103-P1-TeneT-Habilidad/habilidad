@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const TopicCard = ({ data }) => {
     const topics = data
 
-    console.log(topics)
+    // console.log(topics)
 
     return (
         topics && (

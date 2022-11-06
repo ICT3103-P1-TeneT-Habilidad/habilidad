@@ -13,7 +13,7 @@ const ForgetResetPwd = () => {
     const { showAlert, sendPasswordResetLink, openModal } = useAppContext()
 
     const onSubmit = (data) => {
-        console.log(data)
+        // console.log(data)
         sendPasswordResetLink(data.email)
     }
 

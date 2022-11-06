@@ -16,7 +16,7 @@ const AllCourses = () => {
     const { handleSubmit, control } = useForm()
 
     function onSubmit(data) {
-        console.log(data)
+        // console.log(data)
     }
 
     return (
@@ -24,7 +24,7 @@ const AllCourses = () => {
             <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
                 <div>
                     <h3 className="font-semibold text-2xl p-4">All Courses</h3>
-                    <form onSubmit={handleSubmit(onSubmit)} className="p-4 w-full">
+                    {/* <form onSubmit={handleSubmit(onSubmit)} className="p-4 w-full">
                         <div className="flex flex-row space-x-5">
                             <Controller
                                 name="filter"
@@ -48,7 +48,7 @@ const AllCourses = () => {
                                 Submit
                             </button>
                         </div>
-                    </form>
+                    </form> */}
                 </div>
                 <div>{courses && <CourseCard data={courses} />}</div>
             </div>
