@@ -15,7 +15,8 @@ import {
     setCoursePopular,
     setCourseNotPopular,
     purchaseOneCourse,
-    getCoursesByCategory
+    getCoursesByCategory,
+    getViewCourses,
 } from '../controllers/courseController.js'
 // import middleware
 import { courseUpload } from '../middleware/multer.js'
@@ -27,13 +28,16 @@ const router = express.Router()
 // Get all courses (unauth)
 router.route('/').get(getAllCourses)
 
+// Get one course detail (unauth)
+router.route('/viewCourse/:courseId').get(sanitizeUrlParam, getViewCourses)
+
 // Get all purchases courses by student
 // Auth: Token, Role based
-router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
+router.route('/created').get(isAuthenticate, isRoleInstructor, getCoursesCreatedByInstructor)
 
 // Get all courses instructor (owner) created
 // Auth: Token, Role based
-router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesCreatedByInstructor)
+router.route('/purchased').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
 
 // Get all courses that are by category
 // Sanitized: Req.Body
@@ -77,7 +81,7 @@ router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, 
 // Sanitized: Req.Params
 router.route('/:courseId').get(isAuthenticate, sanitizeUrlParam, getOneCourse)
 
-// Get course details 
+// Get course details
 
 // Delete course
 // Auth: Token, Role based
@@ -87,6 +91,8 @@ router.route('/:courseId').delete(isAuthenticate, isRoleInstructor, sanitizeUrlP
 // Edit course
 // Auth: Token, Role based
 // Sanitized: Req.Body, Req.Params
-router.route('/:courseId').put(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, sanitizeUrlParam, editCourse)
+router
+    .route('/:courseId')
+    .put(isAuthenticate, isRoleInstructor, courseUpload, sanitizeBody, sanitizeUrlParam, editCourse)
 
 export default router

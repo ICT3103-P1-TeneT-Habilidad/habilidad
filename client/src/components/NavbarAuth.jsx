@@ -1,13 +1,15 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { classNames } from '../utils/Helpers'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
 // import icons and assets
 import { MdOutlineCancel } from 'react-icons/md'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
 import BigLogo from '../assets/habilidad_large_logo.png'
+import RBAC from './RBAC'
+import { allowInstructorModeratorOnly, allowModeratorOnly, allowStudentOnly } from '../utils/Constants'
 
 export default function NewNavbar() {
     const { getUserDetails, user_details, logout } = useAppContext()
@@ -15,11 +17,20 @@ export default function NewNavbar() {
 
     useEffect(() => {
         getUserDetails()
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
         setUsername(user_details.username)
     }, [user_details])
+
+    const MyLink = ({ linkPath, linkName }) => {
+        return (
+            <Link to={linkPath} className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                {linkName}
+            </Link>
+        )
+    }
 
     return (
         <Disclosure as="nav" className="bg-navbarfooter shadow">
@@ -30,9 +41,23 @@ export default function NewNavbar() {
                             <div className="flex">
                                 <div className="flex-shrink-0 flex items-center">
                                     <Link to="/">
-                                        <img className="hidden lg:block h-24 w-auto" src={BigLogo} />
+                                        <img className="hidden lg:block h-24 w-auto" src={BigLogo} alt="logo" />
                                     </Link>
                                 </div>
+                            </div>
+                            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                                {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
+
+                                <RBAC permissiveRole={allowInstructorModeratorOnly}>
+                                    <MyLink linkName="Course List" linkPath="/courselist" />
+                                </RBAC>
+                                <RBAC permissiveRole={allowModeratorOnly}>
+                                    <MyLink linkName="Account Management" linkPath="/accountmanagement" />
+                                </RBAC>
+
+                                <RBAC permissiveRole={allowStudentOnly}>
+                                    <MyLink linkName="Purchased Courses" linkPath="/purchased" />
+                                </RBAC>
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:items-center">
                                 {/* Profile dropdown */}
@@ -46,9 +71,9 @@ export default function NewNavbar() {
                                                 </div>
                                             </Menu.Button>
                                         ) : (
-                                            <Menu.Button className="rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <Menu.Button className="flex text-sm">
                                                 <span className="sr-only">Open user menu</span>
-                                                <span className='uppercase font-medium'>{username}</span>
+                                                <span className="uppercase font-medium">{username}</span>
                                             </Menu.Button>
                                         )}
                                     </div>

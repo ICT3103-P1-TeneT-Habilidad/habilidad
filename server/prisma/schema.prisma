@@ -14,8 +14,8 @@ model User {
   username String @unique
   password String
   name String
-  email String
-  phoneNumber Int
+  email String @unique
+  phoneNumber Int @unique
   deactivationDate DateTime?
   createdOn DateTime @default(now())
   updatedOn DateTime @updatedAt

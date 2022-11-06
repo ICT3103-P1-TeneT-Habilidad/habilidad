@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom'
 
 const CourseCard = (props) => {
     const courses = props.data
-
-    console.log(courses)
-
+    
     return (
         <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">
             {courses.map((course) => (
@@ -31,15 +29,13 @@ const CourseCard = (props) => {
                                 <span className="text-sm font-medium text-gray-900">{course.courseName}</span>
                             </p>
                             <p className="text-sm text-gray-500">{course.description}</p>
+                            <span className="text-sm text-gray-500 py-2">
+                                Instructor: {course.instructor.user.name}
+                            </span>
                             <div className="flex-1 flex flex-col justify-end">
                                 <p className="text-base font-medium text-gray-900">{course.price} SGD</p>
                             </div>
                         </div>
-
-                        {/* <div className="flex flex-col p-5">
-                        <span className="text-lg">{course.courseName}</span>
-                        <span className="text-md">{course.instructorId}</span>
-                    </div> */}
                     </div>
                 </Link>
             ))}

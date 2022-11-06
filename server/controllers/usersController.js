@@ -7,7 +7,8 @@ import {
     updateUserByUserId,
     storeNewUser,
     findAllUsers,
-    updateDeactivationDateToNull
+    updateDeactivationDateToNull,
+    findActivatedUserByUsername
 } from '../services/user.js'
 import { findEmailToken, replaceEmailToken, saveEmailToken } from '../services/emailToken.js'
 // import constants
@@ -18,7 +19,7 @@ import jwt from 'jsonwebtoken'
 import { generateSalt, hashText, verifyPassword, generateTokenProcedure } from '../utils/auth.js'
 import { sendEmailLink, generateEmailToken, decodeEmailToken, generateEmailOtp } from '../middleware/email.js'
 // import validations
-import { validateEmail, validatePasswords } from '../validations/input.js'
+import { validateEmail, validateName, validatePasswords, validatePhoneNum, validateUsername } from '../validations/input.js'
 // import Responses
 import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
@@ -94,14 +95,17 @@ export const userLogin = async (req, res, next) => {
         const { username } = req.sanitizedBody
 
         // Verify email
-        const user = await findUserByUsername(username)
+        const user = await findActivatedUserByUsername(username)
 
-        if (!user) {
+        if (user.length === 0) {
             throw new Response('Wrong username or password', 'res_unauthorised')
+        }
+        else if (user.length > 1) {
+            throw new Response('Internal Server Error', 'res_internalServer')
         }
 
         // Verify password
-        const result = verifyPassword(password, user.password)
+        const result = verifyPassword(password, user[0].password)
 
         if (!result) {
             throw new Response('Wrong username or password', 'res_unauthorised')
@@ -270,7 +274,8 @@ export const resetPassword = async (req, res, next) => {
 
 export const sendEmailResetLink = async (req, res, next) => {
     try {
-        const email = req.body.email
+        const { email } = req.body
+        if (!email) throw new Response('Bad request', 'res_badRequest')
         const user = await findUserByEmail(email)
 
         if (user.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
@@ -279,28 +284,30 @@ export const sendEmailResetLink = async (req, res, next) => {
 
         let token = await findEmailToken(user[0].userId)
 
-        const currentDate = new Date(Date.now())
-        const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
+        let issueAt
+        let expiredAt
 
         if (!token) {
             token = generateEmailToken(user[0].userId)
-            const result = await saveEmailToken({
-                userId: user[0].userId,
-                token: token,
-                expiredAt: expiredDate,
-            })
-        }
+            const tokenPayload = decodeEmailToken(token)
+            expiredAt = new Date(tokenPayload.exp * 1000)
 
-        if (token.expiredAt > token.createdAt) {
-            token = generateEmailToken(user[0].userId)
-            const result = await replaceEmailToken({
+            await saveEmailToken({
                 userId: user[0].userId,
                 token: token,
-                expiredAt: expiredDate,
-                updatedAt: currentDate,
+                expiredAt: expiredAt,
             })
-        } else if (token.expiredAt < token.createdAt) {
-            throw new Response('Invalid Link', 'res_unauthorised')
+        } else {
+            token = generateEmailToken({ userId: user[0].userId })
+            const tokenPayload = decodeEmailToken(token)
+            expiredAt = new Date(tokenPayload.exp * 1000)
+            issueAt = new Date(tokenPayload.iat * 1000)
+            await replaceEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredAt,
+                updatedAt: issueAt,
+            })
         }
 
         const emailMsg = email_template(token)
@@ -356,14 +363,20 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
         next(error)
     }
 }
-export const validateEmailAndPassword = async (req, res, next) => {
+export const validateRegistrationForm = async (req, res, next) => {
     try {
         const { email, password, username, phoneNumber, name, role, confirmedPassword } = req.body
         if (!email || !password || !username || !phoneNumber || !name || !role || !confirmedPassword) {
             throw new Response('Form incomplete.', 'res_badRequest')
         }
 
-        await Promise.all([validateEmail(req), validatePasswords(req)])
+        await Promise.all([
+            validateEmail(req),
+            validatePasswords(req),
+            validateName(req),
+            validatePhoneNum(req),
+            validateUsername(req)
+        ])
             .then((value) => {
                 req.validate = {
                     status: true,
