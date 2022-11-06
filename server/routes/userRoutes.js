@@ -15,7 +15,7 @@ import {
     deactivateUser,
     sendEmailOtp,
     verifyEmailOtp,
-    validateEmailAndPassword
+    validateRegistrationForm
 } from '../controllers/usersController.js'
 import { isRoleModerator } from '../middleware/checkRole.js'
 import { sanitizeBody } from '../validations/input.js'
@@ -32,7 +32,7 @@ router.route('/').get(isAuthenticate, getOneUser)
 router.route('/').patch(isAuthenticate, updateUser)
 
 // register
-router.route('/register').post(validateEmailAndPassword, userRegister)
+router.route('/register').post(validateRegistrationForm, userRegister)
 
 // login
 router.route('/login').post(sanitizeBody, userLogin, sendEmailOtp)

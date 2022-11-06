@@ -19,7 +19,7 @@ import jwt from 'jsonwebtoken'
 import { generateSalt, hashText, verifyPassword, generateTokenProcedure } from '../utils/auth.js'
 import { sendEmailLink, generateEmailToken, decodeEmailToken, generateEmailOtp } from '../middleware/email.js'
 // import validations
-import { validateEmail, validatePasswords } from '../validations/input.js'
+import { validateEmail, validateName, validatePasswords, validatePhoneNum, validateUsername } from '../validations/input.js'
 // import Responses
 import { responseCode } from '../responses/responseCode.js'
 import { Response } from '../responses/response.js'
@@ -274,7 +274,7 @@ export const resetPassword = async (req, res, next) => {
 
 export const sendEmailResetLink = async (req, res, next) => {
     try {
-        const {email }= req.body
+        const { email } = req.body
         if (!email) throw new Response('Bad request', 'res_badRequest')
         const user = await findUserByEmail(email)
 
@@ -363,14 +363,20 @@ export const sendEmailDeactivateAcc = async (req, res, next) => {
         next(error)
     }
 }
-export const validateEmailAndPassword = async (req, res, next) => {
+export const validateRegistrationForm = async (req, res, next) => {
     try {
         const { email, password, username, phoneNumber, name, role, confirmedPassword } = req.body
         if (!email || !password || !username || !phoneNumber || !name || !role || !confirmedPassword) {
             throw new Response('Form incomplete.', 'res_badRequest')
         }
 
-        await Promise.all([validateEmail(req), validatePasswords(req)])
+        await Promise.all([
+            validateEmail(req),
+            validatePasswords(req),
+            validateName(req),
+            validatePhoneNum(req),
+            validateUsername(req)
+        ])
             .then((value) => {
                 req.validate = {
                     status: true,
