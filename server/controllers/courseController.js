@@ -17,7 +17,8 @@ import {
     findCourseByTopic,
     updateCourseToNotPopular,
     updateCourseToPopular,
-    findCourseByPopularTopic
+    findCourseByPopularTopic,
+    findAllCoursesNoCourseMaterial
 } from '../services/course.js'
 
 import { findInstructorIdByUserId } from '../services/instructor.js'
@@ -511,6 +512,32 @@ export const purchaseOneCourse = async (req, res, next) => {
 
         next(error)
 
+    }
+
+}
+
+export const getViewCourses = async (req, res, next) => {
+    try {
+        const { courseId } = req.sanitizedParams
+
+        const courses = await findAllCoursesNoCourseMaterial(courseId)
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
+        res.status(responseCode.res_ok).json({
+            result: {
+                status: responseCode.res_ok,
+                data: courses
+            },
+        })
+    } catch (err) {
+        const error = getErrorResponse(err)
+
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
+        next(error)
     }
 
 }

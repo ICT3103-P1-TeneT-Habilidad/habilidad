@@ -55,8 +55,26 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
                 },
             },
         },
-        include: {
-            instructorId: true
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            duration: true,
+            isPopular: true,
+            description: true,
+            language: true,
+            status: true,
+            createdOn: true,
+            updatedOn: true,
+            instructor: {
+                select: {
+                    user: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
         }
     })
 }
@@ -119,6 +137,20 @@ export const findAllCourses = async () => {
         },
     })
 }
+
+export const findAllCoursesNoCourseMaterial = async (courseId) => {
+    return db.course.findUnique({
+        where: {
+            courseId: courseId,
+        },
+        include: {
+            topicCourse: {
+                include: { topics: true }
+            },
+        },
+    })
+}
+
 
 export const updateCourseApprovalStatus = async (data) => {
     return db.course.update({
@@ -203,7 +235,17 @@ export const findCourseByTopic = async (topic) => {
             imageUrl: true,
             description: true,
             price: true,
-            duration: true
+            duration: true,
+            instructor: {
+                select: {
+                    user: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
+
         }
     })
 }
