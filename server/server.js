@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 
 // Error Handling all errors
 app.use((err, req, res, next) => {
+    console.log(err)
     res.status(err.statusCode || 500).json({
         result: {
             status: err.statusCode || 500,
