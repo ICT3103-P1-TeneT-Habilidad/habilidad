@@ -53,6 +53,8 @@ services:
     depends_on:
       - database
     stdin_open: true
+    env_file:
+      - .env
     build:
       dockerfile: Dockerfile
       context: ./server
