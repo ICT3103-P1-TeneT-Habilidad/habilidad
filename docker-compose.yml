@@ -47,14 +47,11 @@ services:
   ####################
 
   database:
-    image: mysql
+    image: mysql:latest
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
-      # MYSQL_USER: "${DB_USER}"
       MYSQL_PASSWORD: "${DB_PASS}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
-    ports:
-      - "${DB_HOST}:${DB_PORT}"
     volumes:
       - my-db:/var/lib/mysql
     networks:
@@ -75,8 +72,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
-    ports:
-      - "${SERVER_HOST}:${SERVER_PORT}"
     networks:
       backend:
         ipv4_address: 172.16.1.3
