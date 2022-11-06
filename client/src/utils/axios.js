@@ -5,9 +5,7 @@ const instance = axios.create({
     // baseURL: 'http://localhost:5000',
     headers: {
         'Access-Control-Allow-Origin': '*',
-        mode: 'cors',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
+        mode: 'cors'
     },
 })
 
