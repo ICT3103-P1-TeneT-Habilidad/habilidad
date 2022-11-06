@@ -4,5 +4,5 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package*.json /app/
 RUN npm i
 COPY ./ /app
-EXPOSE $CLIENT_PORT
+EXPOSE 3000
 CMD ["npm", "run", "start"]
