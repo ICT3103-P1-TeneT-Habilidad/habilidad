@@ -15,11 +15,16 @@ dotenv.config({ path: '../.env' })
 
 const app = express()
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(helmet())
 app.use(cors())
 
 // Routes
 app.use('/', setHeaderTimestamp, routes)
+
+app.get('/', (req, res) => {
+    res.send('Hi There')
+})
 
 console.log(process.env.DATABASE_URL)
 
