@@ -55,8 +55,26 @@ export const findCoursesWherePurchasedByStudent = async (studentId) => {
                 },
             },
         },
-        include: {
-            instructorId: true
+        select: {
+            courseId: true,
+            courseName: true,
+            imageUrl: true,
+            duration: true,
+            isPopular: true,
+            description: true,
+            language: true,
+            status: true,
+            createdOn: true,
+            updatedOn: true,
+            instructor: {
+                select: {
+                    user: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
         }
     })
 }
