@@ -52,6 +52,8 @@ services:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_PASSWORD: "${DB_PASS}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
+    expose:
+      - 3306
     volumes:
       - my-db:/var/lib/mysql
     networks:
@@ -68,7 +70,10 @@ services:
       - database
     stdin_open: true
     env_file:
-      - .env
+      - ../.env
+      - ./.env
+    expose:
+      - 5000
     build:
       dockerfile: Dockerfile
       context: ./server
@@ -82,7 +87,6 @@ services:
 
 volumes:
   my-db:
-
 
 networks:
   backend:

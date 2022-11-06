@@ -208,7 +208,6 @@ export const getPopularCourses = async (req, res, next) => {
             },
         })
     } catch (err) {
-        console.log(err)
         const error = getErrorResponse(err)
 
         const logMsg = new LogMessage(error.statusCode, req)
