@@ -6,6 +6,6 @@ import { isRoleStudent } from '../middleware/checkRole.js'
 const router = express.Router()
 
 // Get transaction by Students
-router.route('/transactionsByStudent').get(isAuthenticate, isRoleStudent, purchaseOneCourse)
+router.route('/transactionsByStudent').post(isAuthenticate, isRoleStudent, purchaseOneCourse)
 
 export default router

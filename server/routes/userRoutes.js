@@ -23,7 +23,7 @@ import { sanitizeBody } from '../validations/input.js'
 const router = express.Router()
 
 // Get all users
-router.route('/allUsers').get(isAuthenticate, getAllUsers)
+router.route('/allUsers').get(isAuthenticate, isRoleModerator, getAllUsers)
 
 // Get user detail
 router.route('/').get(isAuthenticate, getOneUser)
@@ -41,9 +41,7 @@ router.route('/login').post(sanitizeBody, userLogin, sendEmailOtp)
 router.route('/verifyOTP').post(sanitizeBody, verifyEmailOtp)
 
 // logout
-router.route('/logout').post(userLogout)
-
-// verify access token
+router.route('/logout').post(isAuthenticate, userLogout)
 
 // send email reset link
 router.route('/resetPassword').post(sendEmailResetLink)
