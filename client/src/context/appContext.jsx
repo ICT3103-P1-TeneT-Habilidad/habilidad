@@ -347,9 +347,27 @@ const AppProvider = ({ children }) => {
         dispatch({
             type: GET_ONE_COURSE_BEGIN,
         })
-
         try {
             const { data } = await authFetch.get(`/api/course/${courseId}`)
+            const { result } = data
+            dispatch({
+                type: GET_ONE_COURSE_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({
+                type: GET_ONE_COURSE_ERROR,
+                payload: { msg: err.response.data.result.message },
+            })
+        }
+    }
+
+    const getCourseDetailNoAuth = async(courseId) => {
+        dispatch({
+            type: GET_ONE_COURSE_BEGIN
+        })
+        try{
+        const { data } = await authFetch.get(`/api/course/viewCourse/${courseId}`)
             const { result } = data
             dispatch({
                 type: GET_ONE_COURSE_SUCCESS,

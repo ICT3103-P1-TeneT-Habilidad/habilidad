@@ -42,7 +42,6 @@ function App() {
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
                     <Route path="accountmanagement" element={<AccountsPage />} />
                     <Route path="courselist" element={<CourseList />} />
-                    <Route path='vet/:courseId' element={<VetCourse/>}/>
                 </Route>
                 <Route path="/" index element={<Dashboard />} />
                 <Route path="*" element={<Error404 />} />

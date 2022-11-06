@@ -5,7 +5,6 @@ import CourseList from './CourseList'
 import CreateCourse from './CreateCourse'
 import EditCourse from './EditCourse'
 import StudentViewCourse from './StudentViewCourse'
-import VetCourse from './VetCourse'
 import ViewCourse from './ViewCourse'
 
 export {
@@ -16,6 +15,5 @@ export {
     CreateCourse,
     EditCourse,
     StudentViewCourse,
-    VetCourse,
     ViewCourse,
 }
