@@ -12,6 +12,7 @@ import OneTopicCard from './OneTopicCard'
 import PopularCourse from './PopularCourse'
 import TopicCard from './TopicCard'
 import TopTopics from './TopTopics'
+import RBAC from './RBAC'
 
 export {
     Alert,
@@ -28,4 +29,5 @@ export {
     OneTopicCard,
     TopicCard,
     TopTopics,
+    RBAC,
 }
