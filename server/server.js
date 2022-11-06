@@ -14,8 +14,6 @@ import { corsOptionsDelegate } from './utils/cors.js'
 
 dotenv.config({ path: '../.env' })
 
-defaultDirectives = helmet.contentSecurityPolicy.getDefaultDirectives()
-
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
