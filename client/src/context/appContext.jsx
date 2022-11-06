@@ -312,7 +312,7 @@ const AppProvider = ({ children }) => {
     const sendPasswordResetLink = async (email) => {
         dispatch({ type: RESET_PASSWORD_LINK_BEGIN })
         try {
-            await axios.post(`api/users/resetPassword`, email)
+            await axios.post(`api/users/resetPassword`, {email})
             dispatch({
                 type: RESET_PASSWORD_LINK_SUCCESS,
             })
@@ -535,18 +535,18 @@ const AppProvider = ({ children }) => {
 
     const getCourseDetailGuest = async (courseId) => {
         dispatch({
-            type: GET_ONE_COURSE_BEGIN,
+            type: GET_COURSE_DETAIL_GUEST_BEGIN,
         })
         try {
             const { data } = await axios.get(`/api/course/viewCourse/${courseId}`)
             const { result } = data
             dispatch({
-                type: GET_ONE_COURSE_SUCCESS,
+                type: GET_COURSE_DETAIL_GUEST_SUCCESS,
                 payload: { result },
             })
         } catch (err) {
             dispatch({
-                type: GET_ONE_COURSE_ERROR,
+                type: GET_COURSE_DETAIL_GUEST_ERROR,
                 payload: { msg: err.response.data.result.message },
             })
         }
