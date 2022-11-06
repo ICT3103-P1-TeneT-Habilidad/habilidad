@@ -216,6 +216,7 @@ const AppProvider = ({ children }) => {
 
     const sendLoginOtp = async (user_data) => {
         dispatch({ type: LOGIN_OTP_BEGIN })
+        console.log(user_data)
         try {
             await axios.post(`/api/users/login`, user_data)
             dispatch({
