@@ -327,6 +327,7 @@ const AppProvider = ({ children }) => {
                 })
             }
         }
+        clearAlert()
     }
 
     const createNewCourse = async (course_data) => {
@@ -368,7 +369,7 @@ const AppProvider = ({ children }) => {
             dispatch({
                 type: CLEAR_ALERT,
             })
-        }, 5000)
+        }, 10000)
     }
 
     const clearValues = () => {
