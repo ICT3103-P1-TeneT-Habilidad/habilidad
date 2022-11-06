@@ -6,6 +6,6 @@ RUN npm i
 COPY ./ /app
 ENV PATH /app/node_modules/.bin:$PATH
 RUN npx prisma generate
-RUN npx prisma db push
 EXPOSE 5000
 CMD ["npm", "run", "start"]
+RUN npx prisma db push
