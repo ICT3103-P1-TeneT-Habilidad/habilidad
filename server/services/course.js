@@ -235,7 +235,17 @@ export const findCourseByTopic = async (topic) => {
             imageUrl: true,
             description: true,
             price: true,
-            duration: true
+            duration: true,
+            instructor: {
+                select: {
+                    user: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
+
         }
     })
 }
