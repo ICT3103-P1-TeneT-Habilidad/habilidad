@@ -20,6 +20,7 @@ export const isAuthenticate = async (req, res, next) => {
         }
 
         const token = authorization.split(' ')[1]
+        if (token == "undefined") throw new Response('Bad request', 'res_badRequest')
         const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
         req.payload = payload
 
