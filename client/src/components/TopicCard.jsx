@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 const TopicCard = ({ data }) => {
     const topics = data
 
+    console.log(topics)
+
     return (
         topics && (
             <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">

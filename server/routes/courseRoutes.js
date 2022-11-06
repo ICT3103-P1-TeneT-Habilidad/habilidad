@@ -1,5 +1,4 @@
 import express from 'express'
-import multer from 'multer'
 // import controllers
 import { isAuthenticate } from '../controllers/authController.js'
 import {
@@ -77,6 +76,8 @@ router.route('/:courseId').patch(isAuthenticate, isRoleModerator, sanitizeBody, 
 // Auth: Token, Role based
 // Sanitized: Req.Params
 router.route('/:courseId').get(isAuthenticate, sanitizeUrlParam, getOneCourse)
+
+// Get course details 
 
 // Delete course
 // Auth: Token, Role based

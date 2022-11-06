@@ -44,3 +44,7 @@ export const sortCourseMaterials = (materials) => {
     })
     return sortedMaterials
 }
+
+export function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}

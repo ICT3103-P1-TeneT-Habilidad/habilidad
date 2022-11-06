@@ -1,18 +1,17 @@
 // import responses
 import { Response } from '../responses/response.js'
 import jwt from 'jsonwebtoken'
-import logger from '../utils/logging/log.js'
-import { LogMessage } from '../utils/logging/logMessage.js'
 import { getErrorResponse } from '../utils/error.js'
 import { responseCode } from '../responses/responseCode.js'
 import { findRefreshTokenByUserId, revokeTokensByUserId, addRefreshTokenToWhitelist, revokeLastTokenById } from '../services/refreshTokens.js'
 import { generateTokenProcedure } from '../utils/auth.js'
 import { hashToken } from '../utils/hash.js'
+// import logs
+import logger from '../utils/logging/log.js'
+import { LogMessage } from '../utils/logging/logMessage.js'
 
 export const isAuthenticate = async (req, res, next) => {
     try {
-        const logMsg = new LogMessage(200, req)
-        logger.log(logMsg)
 
         const { authorization } = req.headers
 
@@ -24,10 +23,12 @@ export const isAuthenticate = async (req, res, next) => {
         const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
         req.payload = payload
 
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         next()
 
     } catch (err) {
-        console.log(err)
         let error
         if (err.name === 'TokenExpiredError') {
             error = new Response('Token Expired', 'res_unauthorised')
@@ -35,18 +36,25 @@ export const isAuthenticate = async (req, res, next) => {
         else {
             error = getErrorResponse(err)
         }
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
 
 export const refreshAccessToken = async (req, res, next) => {
     try {
+
         const { userId } = req.payload
 
         // Generate tokens
         const { accessToken, refreshToken, jti } = await generateTokenProcedure({ userId })
         // Whitelist refresh token (store in db)
         await addRefreshTokenToWhitelist({ jti, refreshToken, userId })
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
 
         res.status(responseCode.res_ok).json({
             result: {
@@ -65,12 +73,16 @@ export const refreshAccessToken = async (req, res, next) => {
         else {
             error = getErrorResponse(err)
         }
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 }
 
 export const isRefreshTokenValid = async (req, res, next) => {
     try {
+
         const { refreshToken } = req.body
 
         // Check if expired
@@ -78,7 +90,6 @@ export const isRefreshTokenValid = async (req, res, next) => {
 
         // Check if refresh token is compromised
         const { userId } = payload
-        console.log(payload)
 
         const tokens = await findRefreshTokenByUserId(userId)
         const hashedToken = hashToken(refreshToken)
@@ -92,10 +103,13 @@ export const isRefreshTokenValid = async (req, res, next) => {
 
         // Revoke used token
         await revokeLastTokenById(tokens[0].rTokenId)
+
+        const logMsg = new LogMessage(200, req)
+        logger.log(logMsg)
+
         next()
 
     } catch (err) {
-        console.log(err)
         let error
         if (err.name === 'TokenExpiredError') {
             error = new Response('Refresh Token Expired', 'res_unauthorised')
@@ -103,6 +117,9 @@ export const isRefreshTokenValid = async (req, res, next) => {
         else {
             error = getErrorResponse(err)
         }
+        const logMsg = new LogMessage(error.statusCode, req)
+        logger.log(logMsg)
+
         next(error)
     }
 
