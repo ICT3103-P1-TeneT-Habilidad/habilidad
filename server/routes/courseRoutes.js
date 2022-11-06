@@ -29,11 +29,11 @@ router.route('/').get(getAllCourses)
 
 // Get all purchases courses by student
 // Auth: Token, Role based
-router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesPurchasedByStudent)
+router.route('/created').get(isAuthenticate, isRoleStudent, getCoursesCreatedByInstructor)
 
 // Get all courses instructor (owner) created
 // Auth: Token, Role based
-router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesCreatedByInstructor)
+router.route('/purchased').get(isAuthenticate, isRoleInstructor, getCoursesPurchasedByStudent)
 
 // Get all courses that are by category
 // Sanitized: Req.Body
