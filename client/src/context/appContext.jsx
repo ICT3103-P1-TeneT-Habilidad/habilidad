@@ -27,51 +27,47 @@ import {
     DEACTIVATE_USER_BEGIN,
     DEACTIVATE_USER_SUCCESS,
     DEACTIVATE_USER_ERROR,
-    GET_ALL_COURSES_BEGIN,
-    GET_ALL_COURSES_SUCCESS,
-    // GET_ALL_COURSES_ERROR,
-    GET_ONE_COURSE_BEGIN,
-    GET_ONE_COURSE_SUCCESS,
-    GET_ONE_COURSE_ERROR,
-    CREATE_COURSE_BEGIN,
-    CREATE_COURSE_SUCCESS,
-    CREATE_COURSE_ERROR,
-    EDIT_COURSE_BEGIN,
-    EDIT_COURSE_SUCCESS,
-    EDIT_COURSE_ERROR,
-    GET_ALL_TOPICS_BEGIN,
-    GET_ALL_TOPICS_SUCCESS,
-    GET_ALL_TOPICS_ERROR,
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
     GET_ALL_USERS_BEGIN,
     GET_ALL_USERS_SUCCESS,
     GET_ALL_USERS_ERROR,
+    GET_ALL_COURSES_BEGIN,
+    GET_ALL_COURSES_SUCCESS,
     // GET_ONE_COURSE_BEGIN,
     // GET_ONE_COURSE_SUCCESS,
     // GET_ONE_COURSE_ERROR,
-    // GET_ALL_PURCHASED_COURSES_BEGIN,
-    // GET_ALL_PURCHASED_COURSES_SUCCESS,
-    // GET_ALL_PURCHASED_COURSES_ERROR,
-    // GET_ALL_POPULAR_COURSES_BEGIN,
-    // GET_ALL_POPULAR_COURSES_SUCCESS,
-    // GET_ALL_POPULAR_COURSES_ERROR,
-    // GET_ALL_TOP_COURSES_BEGIN,
-    // GET_ALL_TOP_COURSES_SUCCESS,
-    // GET_ALL_TOP_COURSES_ERROR,
+    GET_ALL_PURCHASED_COURSES_BEGIN,
+    GET_ALL_PURCHASED_COURSES_SUCCESS,
+    GET_ALL_PURCHASED_COURSES_ERROR,
+    GET_ALL_POPULAR_COURSES_BEGIN,
+    GET_ALL_POPULAR_COURSES_SUCCESS,
+    GET_ALL_POPULAR_COURSES_ERROR,
+    CREATE_COURSE_BEGIN,
+    CREATE_COURSE_SUCCESS,
+    CREATE_COURSE_ERROR,
+    EDIT_COURSE_BEGIN,
+    EDIT_COURSE_SUCCESS,
+    EDIT_COURSE_ERROR,
+    GET_ONE_COURSE_BEGIN,
+    GET_ONE_COURSE_SUCCESS,
+    GET_ONE_COURSE_ERROR,
+    GET_ALL_TOPICS_BEGIN,
+    GET_ALL_TOPICS_SUCCESS,
+    GET_ALL_TOPICS_ERROR,
     GET_COURSE_BY_TOPIC_BEGIN,
     GET_COURSE_BY_TOPIC_SUCCESS,
     GET_COURSE_BY_TOPIC_ERROR,
     GET_TOP_TOPICS_BEGIN,
     GET_TOP_TOPICS_SUCCESS,
     GET_TOP_TOPICS_ERROR,
-    GET_ALL_POPULAR_COURSES_BEGIN,
-    GET_ALL_POPULAR_COURSES_SUCCESS,
-    GET_ALL_POPULAR_COURSES_ERROR,
     APPROVE_COURSE_BEGIN,
     APPROVE_COURSE_SUCCESS,
     APPROVE_COURSE_ERROR,
+    GET_CREATED_COURSE_BEGIN,
+    GET_CREATED_COURSE_SUCCESS,
+    GET_CREATED_COURSE_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -96,6 +92,8 @@ export const initialState = {
     courses_topics: null,
     top_topics: null,
     popular_course: null,
+    purchased_courses: null,
+    created_courses: null,
 
     user_details: {},
 }
@@ -218,7 +216,7 @@ const AppProvider = ({ children }) => {
             await axios.post(`/api/users/login`, user_data)
             dispatch({
                 type: LOGIN_OTP_SUCCESS,
-                payload: { msg: 'Successfully Login' },
+                payload: { msg: 'OTP is sent to your email!' },
             })
         } catch (err) {
             console.log(err)
@@ -242,7 +240,7 @@ const AppProvider = ({ children }) => {
             dispatch({
                 type: SETUP_USER_ERROR,
                 payload: {
-                    msg: err.response.data.result.message,
+                    msg: 'Invalid OTP',
                 },
             })
         }
@@ -362,12 +360,12 @@ const AppProvider = ({ children }) => {
         }
     }
 
-    const getCourseDetailNoAuth = async(courseId) => {
+    const getCourseDetailNoAuth = async (courseId) => {
         dispatch({
-            type: GET_ONE_COURSE_BEGIN
+            type: GET_ONE_COURSE_BEGIN,
         })
-        try{
-        const { data } = await authFetch.get(`/api/course/viewCourse/${courseId}`)
+        try {
+            const { data } = await authFetch.get(`/api/course/viewCourse/${courseId}`)
             const { result } = data
             dispatch({
                 type: GET_ONE_COURSE_SUCCESS,
@@ -529,6 +527,28 @@ const AppProvider = ({ children }) => {
         getAllCourses()
     }
 
+    const getPurchasedCourses = async () => {
+        dispatch({ type: GET_ALL_PURCHASED_COURSES_BEGIN })
+        try {
+            const { data } = await authFetch.get(`api/course/purchased`)
+            const result = data.result
+            dispatch({ type: GET_ALL_PURCHASED_COURSES_SUCCESS, payload: result })
+        } catch (err) {
+            dispatch({ type: GET_ALL_PURCHASED_COURSES_ERROR })
+        }
+    }
+
+    const getCreatedCoursesByInstructor = async () => {
+        dispatch({ type: GET_ALL_PURCHASED_COURSES_BEGIN })
+        try {
+            const { data } = await authFetch.get(`api/course/created`)
+            const result = data.result
+            dispatch({ type: GET_ALL_PURCHASED_COURSES_SUCCESS, payload: result })
+        } catch (err) {
+            dispatch({ type: GET_ALL_PURCHASED_COURSES_ERROR })
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -562,6 +582,8 @@ const AppProvider = ({ children }) => {
                 deactivateUser,
                 clearValues,
                 updateCourseApproval,
+                getPurchasedCourses,
+                getCreatedCoursesByInstructor,
             }}
         >
             {children}

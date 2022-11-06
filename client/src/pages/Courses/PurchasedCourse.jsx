@@ -3,12 +3,11 @@ import { useAppContext } from '../../context/appContext'
 import { BigTable } from '../../components'
 import { Link } from 'react-router-dom'
 
-const CourseList = () => {
-    const { courses, getAllCourses } = useAppContext()
+const PurchasedCourse = () => {
+    const { getPurchasedCourses, purchased_courses } = useAppContext()
 
     useEffect(() => {
-        getAllCourses()
-        // eslint-disable-next-line
+        getPurchasedCourses()
     }, [])
 
     const columns = [
@@ -36,12 +35,12 @@ const CourseList = () => {
         },
         {
             id: 'Actions',
-            Header: 'Pending Approval',
+            Header: 'View Course',
             Cell: ({ row }) => {
                 if (row.original.approvalStatus !== 'Approve') {
                     return (
-                        <Link to={`/vet/${row.original.courseId}`}>
-                            <div className="italic underline text-blue-500">View more details</div>
+                        <Link to={`/studentviewcourse/${row.original.courseId}`}>
+                            <div className="italic underline text-blue-500">View course</div>
                         </Link>
                     )
                 }
@@ -51,8 +50,9 @@ const CourseList = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            {courses && <BigTable columns={columns} data={courses} />}
+            {purchased_courses && <BigTable columns={columns} data={purchased_courses} />}
         </div>
     )
 }
-export default CourseList
+
+export default PurchasedCourse

@@ -17,11 +17,11 @@ import {
     LoginPage,
     OtpRoute,
     Profile,
-    ProtectedRoutes,
+    InstructorCourseList,
     StudentViewCourse,
     Register,
     ViewCourse,
-    VetCourse,
+    PurchasedCourse,
 } from './pages/index'
 import { Footer, NavbarAuth, Navbar, RBAC } from './components/index'
 import { useAppContext } from './context/appContext'
@@ -48,6 +48,7 @@ function App() {
                 <Route path='/' element={<RBAC permissiveRole={allowInstructorModeratorOnly} />}>
                     {/* Instructor & Moderator */}
                     <Route path="viewcourse/:courseId" element={<ViewCourse />} />
+                    <Route path='courselist' element={<InstructorCourseList/>}/>
                 </Route>
 
                 <Route path='/' element={<RBAC permissiveRole={allowModeratorOnly} />}>
@@ -60,6 +61,7 @@ function App() {
                     {/* Student */}
                     <Route path="studentviewcourse/:courseId" element={<StudentViewCourse />} />
                     <Route path="content/:courseId" element={<CourseContent />} />
+                    <Route path='purchased' element={<PurchasedCourse/>}/>
                 </Route>
 
                 <Route path="/" index element={<Dashboard />} />

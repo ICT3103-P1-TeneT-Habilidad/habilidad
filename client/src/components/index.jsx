@@ -10,6 +10,7 @@ import Navbar from './Navbar'
 import OneCourseCard from './OneCourseCard'
 import OneTopicCard from './OneTopicCard'
 import PopularCourse from './PopularCourse'
+import PurchasedCourseCards from './PurchasedCourseCards'
 import TopicCard from './TopicCard'
 import TopTopics from './TopTopics'
 import RBAC from './RBAC'
@@ -27,6 +28,7 @@ export {
     PopularCourse,
     OneCourseCard,
     OneTopicCard,
+    PurchasedCourseCards,
     TopicCard,
     TopTopics,
     RBAC,
