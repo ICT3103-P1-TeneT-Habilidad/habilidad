@@ -8,6 +8,8 @@ import { MdOutlineCancel } from 'react-icons/md'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
 import BigLogo from '../assets/habilidad_large_logo.png'
+import RBAC from './RBAC'
+import { allowInstructorModeratorOnly, allowModeratorOnly, allowStudentOnly } from '../utils/Constants'
 
 export default function NewNavbar() {
     const { getUserDetails, user_details, logout } = useAppContext()
@@ -21,6 +23,14 @@ export default function NewNavbar() {
     useEffect(() => {
         setUsername(user_details.username)
     }, [user_details])
+
+    const MyLink = ({ linkPath, linkName }) => {
+        return (
+            <Link to={linkPath} className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                {linkName}
+            </Link>
+        )
+    }
 
     return (
         <Disclosure as="nav" className="bg-navbarfooter shadow">
@@ -37,19 +47,17 @@ export default function NewNavbar() {
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                                 {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                                <Link
-                                    to="/courselist"
-                                    className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
-                                >
-                                    Course Lists
-                                </Link>
 
-                                <Link
-                                    to="/accountmanagement"
-                                    className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
-                                >
-                                    Account Management
-                                </Link>
+                                <RBAC permissiveRole={allowInstructorModeratorOnly}>
+                                    <MyLink linkName="Course List" linkPath="/courselist" />
+                                </RBAC>
+                                <RBAC permissiveRole={allowModeratorOnly}>
+                                    <MyLink linkName="Account Management" linkPath="/accountmanagement" />
+                                </RBAC>
+
+                                <RBAC permissiveRole={allowStudentOnly}>
+                                    <MyLink linkName="Purchased Courses" linkPath="/purchased" />
+                                </RBAC>
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:items-center">
                                 {/* Profile dropdown */}

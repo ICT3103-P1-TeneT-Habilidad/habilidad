@@ -11,11 +11,34 @@ export const filterOptions = [
 ]
 
 export const languageOptions = [
-    {value: "CHINESE", label: "Chinese" },
-    {value: "ENGLISH", label: "English" },
-    {value: "FRENCH", label: "French" },
-    {value: "INDIAN", label: "Indian" },
-    {value: "JAPANESE", label: "Japanese" },
-    {value: "KOREAN", label: "Korean" },
-    {value: "MALAY", label: "Malay" },
+    { value: 'CHINESE', label: 'Chinese' },
+    { value: 'ENGLISH', label: 'English' },
+    { value: 'FRENCH', label: 'French' },
+    { value: 'INDIAN', label: 'Indian' },
+    { value: 'JAPANESE', label: 'Japanese' },
+    { value: 'KOREAN', label: 'Korean' },
+    { value: 'MALAY', label: 'Malay' },
 ]
+
+export const allowAllRoles = {
+    STUDENT: 'student',
+    INSTRUCTOR: 'instructor',
+    MODERATOR: 'moderator',
+}
+
+export const allowInstructorOnly = {
+    INSTRUCTOR: 'instructor',
+}
+
+export const allowStudentOnly = {
+    STUDENT: 'student',
+}
+
+export const allowInstructorModeratorOnly = {
+    INSTRUCTOR: 'instructor',
+    MODERATOR: 'moderator',
+}
+
+export const allowModeratorOnly = {
+    MODERATOR: 'moderator',
+}
