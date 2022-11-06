@@ -4,6 +4,7 @@ import CoursesByTopic from './CoursesByTopic'
 import CourseList from './CourseList'
 import CreateCourse from './CreateCourse'
 import EditCourse from './EditCourse'
+import GuestViewCourse from './GuestViewCourse'
 import InstructorCourseList from './InstructorCourseList'
 import PurchasedCourse from './PurchasedCourse'
 import StudentViewCourse from './StudentViewCourse'
@@ -16,6 +17,7 @@ export {
     CourseList,
     CreateCourse,
     EditCourse,
+    GuestViewCourse,
     InstructorCourseList,
     PurchasedCourse,
     StudentViewCourse,

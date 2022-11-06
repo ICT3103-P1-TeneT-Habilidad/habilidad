@@ -68,6 +68,9 @@ import {
     GET_CREATED_COURSE_BEGIN,
     GET_CREATED_COURSE_SUCCESS,
     GET_CREATED_COURSE_ERROR,
+    GET_COURSE_DETAIL_GUEST_BEGIN,
+    GET_COURSE_DETAIL_GUEST_SUCCESS,
+    GET_COURSE_DETAIL_GUEST_ERROR,
 } from './action'
 
 const user = localStorage.getItem('user')
@@ -360,25 +363,6 @@ const AppProvider = ({ children }) => {
         }
     }
 
-    const getCourseDetailNoAuth = async (courseId) => {
-        dispatch({
-            type: GET_ONE_COURSE_BEGIN,
-        })
-        try {
-            const { data } = await authFetch.get(`/api/course/viewCourse/${courseId}`)
-            const { result } = data
-            dispatch({
-                type: GET_ONE_COURSE_SUCCESS,
-                payload: { result },
-            })
-        } catch (err) {
-            dispatch({
-                type: GET_ONE_COURSE_ERROR,
-                payload: { msg: err.response.data.result.message },
-            })
-        }
-    }
-
     const clearAlert = () => {
         setTimeout(() => {
             dispatch({
@@ -539,13 +523,32 @@ const AppProvider = ({ children }) => {
     }
 
     const getCreatedCoursesByInstructor = async () => {
-        dispatch({ type: GET_ALL_PURCHASED_COURSES_BEGIN })
+        dispatch({ type: GET_CREATED_COURSE_BEGIN })
         try {
             const { data } = await authFetch.get(`api/course/created`)
-            const result = data.result
-            dispatch({ type: GET_ALL_PURCHASED_COURSES_SUCCESS, payload: result })
+            const result = data.result.data
+            dispatch({ type: GET_CREATED_COURSE_SUCCESS, payload: result })
         } catch (err) {
-            dispatch({ type: GET_ALL_PURCHASED_COURSES_ERROR })
+            dispatch({ type: GET_CREATED_COURSE_ERROR })
+        }
+    }
+
+    const getCourseDetailGuest = async (courseId) => {
+        dispatch({
+            type: GET_ONE_COURSE_BEGIN,
+        })
+        try {
+            const { data } = await axios.get(`/api/course/viewCourse/${courseId}`)
+            const { result } = data
+            dispatch({
+                type: GET_ONE_COURSE_SUCCESS,
+                payload: { result },
+            })
+        } catch (err) {
+            dispatch({
+                type: GET_ONE_COURSE_ERROR,
+                payload: { msg: err.response.data.result.message },
+            })
         }
     }
 
@@ -584,6 +587,7 @@ const AppProvider = ({ children }) => {
                 updateCourseApproval,
                 getPurchasedCourses,
                 getCreatedCoursesByInstructor,
+                getCourseDetailGuest,
             }}
         >
             {children}

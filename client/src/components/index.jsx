@@ -3,6 +3,7 @@ import BigTable from './BigTable'
 import CourseCard from './CourseCard'
 import CourseContentNav from './CourseContentNav'
 import Footer from './Footer'
+import GeneralViewCourse from './GeneralViewCourse'
 import LoadingMsg from './LoadingMsg'
 import NavbarAuth from './NavbarAuth'
 import NavbarModal from './NavbarModal'
@@ -21,6 +22,7 @@ export {
     CourseCard,
     CourseContentNav,
     Footer,
+    GeneralViewCourse,
     LoadingMsg,
     Navbar,
     NavbarAuth,

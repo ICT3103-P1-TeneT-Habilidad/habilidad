@@ -65,6 +65,9 @@ import {
     GET_CREATED_COURSE_BEGIN,
     GET_CREATED_COURSE_SUCCESS,
     GET_CREATED_COURSE_ERROR,
+    GET_COURSE_DETAIL_GUEST_BEGIN,
+    GET_COURSE_DETAIL_GUEST_SUCCESS,
+    GET_COURSE_DETAIL_GUEST_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -410,6 +413,19 @@ const reducer = (state, action) => {
         case GET_CREATED_COURSE_ERROR:
             return {
                 ...state,
+            }
+        case GET_COURSE_DETAIL_GUEST_BEGIN:
+            return{
+                ...state
+            }
+        case GET_COURSE_DETAIL_GUEST_SUCCESS:
+            return{
+                ...state,
+                courseDetail: action.payload.result.data,
+            }
+        case GET_COURSE_DETAIL_GUEST_ERROR:
+            return{
+                ...state
             }
         default:
             throw new Error(`no such action: ${action.type}`)

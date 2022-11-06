@@ -11,10 +11,6 @@ const InstructorCourseList = () => {
         // eslint-disable-next-line
     }, [])
 
-    useEffect(() => {
-        console.log(created_courses)
-    }, [created_courses])
-
     const columns = [
         {
             Header: 'Course Name',
@@ -31,6 +27,9 @@ const InstructorCourseList = () => {
         {
             Header: 'Price',
             accessor: 'price',
+            Cell: ({ row }) => {
+                return <div>{row.original.price} SGD</div>
+            },
         },
         {
             id: 'status',
@@ -49,7 +48,7 @@ const InstructorCourseList = () => {
             Header: 'Actions',
             Cell: ({ row }) => {
                 return (
-                    <Link to={`/vet/${row.original.courseId}`}>
+                    <Link to={`/viewcourse/${row.original.courseId}`}>
                         <div className="italic underline text-blue-500">View more details</div>
                     </Link>
                 )

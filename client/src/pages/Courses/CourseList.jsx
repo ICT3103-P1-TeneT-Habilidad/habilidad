@@ -40,7 +40,7 @@ const CourseList = () => {
             Cell: ({ row }) => {
                 if (row.original.approvalStatus !== 'Approve') {
                     return (
-                        <Link to={`/vet/${row.original.courseId}`}>
+                        <Link to={`/viewcourse/${row.original.courseId}`}>
                             <div className="italic underline text-blue-500">View more details</div>
                         </Link>
                     )
