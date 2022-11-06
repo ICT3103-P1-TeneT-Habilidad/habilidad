@@ -227,7 +227,7 @@ const AppProvider = ({ children }) => {
             console.log(err)
             dispatch({
                 type: LOGIN_OTP_ERROR,
-                payload: { msg: err.response.data },
+                payload: { msg: err.response.data.result.message },
             })
         }
         clearAlert()
