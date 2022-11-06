@@ -8,4 +8,3 @@ ENV PATH /app/node_modules/.bin:$PATH
 RUN npx prisma generate
 EXPOSE 5000
 CMD ["npm", "run", "start"]
-RUN npx prisma db push
