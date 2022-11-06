@@ -5,7 +5,7 @@ import { Alert, LoadingMsg } from '../../components'
 import { Link, useNavigate } from 'react-router-dom'
 
 const LoginPage = () => {
-    const { showAlert, sendLoginOtp, loginOtp, isLoading } = useAppContext()
+    const { showAlert, sendLoginOtp, loginOtp, isLoading, openModal } = useAppContext()
 
     const navigate = useNavigate()
 
@@ -29,16 +29,13 @@ const LoginPage = () => {
     }, [isLoading])
 
     const showLoadingMsg = () => {
-        return (
-            <LoadingMsg/>
-        )
+        return <LoadingMsg />
     }
 
     return (
         <>
             <div
-                className={`min-h-screen bg-background
-                } flex flex-col justify-center py-12 sm:px-6 lg:px-8`}
+                className={`min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 ${openModal ? 'opacity-40' : ""}`}
             >
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Login to HABILIDAD</h2>
@@ -47,7 +44,7 @@ const LoginPage = () => {
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                         {/* {user_type === 'Instructor' ? <InstructorLogin /> : <StudentLogin />} */}
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-                            {showAlert ? <Alert/> : isLoading && showLoadingMsg()}
+                            {showAlert ? <Alert /> : isLoading && showLoadingMsg()}
                             <div>
                                 <label>Username</label>
                                 <div className="mt-1">

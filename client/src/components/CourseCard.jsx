@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom'
 
 const CourseCard = (props) => {
     const courses = props.data
-
-    console.log(courses)
-
+    
     return (
         <div className="grid lg:grid-cols-5 lg:gap-y-4 lg:gap-x-5 sm:grid-cols-2 sm:gap-y-5 sm:gap-x-5">
             {courses.map((course) => (

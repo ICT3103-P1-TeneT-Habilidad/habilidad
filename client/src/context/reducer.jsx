@@ -24,9 +24,6 @@ import {
     DEACTIVATE_USER_BEGIN,
     DEACTIVATE_USER_SUCCESS,
     DEACTIVATE_USER_ERROR,
-    // DELETE_USER_BEGIN,
-    // DELETE_USER_SUCCESS,
-    // DELETE_USER_ERROR,
     RESET_PASSWORD_LINK_BEGIN,
     RESET_PASSWORD_LINK_SUCCESS,
     RESET_PASSWORD_LINK_ERROR,
@@ -38,15 +35,12 @@ import {
     // GET_ONE_COURSE_BEGIN,
     // GET_ONE_COURSE_SUCCESS,
     // GET_ONE_COURSE_ERROR,
-    // GET_ALL_PURCHASED_COURSES_BEGIN,
-    // GET_ALL_PURCHASED_COURSES_SUCCESS,
-    // GET_ALL_PURCHASED_COURSES_ERROR,
+    GET_ALL_PURCHASED_COURSES_BEGIN,
+    GET_ALL_PURCHASED_COURSES_SUCCESS,
+    GET_ALL_PURCHASED_COURSES_ERROR,
     GET_ALL_POPULAR_COURSES_BEGIN,
     GET_ALL_POPULAR_COURSES_SUCCESS,
     GET_ALL_POPULAR_COURSES_ERROR,
-    // GET_ALL_TOP_COURSES_BEGIN,
-    // GET_ALL_TOP_COURSES_SUCCESS,
-    // GET_ALL_TOP_COURSES_ERROR,
     CREATE_COURSE_BEGIN,
     CREATE_COURSE_SUCCESS,
     CREATE_COURSE_ERROR,
@@ -68,6 +62,12 @@ import {
     APPROVE_COURSE_BEGIN,
     APPROVE_COURSE_SUCCESS,
     APPROVE_COURSE_ERROR,
+    GET_CREATED_COURSE_BEGIN,
+    GET_CREATED_COURSE_SUCCESS,
+    GET_CREATED_COURSE_ERROR,
+    GET_COURSE_DETAIL_GUEST_BEGIN,
+    GET_COURSE_DETAIL_GUEST_SUCCESS,
+    GET_COURSE_DETAIL_GUEST_ERROR,
 } from './action'
 
 import { initialState } from './appContext'
@@ -154,6 +154,7 @@ const reducer = (state, action) => {
                 showAlert: true,
                 alert_type: 'danger',
                 alert_msg: action.payload.msg,
+                loginOtp: true,
             }
         case LOGOUT:
             return {
@@ -386,6 +387,45 @@ const reducer = (state, action) => {
         case APPROVE_COURSE_ERROR:
             return {
                 ...state,
+            }
+        case GET_ALL_PURCHASED_COURSES_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_ALL_PURCHASED_COURSES_SUCCESS:
+            return {
+                ...state,
+                purchased_courses: action.payload,
+            }
+        case GET_ALL_PURCHASED_COURSES_ERROR:
+            return {
+                ...state,
+            }
+        case GET_CREATED_COURSE_BEGIN:
+            return {
+                ...state,
+            }
+        case GET_CREATED_COURSE_SUCCESS:
+            return {
+                ...state,
+                created_courses: action.payload,
+            }
+        case GET_CREATED_COURSE_ERROR:
+            return {
+                ...state,
+            }
+        case GET_COURSE_DETAIL_GUEST_BEGIN:
+            return{
+                ...state
+            }
+        case GET_COURSE_DETAIL_GUEST_SUCCESS:
+            return{
+                ...state,
+                courseDetail: action.payload.result.data,
+            }
+        case GET_COURSE_DETAIL_GUEST_ERROR:
+            return{
+                ...state
             }
         default:
             throw new Error(`no such action: ${action.type}`)
