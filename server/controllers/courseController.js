@@ -389,7 +389,10 @@ export const editCourse = async (req, res, next) => {
             }
 
         }
-        const courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
+        let courseMaterials
+        if (courseMaterials) {
+            courseMaterials = JSON.parse(replaceSanitizedQuot(materials))
+        }
 
         let uploadResult
         if (materialFiles && materialFiles.length > 0) {
@@ -418,7 +421,7 @@ export const editCourse = async (req, res, next) => {
             topicCourse: topics,
             imageAssetId: uploadResult?.asset_id,
             imagePublicId: uploadResult?.public_id,
-            courseMaterials: courseMaterials.length > 0 ? courseMaterials : null
+            courseMaterials: courseMaterials ? courseMaterials : null
         })
 
         const logMsg = new LogMessage(200, req)
