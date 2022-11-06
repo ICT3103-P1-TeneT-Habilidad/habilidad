@@ -194,11 +194,16 @@ export const updateUser = async (req, res, next) => {
             throw new Response('Passwords do not match.', 'res_badRequest')
         }
 
-        await validatePasswords(req).catch((reject) => {
-            throw new Response(reject, 'res_badRequest')
-        })
+        let hashedPassword
 
-        const hashedPassword = hashText(password, generateSalt(12))
+        if (password) {
+            await validatePasswords(req).catch((reject) => {
+                throw new Response(reject, 'res_badRequest')
+            })
+            hashedPassword = hashText(password, generateSalt(12))
+
+        }
+
         const user = await updateUserByUserId({
             userId,
             email,
@@ -471,7 +476,7 @@ export const verifyEmailOtp = async (req, res, next) => {
         const { username, token } = req.body
         const otp = await findOtpTokenByUsername({ username, token })
 
-        if (otp.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
+        if (otp.length != 1) throw new Response('Bad Request', 'res_badRequest')
 
         // verify if token
         const currentdata = new Date()

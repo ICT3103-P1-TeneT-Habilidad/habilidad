@@ -105,7 +105,7 @@ export const updateUserByUserId = async (data) => {
         where: { userId: data.userId },
         data: {
             name: data.name,
-            password: data.password,
+            password: data.hashedPassword,
             email: data.email,
             phoneNumber: data.phoneNumber,
         },
