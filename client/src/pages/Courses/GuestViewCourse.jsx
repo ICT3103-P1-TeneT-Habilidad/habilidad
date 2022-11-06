@@ -2,26 +2,18 @@ import React, { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAppContext } from '../../context/appContext'
 
-const StudentViewCourse = () => {
-    const { courseDetail, getCourseDetail } = useAppContext()
+const GuestViewCourse = () => {
+    const { courseDetail, getCourseDetailGuest, openModal } = useAppContext()
     const { courseId } = useParams()
 
     useEffect(() => {
-        getCourseDetail(courseId)
+        getCourseDetailGuest(courseId)
     }, [])
 
     return (
-        <div className="min-h-screen bg-background py-12 sm:px-6 lg:px-8 w-full">
+        <div className={`min-h-screen bg-background py-12 sm:px-6 lg:px-8 w-full ${openModal ? 'opacity-40' : ''}`}>
             {courseDetail && (
                 <div className="bg-white rounded-lg px-6 py-10 mx-auto relative">
-                    <div className="flex justify-end">
-                        <Link
-                            className="absolute shadow focus:shadow-outline focus:outline-none bg-accent2 font-bold py-2 px-4 rounded"
-                            to={`/content/${courseId}`}
-                        >
-                            Start Course
-                        </Link>
-                    </div>
                     <div className="lg:-mx-6 mb-5 lg:flex lg:items-center">
                         <img
                             className="object-scale-down w-full lg:mx-6 lg:w-1/2 rounded-xl h-72 lg:h-96"
@@ -52,4 +44,4 @@ const StudentViewCourse = () => {
     )
 }
 
-export default StudentViewCourse
+export default GuestViewCourse

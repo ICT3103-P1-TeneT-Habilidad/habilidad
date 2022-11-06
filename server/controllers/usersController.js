@@ -274,7 +274,8 @@ export const resetPassword = async (req, res, next) => {
 
 export const sendEmailResetLink = async (req, res, next) => {
     try {
-        const email = req.body.email
+        const {email }= req.body
+        if (!email) throw new Response('Bad request', 'res_badRequest')
         const user = await findUserByEmail(email)
 
         if (user.length != 1) throw new Response('Internal Server Error', 'res_internalServer')
@@ -283,28 +284,30 @@ export const sendEmailResetLink = async (req, res, next) => {
 
         let token = await findEmailToken(user[0].userId)
 
-        const currentDate = new Date(Date.now())
-        const expiredDate = new Date(currentDate + 1 * (60 * 60 * 1000))
+        let issueAt
+        let expiredAt
 
         if (!token) {
             token = generateEmailToken(user[0].userId)
-            const result = await saveEmailToken({
-                userId: user[0].userId,
-                token: token,
-                expiredAt: expiredDate,
-            })
-        }
+            const tokenPayload = decodeEmailToken(token)
+            expiredAt = new Date(tokenPayload.exp * 1000)
 
-        if (token.expiredAt > token.createdAt) {
-            token = generateEmailToken(user[0].userId)
-            const result = await replaceEmailToken({
+            await saveEmailToken({
                 userId: user[0].userId,
                 token: token,
-                expiredAt: expiredDate,
-                updatedAt: currentDate,
+                expiredAt: expiredAt,
             })
-        } else if (token.expiredAt < token.createdAt) {
-            throw new Response('Invalid Link', 'res_unauthorised')
+        } else {
+            token = generateEmailToken({ userId: user[0].userId })
+            const tokenPayload = decodeEmailToken(token)
+            expiredAt = new Date(tokenPayload.exp * 1000)
+            issueAt = new Date(tokenPayload.iat * 1000)
+            await replaceEmailToken({
+                userId: user[0].userId,
+                token: token,
+                expiredAt: expiredAt,
+                updatedAt: issueAt,
+            })
         }
 
         const emailMsg = email_template(token)

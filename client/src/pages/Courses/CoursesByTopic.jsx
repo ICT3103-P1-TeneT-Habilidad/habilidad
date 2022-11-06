@@ -20,7 +20,6 @@ const CoursesByTopic = () => {
 
         if (isFound) {
             setCheck(true)
-            console.log(topicName)
             getCourseByTopic(topicName)
         }
         // eslint-disable-next-line

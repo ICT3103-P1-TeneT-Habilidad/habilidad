@@ -13,17 +13,18 @@ import {
     Error404,
     Error500,
     ForgetResetPwd,
+    GuestViewCourse,
     LoginOtp,
     LoginPage,
     OtpRoute,
     Profile,
-    ProtectedRoutes,
+    InstructorCourseList,
     StudentViewCourse,
     Register,
     ViewCourse,
-    VetCourse,
+    PurchasedCourse,
 } from './pages/index'
-import { Footer, NavbarAuth, Navbar, RBAC } from './components/index'
+import { Footer, NavbarAuth, Navbar, RBAC, GeneralViewCourse } from './components/index'
 import { useAppContext } from './context/appContext'
 import { allowAllRoles, allowInstructorModeratorOnly, allowInstructorOnly, allowModeratorOnly, allowStudentOnly } from './utils/Constants'
 
@@ -47,7 +48,7 @@ function App() {
 
                 <Route path='/' element={<RBAC permissiveRole={allowInstructorModeratorOnly} />}>
                     {/* Instructor & Moderator */}
-                    <Route path="viewcourse/:courseId" element={<ViewCourse />} />
+                    <Route path='courselist' element={<InstructorCourseList/>}/>
                 </Route>
 
                 <Route path='/' element={<RBAC permissiveRole={allowModeratorOnly} />}>
@@ -58,8 +59,8 @@ function App() {
 
                 <Route path='/' element={<RBAC permissiveRole={allowStudentOnly} />}>
                     {/* Student */}
-                    <Route path="studentviewcourse/:courseId" element={<StudentViewCourse />} />
                     <Route path="content/:courseId" element={<CourseContent />} />
+                    <Route path='purchased' element={<PurchasedCourse/>}/>
                 </Route>
 
                 <Route path="/" index element={<Dashboard />} />
@@ -73,7 +74,8 @@ function App() {
                     <Route path="otp" element={<LoginOtp />} />
                 </Route>
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="topics/:topicName" element={<CoursesByTopic />} />
+                <Route path="/topics/:topicName" element={<CoursesByTopic />} />
+                <Route path='/viewcourse/:courseId' element={<GeneralViewCourse/>}/>
             </Routes>
             <Footer />
         </BrowserRouter>

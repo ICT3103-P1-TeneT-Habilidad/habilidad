@@ -6,7 +6,7 @@ import { filterOptions } from '../../utils/Constants.jsx'
 import { useForm, Controller } from 'react-hook-form'
 
 const AllCourses = () => {
-    const { getAllCourses, courses } = useAppContext()
+    const { getAllCourses, courses, openModal } = useAppContext()
 
     useEffect(() => {
         getAllCourses()
@@ -20,7 +20,7 @@ const AllCourses = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className={`min-h-screen bg-background ${openModal ? 'opacity-40' : ''}`}>
             <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
                 <div>
                     <h3 className="font-semibold text-2xl p-4">All Courses</h3>

@@ -5,7 +5,7 @@ import { useAppContext } from '../../context/appContext'
 import { compare } from '../../utils/Helpers'
 
 const AllTopics = () => {
-    const { topics, getAllTopics } = useAppContext()
+    const { topics, getAllTopics, openModal } = useAppContext()
     const [sorted, setSorted] = useState([])
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const AllTopics = () => {
     }
 
     return topics ? (
-        <div className="min-h-screen bg-background">
+        <div className={`min-h-screen bg-background ${openModal ? 'opacity-40' : ''}`}>
             <div className="px-4 py-4 mx-24 bg-background space-y-2 mr-24">
                 <h3 className="font-semibold text-2xl p-4">All Topics</h3>
                 <div> {renderGroup()}</div>
