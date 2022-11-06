@@ -106,7 +106,7 @@ export const validateName = (req) => {
 // Phone number requirement
 export const validatePhoneNum = (req) => {
     const { phoneNumber } = req.body
-    if (phoneNumber < 8000000 || phoneNumber > 999999) {
+    if (phoneNumber < 80000000 || phoneNumber > 99999999) {
         return Promise.reject('Phone number is not Singapore number ')
     }
     return Promise.resolve(true)
