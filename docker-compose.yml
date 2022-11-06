@@ -16,7 +16,6 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-    container_name: habilidad_proxy
 
   ####################
   ###    Client    ###
