@@ -17,6 +17,12 @@ dotenv.config({ path: '../.env' })
 const app = express()
 app.use(express.json())
 app.use(helmet())
+app.use(
+    helmet({
+        contentSecurityPolicy: true,
+    })
+)
+
 app.use(cors(corsOptionsDelegate))
 
 // Routes
