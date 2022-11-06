@@ -19,11 +19,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(helmet())
 app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            'script-src': ["'self'"],
-            upgradeInsecureRequests: true,
-        },
+    helmet({
+        contentSecurityPolicy: true
     })
 )
 app.use(cors(corsOptionsDelegate))
