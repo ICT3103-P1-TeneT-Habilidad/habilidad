@@ -2,9 +2,9 @@ import dotenv from 'dotenv'
 
 dotenv.config({ path: './.env' })
 
-export const prod_url = 'https://habilidad.tk'
+export const prod_url = 'https://api.habilidad.tk'
 
-export const dev_url = 'http://localhost:5000'
+export const dev_url = 'https://api.habilidad.tk'
 
 export const email_template = (token) =>
     'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
